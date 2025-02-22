@@ -1,6 +1,7 @@
 'use client';
-import { deleteBoard } from '@/actions/create-dashboard';
+import { deleteBoard } from '@/actions/handle-dashboard';
 import { Button } from '@/components/ui/button';
+import { useAction } from '@/hooks/useAction';
 import React from 'react';
 
 type Props = {
@@ -10,10 +11,13 @@ type Props = {
   };
 };
 function Board({ board }: Props) {
+  const { execute } = useAction(deleteBoard);
   return (
-    <div className='flex justify-between'>
+    <div className='flex justify-between gap-4 items-center'>
       <p onClick={() => deleteBoard(board.id)}>Board name: {board.title}</p>
-      <Button onClick={() => deleteBoard(board.id)}>Delete</Button>
+      <Button variant={'destructive'} onClick={() => execute(board.id)}>
+        Delete
+      </Button>
     </div>
   );
 }
