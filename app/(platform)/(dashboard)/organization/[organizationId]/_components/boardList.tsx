@@ -1,5 +1,3 @@
-import { Button } from '@/components/ui/button';
-import { Spacer } from '@/components/ui/spacer';
 import { Info, User } from 'lucide-react';
 import React from 'react';
 import {
@@ -14,17 +12,20 @@ import FormBoard from './formBoard';
 import { db } from '@/lib/db';
 import Board from './board';
 
-async function BoardList() {
-  const boards = await db.board.findMany();
+async function BoardList({
+  boards,
+}: {
+  boards: { id: string; title: string }[];
+}) {
   return (
     <div className='inline-flex flex-col gap-4'>
       <div className='flex gap-x-2 items-center'>
         <User />
         <p className='body-lg font-bold'>Your boards</p>
       </div>
-      <Spacer size={3} />
 
       <Modal
+        contentClassName='w-[450px] bg-gray-300'
         title='Create a board'
         description='sasas'
         sideOffset={5}
@@ -66,7 +67,7 @@ async function BoardList() {
       </Modal>
 
       <div className='flex-col gap-3 inline-flex ml-6'>
-        {boards.map((board) => (
+        {boards?.map((board) => (
           <Board board={board} key={board.id} />
         ))}
       </div>

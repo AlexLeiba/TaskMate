@@ -1,5 +1,6 @@
 import { ActionState } from '@/lib/createSafeAction';
 import { useState, useCallback } from 'react';
+import { toast } from 'react-toastify';
 
 type Action<TInput, TOutput> = (
   data: TInput
@@ -31,23 +32,27 @@ export function useAction<TInput, TOutput>(
           return;
         }
 
-        if (result.error) {
-          setError(result.error);
+        // if (result.error) {
+        //   setError(result.error);
 
-          options.onError?.(result.error);
-          return;
-        }
+        //   options.onError?.(result.error);
+
+        //   return;
+        // }
 
         if (result.data) {
           setData(result.data as TOutput);
 
           options.onSuccess?.(result.data as TOutput);
+
           return;
         }
       } catch (error: any) {
         setError(error.message as string);
 
         options.onError?.(error.message);
+        // toast.error(error.message);
+        console.log(error.message);
         return;
       } finally {
         setLoading(false);

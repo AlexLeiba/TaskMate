@@ -7,10 +7,19 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { boardSchema } from '@/lib/schemas';
 import { useAction } from '@/hooks/useAction';
-import { Spacer } from '@/components/ui/spacer';
+import { toast } from 'react-toastify';
+import ImagePicker from '@/components/ImagePicker/imagePicker';
 
 function FormBoard() {
-  const { execute, loading, error, data } = useAction(createBoard);
+  const { execute, error } = useAction(createBoard, {
+    onSuccess: () => {
+      toast.success('Board created successfully');
+    },
+    onError: () => {
+      toast.error('Error creating board');
+    },
+  });
+  console.log('🚀 ~ FormBoard ~ error:', error);
 
   const {
     register,
@@ -31,7 +40,10 @@ function FormBoard() {
 
   return (
     <form onSubmit={(e) => e.preventDefault()}>
-      <div className='flex  gap-2 items-center  flex-col'>
+      <div className='flex  gap-2 items-center justify-start  flex-col'>
+        {/* IMAGE PICKER */}
+        <ImagePicker id='image' />
+
         <Input
           {...register('title')}
           label='Create a board'

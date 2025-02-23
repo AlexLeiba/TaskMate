@@ -29,8 +29,6 @@ export async function createBoard(title: string) {
 
   revalidatePath('/organization/org_2tIx6yGR10qPWpRYTv4vgQaaYdc'); // revalidate the path to update the cache
   redirect('/organization/org_2tIx6yGR10qPWpRYTv4vgQaaYdc'); // redirect to the same page
-
-  // return { data: 'Board created', error: null };
 }
 
 export async function deleteBoard(id: string) {
