@@ -6,6 +6,8 @@ import { OrganizationSwitcher, UserButton } from '@clerk/nextjs';
 import { Plus } from 'lucide-react';
 import MobileSidebar from './MobileSidebar';
 import Logo from '@/components/logo';
+import { Modal } from '@/components/Modal/modal';
+import FormBoard from '../../organization/[organizationId]/_components/formBoard';
 
 export function Navbar() {
   // const { isSignedIn } = useAuth();
@@ -18,10 +20,20 @@ export function Navbar() {
       <div className='md:max-w-screen-2xl  flex items-center justify-between w-full mx-auto'>
         <div className='flex gap-4 items-center h-[30px]'>
           <Logo />
-          <Button size={'sm'} className='rounded-full w-8 h-8  md:w-auto '>
-            <span className='md:block lg:block hidden '>Create</span>
-            <Plus className='lg:hidden md:hidden' />
-          </Button>
+
+          <Modal
+            contentClassName='w-[450px] bg-gray-300'
+            title='Create a board'
+            description='sasas'
+            sideOffset={5}
+            side='right'
+            content={<FormBoard type='header' />}
+          >
+            <Button size={'sm'} className='rounded-full w-8 h-8  md:w-auto '>
+              <span className='md:block lg:block hidden'>Create</span>
+              <Plus className='lg:hidden md:hidden' />
+            </Button>
+          </Modal>
 
           <div>
             <OrganizationSwitcher

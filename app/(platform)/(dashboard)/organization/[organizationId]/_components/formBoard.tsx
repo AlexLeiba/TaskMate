@@ -1,48 +1,68 @@
 'use client';
-import { createBoard, State } from '@/actions/handle-dashboard';
+import { createBoard } from '@/actions/action-dashboard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { boardSchema } from '@/lib/schemas';
-import { useAction } from '@/hooks/useAction';
 import { toast } from 'react-toastify';
 import ImagePicker from '@/components/ImagePicker/imagePicker';
+import { useRouter } from 'next/navigation';
 
-function FormBoard() {
-  const { execute, error } = useAction(createBoard, {
-    onSuccess: () => {
-      toast.success('Board created successfully');
-    },
-    onError: () => {
-      toast.error('Error creating board');
+function FormBoard({ type }: { type: 'header' | 'boards' }) {
+  const router = useRouter();
+  const formMethods = useForm({
+    resolver: zodResolver(boardSchema),
+    defaultValues: {
+      title: '',
+      image: '',
     },
   });
-  console.log('🚀 ~ FormBoard ~ error:', error);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(boardSchema),
-    defaultValues: {
-      title: '',
-    },
-  });
+    setValue,
+    reset,
+  } = formMethods;
 
-  async function onSubmit(formData: { title: string }) {
-    const { title } = formData;
+  async function onSubmit(formData: { title: string; image: string }) {
+    const { title, image } = formData;
 
-    execute(title);
+    handleCreateBoard({ title, image });
+  }
+
+  async function handleCreateBoard({
+    title,
+    image,
+  }: {
+    title: string;
+    image: string;
+  }) {
+    const result = await createBoard({ title, image });
+
+    if (result?.data) {
+      if (type === 'header') {
+        toast.success('Board created successfully');
+        reset();
+        // @ts-ignore
+        router.push(`/board/${result.data?.id}`);
+      } else {
+        toast.success('Board created successfully');
+        reset();
+      }
+    }
   }
 
   return (
     <form onSubmit={(e) => e.preventDefault()}>
       <div className='flex  gap-2 items-center justify-start  flex-col'>
         {/* IMAGE PICKER */}
-        <ImagePicker id='image' />
+        <FormProvider {...formMethods}>
+          <ImagePicker id='image' />
+        </FormProvider>
 
         <Input
           {...register('title')}

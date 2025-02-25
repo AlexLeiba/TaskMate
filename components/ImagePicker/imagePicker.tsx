@@ -6,13 +6,18 @@ import React, { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Button } from '../ui/button';
 import { DEFAULT_IMAGES } from '@/consts/images';
+import { useFormContext } from 'react-hook-form';
 
 type Props = {
   id: string;
-  errors?: Record<string, string[] | undefined>;
 };
 
-function ImagePicker({ id, errors }: Props) {
+function ImagePicker({ id }: Props) {
+  const {
+    setValue,
+    formState: { errors },
+  } = useFormContext();
+
   const [images, setImages] = React.useState<Array<Record<string, any>>>([]);
   console.log('🚀 ~ ImagePicker ~ images:', images);
 
@@ -23,9 +28,11 @@ function ImagePicker({ id, errors }: Props) {
 
   async function fetchImages() {
     setIsLoading(true);
+    setSelectedImageId(null);
+    setValue('image', '');
     try {
       const result = await unsplash.photos.getRandom({
-        collectionIds: ['317099'],
+        collectionIds: ['317099'], //ids of a specific collection from library
         count: 9,
       });
 
@@ -50,13 +57,6 @@ function ImagePicker({ id, errors }: Props) {
     fetchImages();
   }
 
-  //   if (isLoading)
-  //     return (
-  //       <div className='p-6 flex items-center justify-center'>
-  //         <Loader2 className='w-6 h-6 animate-spin text-sky-600' />
-  //       </div>
-  //     );
-
   // SKELETON
   const skeletonData = Array(9).fill(0);
 
@@ -77,6 +77,26 @@ function ImagePicker({ id, errors }: Props) {
     );
   }
 
+  function handleImageClick(image: Record<string, any>) {
+    if (!isLoading) {
+      setSelectedImageId(image.id);
+
+      // Add image to the form , to get data on submit action
+      setValue(
+        'image',
+        `${image.id}|${image.urls.thumb}|${image.urls.full}|${
+          image.links.html
+        }|${
+          image.location?.name
+            ? image.location?.name
+            : image.location?.country
+            ? image.location?.country
+            : image.user?.name
+        }`
+      );
+    }
+  }
+
   return (
     <div className='flex gap-2 flex-wrap'>
       {!isLoading
@@ -85,29 +105,58 @@ function ImagePicker({ id, errors }: Props) {
               <div
                 key={index}
                 onClick={() => {
-                  !isLoading && setSelectedImageId(image.id);
+                  handleImageClick(image);
                 }}
                 className={cn(
-                  isLoading && ' hover:opacity-50 cursor-auto',
+                  'relative',
+                  isLoading && ' hover:opacity-90 cursor-auto',
                   selectedImageId === image.id &&
-                    'border-4 border-white  opacity-80 transition-all',
-                  'relative rounded-md cursor-pointer aspect-video group hover:opacity-50 transition bg-muted w-[135px] h-24  z-10'
+                    'border-2 border-white   transition-all',
+                  'relative rounded-md cursor-pointer aspect-video group hover:opacity-90 transition bg-muted w-[135px] h-24  z-10'
                 )}
               >
                 <Image
                   fill
                   src={image?.urls?.regular}
                   alt={'unsplash image'}
-                  className='object-cover w-full h-full rounded-sm '
+                  className={cn(
+                    selectedImageId === image.id &&
+                      'opacity-40 group-hover:opacity-100',
+                    'object-cover w-full h-full rounded-sm '
+                  )}
                 />
+                <div
+                  className={cn(
+                    'w-full',
+                    selectedImageId === image.id
+                      ? 'opacity-100 rounded-sm bg-gray-600/60 p-1'
+                      : 'opacity-0 group-hover:opacity-100 rounded-sm bg-gray-600/40 p-1',
+                    ' absolute bottom-0  left-0 text-white z-20 '
+                  )}
+                >
+                  {image.location?.name ? (
+                    <p className='body-xs'>{image.location.name}</p>
+                  ) : image.location.country ? (
+                    <p className='body-xs'>{image.location.country}</p>
+                  ) : (
+                    <p className='body-xs'>Author: {image.user?.name}</p>
+                  )}
+                </div>
               </div>
             );
           })
         : imageSkeleton()}
+      <p className='body-xs text-red-500'>{errors?.image?.message as string}</p>
 
       <div className='w-full flex justify-end'>
-        <Button size={'sm'} onClick={handleRefetchImages}>
-          <RefreshCcw size={20} />
+        <Button size={'sm'} onClick={handleRefetchImages} disabled={isLoading}>
+          {isLoading ? (
+            <div className=' flex items-center justify-center'>
+              <Loader2 className='w-5 h-5 animate-spin text-white' />
+            </div>
+          ) : (
+            <RefreshCcw size={20} />
+          )}
         </Button>
       </div>
     </div>

@@ -1,5 +1,18 @@
 import React from 'react';
 import OrgControl from './_components/org-control';
+import { auth } from '@clerk/nextjs/server';
+
+export async function generateMetadata() {
+  const { orgSlug } = await auth();
+
+  const orgName = orgSlug
+    ? orgSlug?.at(0)?.toUpperCase() + orgSlug?.slice(1).replace('-', ' ')
+    : 'Organization';
+
+  return {
+    title: orgName,
+  };
+}
 
 // IS USED FOR Using control Fn which checks the url and redirects to the org
 function OrganizationIdLayout({

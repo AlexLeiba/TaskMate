@@ -30,7 +30,7 @@ async function BoardList({
         description='sasas'
         sideOffset={5}
         side='right'
-        content={<FormBoard />}
+        content={<FormBoard type='boards' />}
       >
         <div
           role='button'

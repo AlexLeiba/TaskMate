@@ -32,13 +32,13 @@ export function useAction<TInput, TOutput>(
           return;
         }
 
-        // if (result.error) {
-        //   setError(result.error);
+        if (result.error) {
+          setError(result.error);
 
-        //   options.onError?.(result.error);
+          options.onError?.(result.error);
 
-        //   return;
-        // }
+          return;
+        }
 
         if (result.data) {
           setData(result.data as TOutput);
@@ -48,11 +48,12 @@ export function useAction<TInput, TOutput>(
           return;
         }
       } catch (error: any) {
+        console.log('🚀 ~ error: \n\n\n\n', error);
+        toast.error(error.message);
         setError(error.message as string);
 
         options.onError?.(error.message);
-        // toast.error(error.message);
-        console.log(error.message);
+
         return;
       } finally {
         setLoading(false);
