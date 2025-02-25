@@ -12,6 +12,8 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
+  
+  
 }
 // to push the prisma schema into db use command: npx prisma db push
 // to add types and functions locally to the prisma schema use command: npx prisma generate
