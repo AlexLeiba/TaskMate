@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-// import Logo from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import { OrganizationSwitcher, UserButton } from '@clerk/nextjs';
 import { Plus } from 'lucide-react';
@@ -10,14 +9,12 @@ import { Modal } from '@/components/Modal/modal';
 import FormBoard from '../../organization/[organizationId]/_components/formBoard';
 
 export function Navbar() {
-  // const { isSignedIn } = useAuth();
-
   return (
-    <div className='fixed top-0 w-full h-14 px-4 border-b shadow-sm bg-slate-100 flex items-center'>
+    <div className='fixed top-0 w-full h-14  border-b shadow-sm bg-slate-100 flex items-center'>
       {/* Mobile sidebar */}
       <MobileSidebar />
       {/*  */}
-      <div className='md:max-w-screen-2xl  flex items-center justify-between w-full mx-auto'>
+      <div className='md:max-w-screen-2xl px-4  flex items-center justify-between w-full mx-auto'>
         <div className='flex gap-4 items-center h-[30px]'>
           <Logo />
 

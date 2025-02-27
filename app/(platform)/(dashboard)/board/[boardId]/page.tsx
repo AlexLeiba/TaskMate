@@ -2,6 +2,7 @@ import { db } from '@/lib/db';
 import { auth } from '@clerk/nextjs/server';
 import { notFound, redirect } from 'next/navigation';
 import React from 'react';
+import ListContainer from './_components/listContainer';
 
 async function BoardIdPage({
   params,
@@ -16,23 +17,32 @@ async function BoardIdPage({
     return redirect('/select-org');
   }
 
-  const board = await db?.board?.findUnique({
+  const lists = await db?.list?.findMany({
     where: {
-      id: paramsData.boardId,
-      orgId: orgId,
+      boardId: paramsData.boardId,
+      board: {
+        orgId: orgId,
+      },
+    },
+    include: {
+      cards: {
+        orderBy: {
+          order: 'asc',
+        },
+      },
+    },
+    orderBy: {
+      order: 'asc',
     },
   });
+  console.log('🚀 ~ lists:', lists);
 
-  if (!board) {
+  if (!lists) {
     return notFound();
   }
   return (
-    <div
-      style={{ backgroundImage: `url(${board.imageFullUrl})` }}
-      className='h-full w-full relative bg-no-repeat bg-cover bg-center'
-    >
-      <div className='absolute inset-0 bg-black/40'></div>
-      BoardIdPage
+    <div className='h-full overflow-y-auto'>
+      <ListContainer listData={lists} boardId={paramsData.boardId} />
     </div>
   );
 }

@@ -2,7 +2,6 @@ import { db } from '@/lib/db';
 import { auth } from '@clerk/nextjs/server';
 import { notFound, redirect } from 'next/navigation';
 import React from 'react';
-import { toast } from 'react-toastify';
 import { BoardNavBar } from './_components/boardNavBar';
 
 export async function generateMetadata({
@@ -20,17 +19,12 @@ export async function generateMetadata({
     };
   }
 
-  let board = {} as any;
-  try {
-    board = await db.board.findUnique({
-      where: {
-        id: paramsData.boardId,
-        orgId: orgId,
-      },
-    });
-  } catch (error: any) {
-    console.log('Board not found', error.message);
-  }
+  const board = await db.board.findUnique({
+    where: {
+      id: paramsData.boardId,
+      orgId: orgId,
+    },
+  });
 
   if (!board) {
     return {
@@ -74,10 +68,22 @@ async function BoardIdLayout({
   }
 
   return (
-    <div className='h-full'>
-      <BoardNavBar board={board} />
+    <div
+      className='relative h-[calc(100vh-56px)] bg-no-repeat bg-cover bg-center '
+      //Background Image Board
+      style={{ backgroundImage: `url(${board.imageFullUrl})` }}
+    >
+      {/* Background Dark Board */}
+      <div className='absolute inset-0 bg-black/40'></div>
+      {/*  */}
 
-      <main className='h-full'>{children}</main>
+      {/* Board nav bar */}
+      <BoardNavBar board={board} />
+      {/*  */}
+
+      <main className='pt-16 w-full h-full overflow-y-auto md:max-w-screen-2xl  px-4   mx-auto  relative'>
+        {children}
+      </main>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { Navbar } from './dashboard/_components/NavBar';
 import { Bounce, ToastContainer } from 'react-toastify';
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -12,7 +12,7 @@ export default function DashboardLayout({
   return (
     <ClerkProvider>
       <ToastContainer
-        position='top-center'
+        position='bottom-right'
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}

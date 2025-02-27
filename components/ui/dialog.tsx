@@ -71,7 +71,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      'bg-baseline-950 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 opacity-80',
+      'bg-black data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 opacity-80',
       className
     )}
     {...props}
@@ -107,7 +107,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'shadow-10 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] bg-surface-base fixed left-[50%] top-[50%] z-50 w-[400px] translate-x-[-50%] translate-y-[-50%] space-y-4 border p-6 duration-200',
+        'shadow-10 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] bg-slate-100 fixed left-[50%] top-[50%] z-50 w-[400px] translate-x-[-50%] translate-y-[-50%] space-y-4 border p-6 duration-200',
         className
       )}
       {...props}
@@ -116,7 +116,7 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Close
         onClick={(e) => e.stopPropagation()}
         className={cn([
-          'text-icon-inverted ring-offset-background absolute right-6 top-2 flex size-8 items-center justify-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none',
+          'text-black ring-offset-background absolute right-6 top-2 flex size-8 items-center justify-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none',
         ])}
       >
         <X
@@ -169,10 +169,10 @@ const DialogHeader = ({
         {icon && (
           <div
             className={cn(
-              'bg-surface-lightest size-12',
+              'bg-gray-400 size-12',
               'flex flex-shrink-0 items-center justify-center rounded-full',
-              variant === 'destructive' && 'bg-surface-error',
-              variant === 'accent' && 'bg-surface-accent'
+              variant === 'destructive' && 'bg-red-500',
+              variant === 'accent' && 'bg-sky-500'
             )}
           >
             {React.cloneElement(icon, {
@@ -307,7 +307,7 @@ const DialogFooter = ({
         {!hideCancel && (
           <Button
             variant={'secondary'}
-            className='w-full'
+            className='w-full bg-gray-500 text-slate-200 hover:bg-gray-600'
             onClick={(e) => {
               e.stopPropagation();
               onCancel?.();
@@ -319,7 +319,10 @@ const DialogFooter = ({
 
         <Button
           disabled={disabledConfirmButton}
-          className={cn('w-full', hideCancel && 'w-1/2')}
+          className={cn(
+            'w-full bg-sky-400 text-slate-200 hover:bg-sky-600',
+            hideCancel && 'w-1/2'
+          )}
           variant={'secondary'}
           onClick={(e) => {
             e.stopPropagation();

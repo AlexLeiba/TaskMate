@@ -31,7 +31,6 @@ function AccordionNavItem({
 }: NavItemType) {
   const router = useRouter();
   const pathName = usePathname();
-  console.log('🚀 ~ pathName:', pathName);
 
   const isCurrentPath = pathName.split('/')[3];
 
@@ -91,13 +90,20 @@ function AccordionNavItem({
             <div
               onClick={() => handleClick(data.link)}
               className={cn(
-                !isCurrentPath &&
-                  data.label.toLocaleLowerCase() === 'boards' &&
-                  'bg-sky-500/20 text-sky-700',
-                isCurrentPath &&
-                  isCurrentPath === data.label.toLocaleLowerCase() &&
-                  'bg-sky-500/20',
+                isActive && //if board is active
+                  data.label.toLocaleLowerCase() === 'boards'
+                  ? 'bg-sky-500/20 text-sky-700'
+                  : data.label.toLocaleLowerCase() === 'boards' && !isActive
+                  ? 'bg-slate-100'
+                  : isCurrentPath && //if the rest are active
+                    isCurrentPath === data.label.toLocaleLowerCase() &&
+                    isActive
+                  ? 'bg-sky-500/20 text-sky-700'
+                  : 'bg-slate-100',
+                //
+
                 'flex  flex-col   justify-center hover:bg-gray-200 rounded-md cursor-pointer'
+                //
               )}
               key={index}
             >

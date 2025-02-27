@@ -1,3 +1,4 @@
+'use client';
 import { PopoverClose } from '@radix-ui/react-popover';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Spacer } from '../ui/spacer';
@@ -6,32 +7,34 @@ import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type Props = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   side?: 'left' | 'right' | 'top' | 'bottom';
   align?: 'start' | 'center' | 'end';
-  open?: boolean;
+  isOpen?: boolean;
   onClose?: () => void;
   sideOffset?: number;
   title?: string;
   description?: string;
   content?: React.ReactNode;
   contentClassName?: string;
+  closeRef?: React.RefObject<HTMLButtonElement | null> | undefined;
 };
 
 export function Modal({
   children,
   side = 'bottom',
   align = 'start',
-  open,
-  //   onClose,
+  isOpen,
   sideOffset,
   title,
   description,
   content,
   contentClassName,
+  closeRef,
+  onClose,
 }: Props) {
   return (
-    <Popover open={open}>
+    <Popover open={isOpen} onOpenChange={onClose}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent
         align={align}
@@ -51,7 +54,7 @@ export function Modal({
         {content}
 
         {/* CLOSE BUTTON */}
-        <PopoverClose asChild>
+        <PopoverClose asChild ref={closeRef}>
           <Button
             size={'sm'}
             variant={'ghost'}
