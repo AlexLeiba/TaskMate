@@ -81,7 +81,7 @@ async function BoardIdLayout({
       <BoardNavBar board={board} />
       {/*  */}
 
-      <main className='pt-16 w-full h-full overflow-y-auto md:max-w-screen-2xl  px-4   mx-auto  relative'>
+      <main className='pt-16 w-full h-full  md:max-w-screen-2xl  px-4   mx-auto  relative'>
         {children}
       </main>
     </div>

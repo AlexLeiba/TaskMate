@@ -1,18 +1,16 @@
 'use client';
 import { List } from '@prisma/client';
-import React, { useState } from 'react';
-import ListWrapper from './listWrapper';
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Dot, Menu, Plus, X } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { useEventListener, useOnClickOutside } from 'usehooks-ts';
 import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createListSchema } from '@/lib/schemas';
-import { addNewListTitle, editListTitle } from '@/actions/action-board';
+import { editListTitle } from '@/actions/action-board';
 import { useParams } from 'next/navigation';
 import { toast } from 'react-toastify';
-import ListOptions from './listOptions';
 
 function ListHeader({
   data,
@@ -107,7 +105,7 @@ function ListHeader({
           <Button
             className='h-[30px]'
             size={'sm'}
-            variant={'secondary'}
+            variant={'outline'}
             type='submit'
             onClick={handleSubmit(onSubmit)}
           >

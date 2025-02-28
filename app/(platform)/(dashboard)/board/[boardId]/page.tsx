@@ -35,13 +35,12 @@ async function BoardIdPage({
       order: 'asc',
     },
   });
-  console.log('🚀 ~ lists:', lists);
 
   if (!lists) {
     return notFound();
   }
   return (
-    <div className='h-full overflow-y-auto'>
+    <div className='h-full overflow-auto'>
       <ListContainer listData={lists} boardId={paramsData.boardId} />
     </div>
   );

@@ -45,7 +45,6 @@ async function OrganizationPage({}: // params,
 
       {/* Your boards */}
       <div>
-        {/* <BoardList boards={boards} /> */}
         <div className='inline-flex flex-col gap-4'>
           <div className='flex gap-x-2 items-center'>
             <User />
@@ -60,7 +59,7 @@ async function OrganizationPage({}: // params,
             <Modal
               contentClassName='w-[450px] bg-gray-300'
               title='Create a board'
-              description='sasas'
+              description=''
               sideOffset={-40}
               side='top'
               content={<FormBoard type='boards' />}

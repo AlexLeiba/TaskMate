@@ -217,7 +217,7 @@ const DialogFooter = ({
   customConfirmButtonText,
   customCancelButtonText,
   position = 'horizontal-fill',
-  confirmButtonVariant = 'accent',
+  confirmButtonVariant = 'secondary',
   cancelButtonVariant = 'secondary',
   customCheckboxText,
   customLinkButtonText,
@@ -231,8 +231,20 @@ const DialogFooter = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement> & {
   position: 'horizontal-fill' | 'vertical-fill' | 'horizontal-group';
-  confirmButtonVariant?: 'accent' | 'destructive' | 'primary' | 'secondary';
-  cancelButtonVariant?: 'accent' | 'destructive' | 'primary' | 'secondary';
+  confirmButtonVariant?:
+    | 'destructive'
+    | 'secondary'
+    | 'link'
+    | 'outline'
+    | 'ghost'
+    | 'default';
+  cancelButtonVariant?:
+    | 'destructive'
+    | 'secondary'
+    | 'link'
+    | 'outline'
+    | 'ghost'
+    | 'default';
   customConfirmButtonText?: string;
   customCancelButtonText?: string;
   customCheckboxText?: string;
@@ -306,8 +318,8 @@ const DialogFooter = ({
       >
         {!hideCancel && (
           <Button
-            variant={'secondary'}
-            className='w-full bg-gray-500 text-slate-200 hover:bg-gray-600'
+            variant={cancelButtonVariant}
+            className='w-full'
             onClick={(e) => {
               e.stopPropagation();
               onCancel?.();
@@ -319,11 +331,8 @@ const DialogFooter = ({
 
         <Button
           disabled={disabledConfirmButton}
-          className={cn(
-            'w-full bg-sky-400 text-slate-200 hover:bg-sky-600',
-            hideCancel && 'w-1/2'
-          )}
-          variant={'secondary'}
+          className={cn('w-full', hideCancel && 'w-1/2')}
+          variant={'destructive'}
           onClick={(e) => {
             e.stopPropagation();
             onConfirm();

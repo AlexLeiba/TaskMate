@@ -61,21 +61,18 @@ function Board({ board }: Board | any) {
               onOpenChange={() => setDeleteModalOpen(!deleteModalOpen)}
               classNameTriggerButton='text-text-base rounded border-none p-2 shadow'
               triggerTitle=''
-              iconHeader={<Info size={20} />}
-              // iconLinkButton={<IconSettings />}
-              positionFooter='horizontal-group'
-              positionHeader='center-aligned'
+              positionFooter={'horizontal-fill'}
+              positionHeader='left-aligned'
               title={'Delete board'}
               description={
-                'Deliting the board  will permanently erase all the information is associated with it. Are you sure you want to continue?'
+                'Deleting the board  will permanently erase all the information is associated with it. Are you sure you want to continue?'
               }
               onConfirm={() => {
                 handleDeleteBoard(board.id);
               }}
-              // onCheckbox={(v) => console.log('checkbox value', v)}
-              // onLinkButton={() => console.log('settings clicked')}
-              customConfirmButtonText='Confirm '
+              customConfirmButtonText='Delete'
               customCancelButtonText='Cancel'
+              confirmButtonVariant='destructive'
             >
               {/* BODY MODAL HERE */}
             </Modal>

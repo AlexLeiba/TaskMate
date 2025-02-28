@@ -11,8 +11,20 @@ import {
 import { cn } from '@/lib/utils';
 
 type Props = {
-  confirmButtonVariant?: 'primary' | 'destructive' | 'secondary';
-  cancelButtonVariant?: 'primary' | 'destructive' | 'secondary';
+  confirmButtonVariant?:
+    | 'destructive'
+    | 'secondary'
+    | 'link'
+    | 'outline'
+    | 'ghost'
+    | 'default';
+  cancelButtonVariant?:
+    | 'destructive'
+    | 'secondary'
+    | 'link'
+    | 'outline'
+    | 'ghost'
+    | 'default';
   positionFooter: 'horizontal-fill' | 'vertical-fill' | 'horizontal-group';
   positionHeader: 'left-aligned' | 'center-aligned' | 'horizontal-left-aligned';
   title: string;
@@ -70,7 +82,7 @@ function Modal({
   open,
   title,
   description,
-  confirmButtonVariant = 'primary',
+  confirmButtonVariant = 'secondary',
   cancelButtonVariant = 'secondary',
   positionFooter = 'horizontal-fill',
   positionHeader = 'left-aligned',

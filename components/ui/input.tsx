@@ -21,8 +21,8 @@ export const inputVariants = cva(
     'disabled:bg-gray-100 disabled:border-gray-300 disabled:cursor-not-allowed disabled:text-gray-400',
     // remove default behaviour in browsers
     'focus-within:outline-0',
-    'focus-within:border-blue-500 ',
-    'focus:ring-[1px] focus-within:ring-blue-500',
+    'focus-within:border-sky-400 ',
+    'focus:ring-[1px] focus-within:ring-sky-400',
     'focus-within:placeholder:text-transparent',
   ],
   {
@@ -35,7 +35,7 @@ export const inputVariants = cva(
         true: 'pointer-events-none bg-gray-200 border-gray-300 ',
       },
       hasError: {
-        true: 'border-red-500  focus-visible:border focus-within:border-red-500 ring-red-500  focus-visible:ring-[1px] focus-within:ring-blue-500',
+        true: 'border-red-500  focus-visible:border focus-within:border-red-500 ring-red-500  focus-visible:ring-[1px] focus-within:ring-sky-400',
       },
     },
   }

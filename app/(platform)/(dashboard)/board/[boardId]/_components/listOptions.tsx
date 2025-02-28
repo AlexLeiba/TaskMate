@@ -4,16 +4,20 @@ import { Button } from '@/components/ui/button';
 import Modal from '@/components/ui/modal-dialog';
 import { Separator } from '@/components/ui/separator';
 import { List } from '@prisma/client';
-import { Copy, Delete, Plus } from 'lucide-react';
+import { Copy, Delete, Edit, Plus } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 
 function ListOptions({
   data,
   closeRef,
+  enableEditingCard,
+  handleEnableEditingListHeader,
 }: {
   data: List;
   closeRef: React.RefObject<HTMLButtonElement | null>;
+  enableEditingCard: () => void;
+  handleEnableEditingListHeader: () => void;
 }) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -47,10 +51,24 @@ function ListOptions({
     }
   }
 
+  function handleOpenCreateCard() {
+    enableEditingCard();
+    // will trigger the dropdown Options menu to close
+    closeRef?.current?.click();
+  }
+
   return (
     <div className='flex flex-col justify-start items-start gap-2'>
       <Button
-        className='w-full text-s justify-start hover:bg-gray-300'
+        onClick={handleEnableEditingListHeader}
+        className='w-full text-s justify-start hover:bg-gray-400 hover:text-white'
+        variant={'ghost'}
+      >
+        <Edit /> Edit list title
+      </Button>
+      <Button
+        onClick={handleOpenCreateCard}
+        className='w-full text-s justify-start hover:bg-gray-400 hover:text-white'
         variant={'ghost'}
       >
         <Plus /> Add card
@@ -58,14 +76,22 @@ function ListOptions({
 
       <Button
         onClick={handleCopyList}
-        className='w-full justify-start hover:bg-gray-300'
+        className='w-full justify-start hover:bg-gray-400 hover:text-white'
         variant={'ghost'}
       >
         <Copy /> Copy list
       </Button>
 
       <Separator />
+      <Button
+        onClick={() => setIsDeleteModalOpen(true)}
+        className='w-full justify-start hover:bg-gray-400 hover:text-white'
+        variant={'ghost'}
+      >
+        <Delete /> Delete list
+      </Button>
 
+      {/* DELETE MODAL */}
       <Modal
         open={isDeleteModalOpen}
         onOpenChange={() => setIsDeleteModalOpen(false)}
@@ -75,15 +101,8 @@ function ListOptions({
         title={'Delete list'}
         description={`This action cannot be undone. Are you sure you want to delete  "${data.title}" list?`}
         triggerTitle={''}
+        customConfirmButtonText='Delete list'
       />
-
-      <Button
-        onClick={() => setIsDeleteModalOpen(true)}
-        className='w-full justify-start hover:bg-gray-300'
-        variant={'ghost'}
-      >
-        <Delete /> Delete list
-      </Button>
     </div>
   );
 }

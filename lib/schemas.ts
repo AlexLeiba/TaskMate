@@ -8,3 +8,6 @@ export const boardSchema = zod.object({
 export const createListSchema = zod.object({
   title: zod.string().min(3, 'Title must be at least 3 characters'),
 });
+export const createCardSchema = zod.object({
+  title: zod.string().min(3, 'Title must be at least 3 characters'),
+});
