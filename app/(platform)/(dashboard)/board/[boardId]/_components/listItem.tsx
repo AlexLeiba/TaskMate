@@ -4,14 +4,17 @@ import React, { useRef } from 'react';
 import ListHeader from './listHeader';
 import ListOptions from './listOptions';
 import { Ellipsis } from 'lucide-react';
-import { Modal } from '@/components/Modal/modal';
+import { Modal as ModalDropdown } from '@/components/Modal/modal';
+import Modal from '@/components/ui/modal-dialog';
 import CardForm from './cardForm';
 import { cn } from '@/lib/utils';
 import CardItem from './cardItem';
 import { Droppable, Draggable } from '@hello-pangea/dnd';
+import { CardModalContent } from './cardModalContent';
 
 type ListWithCardsType = List & { cards: Card[] };
 function ListItem({ data, index }: { data: ListWithCardsType; index: number }) {
+  const [cardModalOpen, setCardModalOpen] = React.useState(false);
   // List header
   const [isEditingListHeader, setIsEditingListHeader] = React.useState(false);
   const closeModalOnSubmitRef = useRef<HTMLButtonElement>(null);
@@ -44,7 +47,7 @@ function ListItem({ data, index }: { data: ListWithCardsType; index: number }) {
           >
             <div
               {...provided.dragHandleProps} //by grabbind this handle we can drag the list
-              className='w-full rounded-md shadow-md  bg-white/80 p-2 relative'
+              className='w-full rounded-md shadow-md  bg-black/80 p-2 relative'
             >
               {/* RENDER LIST ITEM */}
               {/* List Title and Handle change title form */}
@@ -72,13 +75,42 @@ function ListItem({ data, index }: { data: ListWithCardsType; index: number }) {
                       )}
                     >
                       {data.cards.map((card, index) => (
-                        <CardItem data={card} index={index} key={card.id} />
+                        <Modal
+                          key={card.id}
+                          positionFooter={'horizontal-fill'}
+                          positionHeader={'left-aligned'}
+                          title={card.title}
+                          description={''}
+                          triggerTitle={''}
+                          onConfirm={function (): void {
+                            throw new Error('Function not implemented.');
+                          }}
+                          hideCancel
+                          // hideConfirm
+                          customTrigger={
+                            // RENDERED CARDS LIST
+                            <CardItem
+                              data={card}
+                              index={index}
+                              key={card.id}
+                              onClick={() => {}}
+                            />
+                          }
+                        >
+                          <CardModalContent cardId={card.id} />
+                        </Modal>
                       ))}
                       {provided.placeholder}
                     </ol>
                   );
                 }}
               </Droppable>
+
+              {/* CARD MODAL */}
+              {/* <CardModalContent
+                cardModalOpen={cardModalOpen}
+                setCardModalOpen={setCardModalOpen}
+              /> */}
 
               {/* ADD CARD FORM */}
               {!isEditingListHeader && (
@@ -92,10 +124,10 @@ function ListItem({ data, index }: { data: ListWithCardsType; index: number }) {
                   />
 
                   {/* List options settings modal */}
-                  <Modal
+                  <ModalDropdown
                     closeRef={closeModalOnSubmitRef}
                     align='end'
-                    title='Options'
+                    title='List Options'
                     content={
                       <ListOptions
                         enableEditingCard={handleEnableEditingCard}
@@ -107,10 +139,10 @@ function ListItem({ data, index }: { data: ListWithCardsType; index: number }) {
                       />
                     }
                   >
-                    <div className=' absolute top-1 right-2  cursor-pointer rounded-full p-1  hover:bg-white/60 transition-all '>
+                    <div className=' text-white absolute top-1 right-2  cursor-pointer rounded-full p-1  hover:bg-white/60 transition-all '>
                       <Ellipsis size={20} />
                     </div>
-                  </Modal>
+                  </ModalDropdown>
                 </>
               )}
             </div>

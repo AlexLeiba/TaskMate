@@ -5,6 +5,8 @@ import ListItem from './listItem';
 import { Card, List } from '@prisma/client';
 import AddListForm from './addListForm';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
+import { updateCardOrder, updateListOrder } from '@/actions/action-drag-drop';
+import { toast } from 'react-toastify';
 
 export function reorderDraggableContent<T>(
   listData: T[],
@@ -25,23 +27,24 @@ type Props = {
   boardId: string;
 };
 
-export default function ListContainer({ listData }: Props) {
-  const [orderedData, setOrderedData] = useState(listData); //for optimistic mutation When drag and drop changing order of lists
+export default function ListContainer({ listData, boardId }: Props) {
+  const [orderedListData, setOrderedListData] = useState(listData); //for optimistic mutation When drag and drop changing order of lists
 
   useEffect(() => {
-    setOrderedData(listData);
+    setOrderedListData(listData);
   }, [listData]);
 
-  function onDragEnd(result: any) {
+  //////////////////DRAG AND DROP FUNCTIONS ///////////////////
+  async function onDragEnd(result: any) {
     const { destination, source, type } = result;
 
-    // if (!source.droppableId || !destination.droppableId) {
-    //   return console.log(
-    //     '🚀 ~ \n\n\n\n\n\n DroppableId is not defined',
-    //     source.droppableId,
-    //     destination.droppableId
-    //   );
-    // }
+    if (!source.droppableId || !destination.droppableId) {
+      return console.log(
+        '🚀 ~ \n\n\n\n\n\n DroppableId is not defined',
+        source.droppableId,
+        destination.droppableId
+      );
+    }
 
     if (!destination) {
       return;
@@ -51,39 +54,45 @@ export default function ListContainer({ listData }: Props) {
       destination.droppableId === source.droppableId &&
       destination.index === source.index
     ) {
-      console.log('🚀 ~ \n\n\n\n\n\n Same position');
       return;
     }
 
     //MOVE A LIST
     if (type === 'list') {
-      console.log(
-        '\n\n\n\nID:',
-        source.droppableId,
-        destination.droppableId,
+      const reorderedListItems = reorderDraggableContent(
+        orderedListData,
         source.index,
         destination.index
-      );
-      const listItems = reorderDraggableContent(
-        orderedData,
-        source.index,
-        destination.index
-      ).map((item, index) => ({ ...item, order: index }));
-      setOrderedData(listItems);
+      ).map((item, index) => ({ ...item, order: index })); //change the roder of the list by changing the 'order' value
+      setOrderedListData(reorderedListItems);
 
-      // TODO: add server actions
+      // SERVER ACTIONS | UPDATE LIST ORDER IN DB
+      const response = await updateListOrder(
+        reorderedListItems,
+        boardId,
+        source.droppableId
+      );
+
+      if (response.error) {
+        toast.error(response.error);
+      }
+      if (response.data) {
+        toast.success('List reordered');
+      }
     }
 
     // MOVE A CARD
     if (type === 'card') {
-      let newOrderedCardData = [...orderedData];
+      let newOrderedListData = [...orderedListData];
 
-      //Source and Destination list -> to know where to move the card
-      const sourceList = newOrderedCardData.find(
+      //SOURCE AND DESTINATION LIST -> to know where to move the card (which list)
+      // Source
+      const sourceList = newOrderedListData.find(
         (list) => list.id === source.droppableId
       );
 
-      const destList = newOrderedCardData.find(
+      // Destination
+      const destList = newOrderedListData.find(
         (list) => list.id === destination.droppableId
       );
 
@@ -104,39 +113,46 @@ export default function ListContainer({ listData }: Props) {
       //move the card in the same list
       if (source.droppableId === destination.droppableId) {
         const newReorderedInSourceListCards = reorderDraggableContent(
-          sourceList.cards,
-          source.index,
-          destination.index
+          sourceList.cards, //in this aray or cards
+          source.index, //take this index and
+          destination.index //and change to this destination
         );
 
+        //once the indexes were changed of the selected cards ABOVE, change the order of the rest of cards
         newReorderedInSourceListCards.forEach((card, index) => {
           card.order = index;
         });
 
+        // update the cards in the source list
         sourceList.cards = newReorderedInSourceListCards;
 
-        setOrderedData(newOrderedCardData);
+        setOrderedListData(newOrderedListData);
 
-        // TODO, add server actions
+        // SERVER ACTIONS | UPDATE CARD ORDER IN DB
+        const response = await updateCardOrder(
+          newReorderedInSourceListCards,
+          boardId
+        );
+
+        if (response.error) {
+          toast.error(response.error);
+        }
+        if (response.data) {
+          toast.success('Card reordered');
+        }
         return;
       }
 
-      // move the card to a different list
-
+      //IF MOVED CARD TO A DIFFERENT LIST
       if (source.droppableId !== destination.droppableId) {
         // Finb the moved card and assign to it the new List id ('destination;).
 
+        // Change the list id of the card/ RESULT is the object of the deleted element/ NOW WE CAN CHANGE ITS LIST ID
         const [movedCard] = sourceList.cards.splice(source.index, 1);
         movedCard.listId = destination.droppableId;
 
-        // Add the card to the destination list
-
+        // Once the card got new ListId, add the card to the destination list INDEX
         destList.cards.splice(destination.index, 0, movedCard);
-
-        // Change the order of cards in the source list
-        sourceList.cards.forEach((card, index) => {
-          card.order = index;
-        });
 
         // Update the order of cards in the destination list
         destList.cards.forEach((card, index) => {
@@ -144,21 +160,32 @@ export default function ListContainer({ listData }: Props) {
         });
         //
 
-        setOrderedData(newOrderedCardData);
+        // Change the order of cards in the source list, ONCE one card was removed from it
+        sourceList.cards.forEach((card, index) => {
+          card.order = index;
+        });
 
-        // TODO, add server actions
+        setOrderedListData(newOrderedListData);
+
+        // SERVER ACTIONS | UPDATE CARD ORDER IN DB
+        const response = await updateCardOrder(destList.cards, boardId);
+
+        if (response.error) {
+          toast.error(response.error);
+        }
+        if (response.data) {
+          toast.success('Card reordered');
+        }
       }
     }
   }
 
-  {
-    /* Render lists */
-  }
+  /* RENDER LISTS */
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId='lists' type='list' direction='horizontal'>
-        {(provided, snapshot) => {
-          console.log('🚀=>>>>>> ~ ListContainer ~ snapshot:', snapshot);
+        {(provided) => {
           return (
             <ol
               {...provided.droppableProps}
@@ -166,7 +193,7 @@ export default function ListContainer({ listData }: Props) {
               className='flex gap-6 w-full'
             >
               {/* <div className='flex-shrink-0 w-1' /> */}
-              {orderedData.map((list, index) => (
+              {orderedListData.map((list, index) => (
                 <ListItem data={list} index={index} key={list.id} />
               ))}
 

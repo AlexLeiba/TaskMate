@@ -22,7 +22,7 @@ type Props = {
 function CardForm({
   listId,
   isEditingCard,
-  textareaCardRef,
+  // textareaCardRef,
   disableEditingCard,
   enableEditingCard,
 }: Props) {
@@ -84,7 +84,7 @@ function CardForm({
     return (
       <form
         ref={formCardRef}
-        className='m-1 py-0.5 px-1 space-y-4'
+        className='m-1 py-0.5 px-1 space-y-4 text-white'
         onSubmit={(e) => e.preventDefault()}
       >
         <TextArea
@@ -112,7 +112,7 @@ function CardForm({
           <Button
             variant={'ghost'}
             size={'sm'}
-            className='justify-start '
+            className='justify-start hover:text-white/50 '
             onClick={handleCloseEditingCard}
           >
             <X />
@@ -126,7 +126,7 @@ function CardForm({
       <Button
         variant={'ghost'}
         size={'sm'}
-        className='justify-start text-gray-700 font-semibold '
+        className='justify-start  font-semibold text-white hover:text-white/50 '
         onClick={enableEditingCard}
       >
         <Plus /> Add a card

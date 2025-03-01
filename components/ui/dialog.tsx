@@ -121,7 +121,11 @@ const DialogContent = React.forwardRef<
       >
         <X
           size={20}
-          className={cn(type === 'modal' && 'text-text-base', 'z-20')}
+          className={cn(
+            type === 'modal' && 'text-text-base',
+            'z-20',
+            'absolute -top-2 right-0'
+          )}
         />
         <span className='sr-only'>Close</span>
       </DialogPrimitive.Close>

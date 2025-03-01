@@ -92,7 +92,7 @@ function ListHeader({
           onSubmit={(e) => e.preventDefault()}
           className='w-full  flex  gap-1  items-end justify-between'
         >
-          <div className='flex flex-col'>
+          <div className='flex flex-col text-white'>
             <Input
               label='Edit list title'
               autoFocus
@@ -124,10 +124,10 @@ function ListHeader({
 
   return (
     <div
-      className='body-sm font-semibold flex justify-between items-start gap-x-2 cursor-text py-1'
+      className='text-white body-sm  flex justify-between items-start gap-x-2 cursor-text py-1'
       onClick={handleEnableEditing}
     >
-      <p>{data.title}</p>
+      <p className='body-md font-semibold'>{data.title}</p>
     </div>
   );
 }
