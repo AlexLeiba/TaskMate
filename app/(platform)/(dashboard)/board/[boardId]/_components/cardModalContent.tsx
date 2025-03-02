@@ -33,13 +33,12 @@ export function CardModalContent({
 
   const {
     control,
-    register,
     handleSubmit,
     formState: { errors },
     setValue,
   } = useForm({
     defaultValues: {
-      description: cardData?.description,
+      description: cardData?.description || '',
       status: cardData?.status || 'none',
     },
   });
@@ -110,20 +109,19 @@ export function CardModalContent({
         <div className='w-full'>
           <div className='flex gap-2'>
             <Logs />
-            <p className='body-lg font-semibold'>Description</p>
+            <p className='body-md font-medium'>Description</p>
           </div>
           <Spacer size={2} />
           <form className='w-full' action='' onSubmit={handleSubmit(onSubmit)}>
             <Controller
               name='description'
               control={control}
-              defaultValue=''
-              render={({ field: { onChange, value, ref } }) => (
+              render={({ field: { onChange, value } }) => (
                 <TextArea
                   ref={textareaRef}
                   onChange={onChange}
-                  value={value}
-                  rows={6}
+                  value={value || ''}
+                  rows={7}
                   autoFocus={false}
                   className='w-full'
                   placeholder='Type the description here...'
@@ -132,7 +130,6 @@ export function CardModalContent({
               )}
             />
 
-            <Spacer size={3} />
             {/* Remove the second Controller and Dropdown */}
           </form>
         </div>
@@ -141,7 +138,7 @@ export function CardModalContent({
           <Spacer size={3} />
           <div className='flex gap-2'>
             <Check />
-            <p className='body-lg font-semibold'>Status</p>
+            <p className='body-md font-medium'>Status</p>
           </div>
           <Spacer size={2} />
           <Controller
@@ -167,8 +164,8 @@ export function CardModalContent({
               />
             )}
           />
-          <Spacer size={3} />
-          <p className='body-lg font-semibold'>Actions</p>
+          <Spacer size={7} />
+          <p className='body-md font-medium'>Actions</p>
           <Spacer size={2} />
 
           <div className='flex flex-col gap-2 '>

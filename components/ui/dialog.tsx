@@ -116,16 +116,13 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Close
         onClick={(e) => e.stopPropagation()}
         className={cn([
-          'text-black ring-offset-background absolute right-6 top-2 flex size-8 items-center justify-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none',
+          'absolute -top-2 right-2',
+          'text-black ring-offset-background  flex size-8 items-center justify-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none',
         ])}
       >
         <X
           size={20}
-          className={cn(
-            type === 'modal' && 'text-text-base',
-            'z-20',
-            'absolute -top-2 right-0'
-          )}
+          className={cn(type === 'modal' && 'text-text-base', 'z-20')}
         />
         <span className='sr-only'>Close</span>
       </DialogPrimitive.Close>
