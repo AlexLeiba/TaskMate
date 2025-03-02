@@ -47,14 +47,25 @@ export function Modal({
       >
         <p className='body-xl font-semibold'>{title}</p>
         <Spacer size={2} />
-        <p className='body-sm'>{description}</p>
-        <Spacer size={6} />
+        {description && (
+          <>
+            <p className='body-sm'>{description}</p>
+            <Spacer size={6} />
+          </>
+        )}
 
         {/* CONTENT */}
         {content}
 
         {/* CLOSE BUTTON */}
-        <PopoverClose asChild ref={closeRef}>
+        <PopoverClose
+          asChild
+          ref={closeRef}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose?.();
+          }}
+        >
           <Button
             size={'sm'}
             variant={'ghost'}

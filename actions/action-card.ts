@@ -162,3 +162,280 @@ export async function editListTitle(
     error: null,
   };
 }
+
+export async function copyCard(
+  boardId: string,
+  cardId: string,
+  listId: string
+) {
+  const { orgId } = await auth();
+
+  if (!orgId) {
+    return {
+      error: 'Organization not found',
+      data: null,
+    };
+  }
+
+  let newCard;
+  try {
+    // Will prevent creating a list if the board doesn't exist
+    const board = await db.board.findUnique({
+      where: {
+        id: boardId,
+        orgId: orgId,
+      },
+    });
+
+    if (!board) {
+      return {
+        error: 'Board not found',
+      };
+    }
+    //
+
+    // Check if list exists
+    const currentList = await db.list.findUnique({
+      where: {
+        id: listId,
+        boardId: boardId,
+        board: {
+          orgId: orgId,
+        },
+      },
+    });
+
+    if (!currentList) {
+      return {
+        error: 'List not found, please try again',
+        data: null,
+      };
+    }
+
+    const lastCardFromTheList = await db.card.findFirst({
+      where: { listId: listId },
+      orderBy: { order: 'desc' },
+      select: { order: true }, //return only 'order' value
+    });
+
+    const newCardOrder =
+      (lastCardFromTheList && lastCardFromTheList?.order + 1) || 1;
+
+    const cardToBeCopied = await db.card.findUnique({
+      where: {
+        id: cardId,
+        listId: listId,
+      },
+    });
+
+    if (!cardToBeCopied) {
+      return {
+        error: 'Card not found',
+        data: null,
+      };
+    }
+
+    newCard = db.card.create({
+      data: {
+        listId: listId,
+        title: cardToBeCopied.title + ' - Copy',
+        description: cardToBeCopied.description,
+        order: newCardOrder,
+      },
+    });
+  } catch (error: any) {
+    return {
+      error: error.message || 'Error on copying card, please try again',
+      data: null,
+    };
+  }
+
+  revalidatePath(`/board/${boardId}`); // revalidate the path to update the cache
+
+  return {
+    data: newCard,
+    error: null,
+  };
+}
+
+export async function deleteCard(
+  boardId: string,
+  cardId: string,
+  listId: string
+) {
+  const { orgId } = await auth();
+
+  if (!orgId) {
+    return {
+      error: 'Organization not found',
+      data: null,
+    };
+  }
+
+  let newCard;
+  try {
+    // Will prevent creating a list if the board doesn't exist
+    const board = await db.board.findUnique({
+      where: {
+        id: boardId,
+        orgId: orgId,
+      },
+    });
+
+    if (!board) {
+      return {
+        error: 'Board not found',
+      };
+    }
+    //
+
+    // Check if list exists
+    const currentList = await db.list.findUnique({
+      where: {
+        id: listId,
+        boardId: boardId,
+        board: {
+          orgId: orgId,
+        },
+      },
+    });
+
+    if (!currentList) {
+      return {
+        error: 'List not found, please try again',
+        data: null,
+      };
+    }
+
+    const cardToBeDeleted = await db.card.findUnique({
+      where: {
+        id: cardId,
+        listId: listId,
+      },
+    });
+
+    if (!cardToBeDeleted) {
+      return {
+        error: 'Card not found',
+        data: null,
+      };
+    }
+
+    newCard = db.card.delete({
+      where: {
+        id: cardId,
+        listId: listId,
+      },
+    });
+  } catch (error: any) {
+    return {
+      error: error.message || 'Error on deleting card, please try again',
+      data: null,
+    };
+  }
+
+  revalidatePath(`/board/${boardId}`); // revalidate the path to update the cache
+
+  return {
+    data: newCard,
+    error: null,
+  };
+}
+
+export async function editCard({
+  title,
+  description,
+  boardId,
+  listId,
+  cardId,
+}: {
+  title?: string;
+  description?: string;
+  boardId: string;
+  listId: string;
+  cardId: string;
+}) {
+  const { orgId } = await auth();
+
+  if (!orgId) {
+    return {
+      error: 'Organization not found',
+      data: null,
+    };
+  }
+
+  let newCard;
+  try {
+    // Will prevent creating a list if the board doesn't exist
+    const board = await db.board.findUnique({
+      where: {
+        id: boardId,
+        orgId: orgId,
+      },
+    });
+
+    if (!board) {
+      return {
+        error: 'Board not found',
+      };
+    }
+    //
+
+    // Check if list exists
+    const currentList = await db.list.findUnique({
+      where: {
+        id: listId,
+        boardId: boardId,
+        board: {
+          orgId: orgId,
+        },
+      },
+    });
+
+    if (!currentList) {
+      return {
+        error: 'List not found, please try again',
+        data: null,
+      };
+    }
+
+    const editedCard = await db.card.findUnique({
+      where: {
+        id: cardId,
+        listId: listId,
+      },
+    });
+
+    if (!editedCard) {
+      return {
+        error: 'Card not found',
+        data: null,
+      };
+    }
+
+    newCard = db.card.update({
+      where: {
+        id: cardId,
+        listId: listId,
+      },
+      data: {
+        listId: listId,
+        title: title ? title : editedCard.title,
+        description: description ? description : editedCard.description,
+        order: editedCard.order,
+      },
+    });
+  } catch (error: any) {
+    return {
+      error: error.message || 'Error on editing card, please try again',
+      data: null,
+    };
+  }
+
+  revalidatePath(`/board/${boardId}`); // revalidate the path to update the cache
+
+  return {
+    data: newCard,
+    error: null,
+  };
+}

@@ -11,11 +11,13 @@ import { toast } from 'react-toastify';
 function ListOptions({
   data,
   closeRef,
+  listId,
   enableEditingCard,
   handleEnableEditingListHeader,
 }: {
   data: List;
   closeRef: React.RefObject<HTMLButtonElement | null>;
+  listId: string;
   enableEditingCard: () => void;
   handleEnableEditingListHeader: () => void;
 }) {

@@ -38,12 +38,8 @@ export default function ListContainer({ listData, boardId }: Props) {
   async function onDragEnd(result: any) {
     const { destination, source, type } = result;
 
-    if (!source.droppableId || !destination.droppableId) {
-      return console.log(
-        '🚀 ~ \n\n\n\n\n\n DroppableId is not defined',
-        source.droppableId,
-        destination.droppableId
-      );
+    if (!source?.droppableId || !destination?.droppableId) {
+      return;
     }
 
     if (!destination) {

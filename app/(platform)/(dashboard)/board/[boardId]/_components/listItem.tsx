@@ -11,8 +11,10 @@ import { cn } from '@/lib/utils';
 import CardItem from './cardItem';
 import { Droppable, Draggable } from '@hello-pangea/dnd';
 import { CardModalContent } from './cardModalContent';
+import { set } from 'zod';
 
 type ListWithCardsType = List & { cards: Card[] };
+
 function ListItem({ data, index }: { data: ListWithCardsType; index: number }) {
   const [cardModalOpen, setCardModalOpen] = React.useState(false);
   // List header
@@ -76,31 +78,44 @@ function ListItem({ data, index }: { data: ListWithCardsType; index: number }) {
                     >
                       {data.cards.map((card, index) => (
                         <Modal
+                          open={cardModalOpen}
+                          onOpenChange={() => setCardModalOpen(false)}
                           key={card.id}
                           positionFooter={'horizontal-fill'}
                           positionHeader={'left-aligned'}
                           title={card.title}
                           description={''}
                           triggerTitle={''}
-                          onConfirm={function (): void {
-                            throw new Error('Function not implemented.');
-                          }}
+                          onConfirm={() => {}}
                           hideCancel
-                          // hideConfirm
+                          hideConfirm
                           customTrigger={
                             // RENDERED CARDS LIST
                             <CardItem
+                              listId={data.id}
                               data={card}
                               index={index}
                               key={card.id}
-                              onClick={() => {}}
+                              onClick={() => setCardModalOpen(true)}
                             />
                           }
                         >
-                          <CardModalContent cardId={card.id} />
+                          <CardModalContent cardId={card.id} listId={data.id} />
                         </Modal>
                       ))}
                       {provided.placeholder}
+
+                      {/* <Modal
+                        open={isDeleteModalOpen}
+                        onOpenChange={() => setIsDeleteModalOpen(false)}
+                        onConfirm={handleDeleteList}
+                        positionFooter={'horizontal-fill'}
+                        positionHeader={'left-aligned'}
+                        title={'Delete list'}
+                        description={`This action cannot be undone. Are you sure you want to delete  "${cardData?.title}" card?`}
+                        triggerTitle={''}
+                        customConfirmButtonText='Delete list'
+                      /> */}
                     </ol>
                   );
                 }}
@@ -132,6 +147,7 @@ function ListItem({ data, index }: { data: ListWithCardsType; index: number }) {
                       <ListOptions
                         enableEditingCard={handleEnableEditingCard}
                         data={data}
+                        listId={data.id}
                         closeRef={closeModalOnSubmitRef}
                         handleEnableEditingListHeader={
                           handleEnableEditingListHeader

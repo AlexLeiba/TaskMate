@@ -41,6 +41,7 @@ type Props = {
   customTrigger?: React.JSX.Element;
   open?: boolean;
   hideCancel?: boolean;
+  hideConfirm?: boolean;
   disabledConfirmButton?: boolean;
 
   onConfirm: () => void;
@@ -97,6 +98,7 @@ function Modal({
   classNameTriggerButton,
   customTrigger,
   hideCancel,
+  hideConfirm,
   onOpenChange,
   onConfirm,
   onCancel,
@@ -143,26 +145,29 @@ function Modal({
           </div>
         )}
 
-        <DialogFooter
-          disabledConfirmButton={disabledConfirmButton}
-          iconLinkButton={iconLinkButton}
-          className='p-4 lg:p-6'
-          customConfirmButtonText={customConfirmButtonText}
-          customCancelButtonText={customCancelButtonText}
-          customCheckboxText={customCheckboxText}
-          customLinkButtonText={customLinkButtonText}
-          position={positionFooter}
-          onConfirm={onConfirm}
-          onCancel={() => {
-            handleOpenStateChange(false);
-            onCancel?.();
-          }}
-          hideCancel={hideCancel}
-          confirmButtonVariant={confirmButtonVariant}
-          cancelButtonVariant={cancelButtonVariant}
-          onLinkButton={onLinkButton}
-          onCheckbox={onCheckbox}
-        />
+        {!hideConfirm && !hideCancel && (
+          <DialogFooter
+            disabledConfirmButton={disabledConfirmButton}
+            iconLinkButton={iconLinkButton}
+            className='p-4 lg:pt-6'
+            customConfirmButtonText={customConfirmButtonText}
+            customCancelButtonText={customCancelButtonText}
+            customCheckboxText={customCheckboxText}
+            customLinkButtonText={customLinkButtonText}
+            position={positionFooter}
+            onConfirm={onConfirm}
+            onCancel={() => {
+              handleOpenStateChange(false);
+              onCancel?.();
+            }}
+            hideCancel={hideCancel}
+            hideConfirm={hideConfirm}
+            confirmButtonVariant={confirmButtonVariant}
+            cancelButtonVariant={cancelButtonVariant}
+            onLinkButton={onLinkButton}
+            onCheckbox={onCheckbox}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

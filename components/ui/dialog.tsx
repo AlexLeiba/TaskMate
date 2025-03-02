@@ -227,6 +227,7 @@ const DialogFooter = ({
   customLinkButtonText,
   iconLinkButton,
   hideCancel,
+  hideConfirm,
   disabledConfirmButton = false,
   onConfirm,
   onCancel,
@@ -255,6 +256,7 @@ const DialogFooter = ({
   customLinkButtonText?: string;
   iconLinkButton?: React.JSX.Element;
   hideCancel?: boolean;
+  hideConfirm?: boolean;
   disabledConfirmButton?: boolean;
 
   onCancel?: () => void;
@@ -266,7 +268,7 @@ const DialogFooter = ({
   return (
     <div
       className={cn([
-        'flex w-full !pt-4',
+        'flex w-full ',
         position === 'horizontal-group' && [
           (onCheckbox || onLinkButton) && 'justify-between sm:gap-4 md:gap-4',
           'flex justify-end sm:flex-col-reverse sm:items-start md:flex-col-reverse md:items-start lg:items-center',
@@ -332,18 +334,19 @@ const DialogFooter = ({
             {customCancelButtonText || 'Cancel'}
           </Button>
         )}
-
-        <Button
-          disabled={disabledConfirmButton}
-          className={cn('w-full', hideCancel && 'w-1/2')}
-          variant={'destructive'}
-          onClick={(e) => {
-            e.stopPropagation();
-            onConfirm();
-          }}
-        >
-          {customConfirmButtonText || 'Confirm'}
-        </Button>
+        {!hideConfirm && (
+          <Button
+            disabled={disabledConfirmButton}
+            className={cn('w-full', hideCancel && 'w-1/2')}
+            variant={'destructive'}
+            onClick={(e) => {
+              e.stopPropagation();
+              onConfirm();
+            }}
+          >
+            {customConfirmButtonText || 'Confirm'}
+          </Button>
+        )}
       </div>
     </div>
   );
