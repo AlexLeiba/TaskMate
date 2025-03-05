@@ -6,15 +6,28 @@ import { NextResponse } from 'next/server';
 export async function GET(
   req: Request,
   params: {
-    cardId: Promise<string>;
+    params: {
+      cardId: Promise<string>;
+    };
   }
 ) {
-  const cardId = await params.cardId;
+  const cardId = await params?.params?.cardId;
+
   try {
     const { userId, orgId } = await auth();
 
     if (!userId || !orgId) {
       return new Response('Unauthorized', { status: 401 });
+    }
+
+    const cardData = await db?.card.findUnique({
+      where: {
+        id: cardId,
+      },
+    });
+
+    if (!cardData) {
+      throw new Error('Not found');
     }
 
     const activityLogs = await db?.activity?.findMany({
@@ -26,7 +39,7 @@ export async function GET(
       orderBy: {
         createdAt: 'desc',
       },
-      take: 5,
+      take: 3,
     });
 
     return NextResponse.json(activityLogs);

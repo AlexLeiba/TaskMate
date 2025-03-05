@@ -1,5 +1,6 @@
 'use client';
 import { copyCard, deleteCard, editCard } from '@/actions/action-card';
+import { ActivityList } from '@/components/Activity/activity';
 import { Button } from '@/components/ui/button';
 import Dropdown from '@/components/ui/dropdown';
 import Modal from '@/components/ui/modal-dialog';
@@ -7,7 +8,7 @@ import { Spacer } from '@/components/ui/spacer';
 import { TextArea } from '@/components/ui/textArea';
 import { Fetcher } from '@/lib/fetcher';
 import { Activity } from '@prisma/client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Activity as ActivityIcon,
   Check,
@@ -33,6 +34,7 @@ export function CardModalContent({
   const params = useParams();
   const { boardId } = params;
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: cardData } = useQuery({
     queryKey: ['card', cardId],
@@ -42,7 +44,6 @@ export function CardModalContent({
     queryKey: ['activity', cardId],
     queryFn: () => Fetcher(`/api/cards/${cardId}/activity`),
   });
-  console.log('🚀 ~ activityData:', activityData);
 
   const {
     control,
@@ -74,6 +75,8 @@ export function CardModalContent({
     }
     if (response?.data) {
       toast.success('Card edited successfully');
+
+      queryClient.invalidateQueries({ queryKey: ['activity', cardId] });
     }
   }
 
@@ -104,11 +107,13 @@ export function CardModalContent({
       toast.error(response?.error);
     }
     if (response?.data) {
+      queryClient.invalidateQueries({ queryKey: ['activity', cardId] });
       toast.success('Card copied successfully');
     }
   }
   return (
-    <div className='w-full'>
+    <div>
+      {/* LIST LOCATION */}
       <div className='flex gap-2 w-full '>
         <MapPin />
         <p className='body-sm text-gray-500'>in list</p>
@@ -119,119 +124,114 @@ export function CardModalContent({
 
       <Spacer size={6} />
 
-      <div className='flex w-full gap-8 justify-between items-end'>
-        <div className='w-full'>
-          <div className='flex gap-2'>
-            <Logs />
-            <p className='body-md font-medium'>Description</p>
+      <div>
+        {/* DESCRIPTION */}
+        <div className='flex w-full gap-8'>
+          <div className='w-full'>
+            <div className='flex gap-2'>
+              <Logs />
+              <p className='body-md font-semibold'>Description</p>
+            </div>
+            <Spacer size={2} />
+            <div className='flex gap-4'>
+              <form
+                className='w-full ml-8'
+                action=''
+                onSubmit={handleSubmit(onSubmit)}
+              >
+                <Controller
+                  name='description'
+                  control={control}
+                  render={({ field: { onChange, value } }) => (
+                    <TextArea
+                      ref={textareaRef}
+                      onChange={onChange}
+                      value={value || ''}
+                      rows={7}
+                      autoFocus={false}
+                      className='w-full'
+                      placeholder='Type the description here...'
+                      error={errors?.description?.message as string}
+                    />
+                  )}
+                />
+
+                {/* Remove the second Controller and Dropdown */}
+              </form>
+            </div>
           </div>
-          <Spacer size={2} />
-          <form className='w-full' action='' onSubmit={handleSubmit(onSubmit)}>
+          {/* STATUS */}
+          <div className='w-[200px]'>
+            <div className='flex gap-2'>
+              <Check />
+              <p className='body-md font-semibold'>Status</p>
+            </div>
+            <Spacer size={2} />
             <Controller
-              name='description'
+              name='status'
               control={control}
-              render={({ field: { onChange, value } }) => (
-                <TextArea
-                  ref={textareaRef}
+              defaultValue=''
+              render={({ field: { onChange, value, ref } }) => (
+                <Dropdown
+                  defaultValue={value}
+                  label=''
+                  options={[
+                    { label: 'None', value: 'none', image: '' },
+                    { label: 'Todo', value: 'todo', image: '/todo.png' },
+                    {
+                      label: 'Progress',
+                      value: 'progress',
+                      image: '/progress.png',
+                    },
+                    { label: 'Done', value: 'Done', image: '/check.png' },
+                  ]}
                   onChange={onChange}
-                  value={value || ''}
-                  rows={7}
-                  autoFocus={false}
-                  className='w-full'
-                  placeholder='Type the description here...'
-                  error={errors?.description?.message as string}
+                  value={value}
                 />
               )}
             />
+            <Spacer size={7} />
+            <p className='body-md font-medium'>Actions</p>
+            <Spacer size={2} />
 
-            {/* Remove the second Controller and Dropdown */}
-          </form>
-
-          <Spacer size={6} />
-          <div className='flex gap-2'>
-            <ActivityIcon size={20} />
-            <p className='body-md font-medium'>Activity</p>
-          </div>
-          <Spacer size={3} />
-
-          {activityData && activityData?.length > 0 ? (
-            <div className='flex flex-col gap-2'>
-              {activityData.map((activity) => (
-                <p key={activity.id} className='body-sm'>
-                  {activity.entityTitle}
-                </p>
-              ))}
+            <div className='flex flex-col gap-2 '>
+              <Button
+                variant={'secondary'}
+                className='w-full justify-start'
+                onClick={handleCopyCard}
+              >
+                <Copy /> Copy
+              </Button>
+              <Button
+                variant={'destructive'}
+                className='w-full justify-start'
+                onClick={() => setIsDeleteModalOpen(true)}
+              >
+                <Delete /> Delete
+              </Button>
             </div>
-          ) : (
-            <p className='body-sm'>No activity yet</p>
-          )}
-        </div>
-
-        <div className='w-[200px]'>
-          <Spacer size={3} />
-          <div className='flex gap-2'>
-            <Check />
-            <p className='body-md font-medium'>Status</p>
-          </div>
-          <Spacer size={2} />
-          <Controller
-            name='status'
-            control={control}
-            defaultValue=''
-            render={({ field: { onChange, value, ref } }) => (
-              <Dropdown
-                defaultValue={value}
-                label=''
-                options={[
-                  { label: 'None', value: 'none', image: '' },
-                  { label: 'Todo', value: 'todo', image: '/todo.png' },
-                  {
-                    label: 'Progress',
-                    value: 'progress',
-                    image: '/progress.png',
-                  },
-                  { label: 'Done', value: 'Done', image: '/check.png' },
-                ]}
-                onChange={onChange}
-                value={value}
-              />
-            )}
-          />
-          <Spacer size={7} />
-          <p className='body-md font-medium'>Actions</p>
-          <Spacer size={2} />
-
-          <div className='flex flex-col gap-2 '>
-            <Button
-              variant={'secondary'}
-              className='w-full justify-start'
-              onClick={handleCopyCard}
-            >
-              <Copy /> Copy
-            </Button>
-            <Button
-              variant={'destructive'}
-              className='w-full justify-start'
-              onClick={() => setIsDeleteModalOpen(true)}
-            >
-              <Delete /> Delete
-            </Button>
           </div>
         </div>
+
+        {/* ACTIVITY */}
+        <Spacer size={6} />
+        <ActivityList items={activityData} />
       </div>
 
       {/* DELETE CARD MODAL */}
-      <Modal
-        open={isDeleteModalOpen}
-        onOpenChange={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleDeleteCard}
-        positionFooter={'horizontal-fill'}
-        positionHeader={'left-aligned'}
-        title={'Delete card'}
-        description={`This action cannot be undone. Are you sure you want to delete  "${cardData?.title}" card?`}
-        triggerTitle={''}
-        customConfirmButtonText='Delete card'
-      />
+      {isDeleteModalOpen && (
+        <Modal
+          open={isDeleteModalOpen}
+          onOpenChange={() => setIsDeleteModalOpen(false)}
+          onConfirm={handleDeleteCard}
+          positionFooter={'horizontal-fill'}
+          positionHeader={'left-aligned'}
+          title={'Delete card'}
+          description={`This action cannot be undone. Are you sure you want to delete  "${cardData?.title}" card?`}
+          triggerTitle={''}
+          customConfirmButtonText='Delete card'
+        />
+      )}
     </div>
   );
 }
