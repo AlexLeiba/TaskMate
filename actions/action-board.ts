@@ -1,7 +1,9 @@
 'use server';
 
+import { createActivityLog } from '@/lib/createActivityLog';
 import { db } from '@/lib/db';
 import { auth } from '@clerk/nextjs/server';
+import { ACTIONS, ENTITY_TYPE } from '@prisma/client';
 import { error } from 'console';
 import { revalidatePath } from 'next/cache';
 
@@ -36,6 +38,14 @@ export async function editBoardTitle(boardId: string, title: string) {
       data: {
         title: title,
       },
+    });
+
+    // Activity
+    await createActivityLog({
+      entityId: board.id,
+      entityType: ENTITY_TYPE.BOARD,
+      action: ACTIONS.UPDATE,
+      entityTitle: `The Board: '${board.title}' title was updated`,
     });
   } catch (error: any) {
     return {
@@ -110,6 +120,14 @@ export async function addNewListTitle(boardId: string, title: string) {
         data: null,
       };
     }
+
+    // Activity
+    await createActivityLog({
+      entityId: board.id,
+      entityType: ENTITY_TYPE.LIST,
+      action: ACTIONS.CREATE,
+      entityTitle: `New List: '${list.title}' was created`,
+    });
   } catch (error: any) {
     return {
       error: error.message || 'Error on creating list, please try again',
@@ -186,6 +204,14 @@ export async function editListTitle(
         data: null,
       };
     }
+
+    // Activity
+    await createActivityLog({
+      entityId: board.id,
+      entityType: ENTITY_TYPE.LIST,
+      action: ACTIONS.UPDATE,
+      entityTitle: `The List: '${list.title}'  title was updated`,
+    });
   } catch (error: any) {
     return {
       error: error.message || 'Error on editing list title, please try again',
@@ -251,6 +277,14 @@ export async function deleteList(boardId: string, listId: string) {
           orgId: orgId,
         },
       },
+    });
+
+    // Activity
+    await createActivityLog({
+      entityId: board.id,
+      entityType: ENTITY_TYPE.LIST,
+      action: ACTIONS.DELETE,
+      entityTitle: `The List: '${list.title}' was deleted`,
     });
   } catch (error: any) {
     return {
@@ -326,6 +360,13 @@ export async function copyList(boardId: string, listId: string) {
       },
     });
 
+    if (!lastListOrdered) {
+      return {
+        error: 'Error on copying list, please try again',
+        data: null,
+      };
+    }
+
     const newOrder = (lastListOrdered && lastListOrdered?.order + 1) || 1;
 
     if (!lastListOrdered) {
@@ -346,8 +387,7 @@ export async function copyList(boardId: string, listId: string) {
             //copy cards as well
             data: listToCopyData.cards.map((card) => ({
               title: card.title,
-              description: card.description,
-              listId: listToCopyData.id,
+              description: card.description ? card.description : '',
               order: card.order,
             })),
           },
@@ -356,6 +396,14 @@ export async function copyList(boardId: string, listId: string) {
       include: {
         cards: true, //To copy the list with cards included
       },
+    });
+
+    // Activity
+    await createActivityLog({
+      entityId: board.id,
+      entityType: ENTITY_TYPE.LIST,
+      action: ACTIONS.UPDATE,
+      entityTitle: `The List: '${listToCopyData.title}' was copied`,
     });
   } catch (error: any) {
     return {

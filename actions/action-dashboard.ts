@@ -1,9 +1,11 @@
 'use server';
 
+import { createActivityLog } from '@/lib/createActivityLog';
 // server actions allows to mutate the server components
 
 import { db } from '@/lib/db';
 import { auth } from '@clerk/nextjs/server';
+import { ACTIONS, ENTITY_TYPE } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 
 export type State = {
@@ -52,6 +54,15 @@ export async function createBoard(data: { title: string; image: string }) {
         orgId: orgId,
       },
     });
+
+    // Activity
+    await createActivityLog({
+      entityId: board.id,
+      entityType: ENTITY_TYPE.BOARD,
+      action: ACTIONS.CREATE,
+      entityTitle: `New Board: '${board.title}' was created`,
+    });
+
     if (board.id) {
       revalidatePath(`/board/${board.id}`);
       return {
@@ -80,6 +91,14 @@ export async function deleteBoard(id: string) {
 
     if (result) {
       revalidatePath(`/board/${id}`);
+
+      // Activity
+      await createActivityLog({
+        entityId: id,
+        entityType: ENTITY_TYPE.BOARD,
+        action: ACTIONS.DELETE,
+        entityTitle: `The Board: '${result.title}' was deleted`,
+      });
 
       return {
         data: 'Board deleted successfully',

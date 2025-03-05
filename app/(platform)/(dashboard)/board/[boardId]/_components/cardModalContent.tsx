@@ -6,8 +6,16 @@ import Modal from '@/components/ui/modal-dialog';
 import { Spacer } from '@/components/ui/spacer';
 import { TextArea } from '@/components/ui/textArea';
 import { Fetcher } from '@/lib/fetcher';
+import { Activity } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
-import { Check, Copy, Delete, Logs, MapPin } from 'lucide-react';
+import {
+  Activity as ActivityIcon,
+  Check,
+  Copy,
+  Delete,
+  Logs,
+  MapPin,
+} from 'lucide-react';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -30,6 +38,11 @@ export function CardModalContent({
     queryKey: ['card', cardId],
     queryFn: () => Fetcher(`/api/cards/${cardId}`),
   });
+  const { data: activityData } = useQuery<Activity[]>({
+    queryKey: ['activity', cardId],
+    queryFn: () => Fetcher(`/api/cards/${cardId}/activity`),
+  });
+  console.log('🚀 ~ activityData:', activityData);
 
   const {
     control,
@@ -70,6 +83,7 @@ export function CardModalContent({
     }
   });
 
+  // SERVER ACTIONS
   async function handleDeleteCard() {
     setIsDeleteModalOpen(false);
 
@@ -132,6 +146,25 @@ export function CardModalContent({
 
             {/* Remove the second Controller and Dropdown */}
           </form>
+
+          <Spacer size={6} />
+          <div className='flex gap-2'>
+            <ActivityIcon size={20} />
+            <p className='body-md font-medium'>Activity</p>
+          </div>
+          <Spacer size={3} />
+
+          {activityData && activityData?.length > 0 ? (
+            <div className='flex flex-col gap-2'>
+              {activityData.map((activity) => (
+                <p key={activity.id} className='body-sm'>
+                  {activity.entityTitle}
+                </p>
+              ))}
+            </div>
+          ) : (
+            <p className='body-sm'>No activity yet</p>
+          )}
         </div>
 
         <div className='w-[200px]'>
@@ -186,6 +219,8 @@ export function CardModalContent({
           </div>
         </div>
       </div>
+
+      {/* DELETE CARD MODAL */}
       <Modal
         open={isDeleteModalOpen}
         onOpenChange={() => setIsDeleteModalOpen(false)}

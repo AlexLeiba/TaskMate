@@ -36,7 +36,8 @@ export default function ListContainer({ listData, boardId }: Props) {
 
   //////////////////DRAG AND DROP FUNCTIONS ///////////////////
   async function onDragEnd(result: any) {
-    const { destination, source, type } = result;
+    console.log('🚀 ~ onDragEnd ~ result:', result);
+    const { destination, source, type, draggableId } = result;
 
     if (!source?.droppableId || !destination?.droppableId) {
       return;
@@ -66,7 +67,8 @@ export default function ListContainer({ listData, boardId }: Props) {
       const response = await updateListOrder(
         reorderedListItems,
         boardId,
-        source.droppableId
+        draggableId,
+        destination.index
       );
 
       if (response.error) {
@@ -127,7 +129,8 @@ export default function ListContainer({ listData, boardId }: Props) {
         // SERVER ACTIONS | UPDATE CARD ORDER IN DB
         const response = await updateCardOrder(
           newReorderedInSourceListCards,
-          boardId
+          boardId,
+          draggableId //card id
         );
 
         if (response.error) {
@@ -164,7 +167,17 @@ export default function ListContainer({ listData, boardId }: Props) {
         setOrderedListData(newOrderedListData);
 
         // SERVER ACTIONS | UPDATE CARD ORDER IN DB
-        const response = await updateCardOrder(destList.cards, boardId);
+        const response = await updateCardOrder(
+          destList.cards,
+          boardId,
+          draggableId, //card id
+          destination.droppableId
+        );
+
+        console.log(
+          '🚀 ~ onDragEnd ~ reorderedListItems:',
+          destination.droppableId
+        );
 
         if (response.error) {
           toast.error(response.error);

@@ -11,9 +11,8 @@ import { cn } from '@/lib/utils';
 import CardItem from './cardItem';
 import { Droppable, Draggable } from '@hello-pangea/dnd';
 import { CardModalContent } from './cardModalContent';
-import { set } from 'zod';
 
-type ListWithCardsType = List & { cards: Card[] };
+export type ListWithCardsType = List & { cards: Card[] };
 
 function ListItem({ data, index }: { data: ListWithCardsType; index: number }) {
   const [cardModalOpen, setCardModalOpen] = React.useState(false);

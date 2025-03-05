@@ -1,6 +1,8 @@
 'use server';
+import { createActivityLog } from '@/lib/createActivityLog';
 import { db } from '@/lib/db';
 import { auth } from '@clerk/nextjs/server';
+import { ACTIONS, ENTITY_TYPE } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 
 export async function createNewCardInList(
@@ -65,12 +67,20 @@ export async function createNewCardInList(
     const newCardOrder =
       (lastCardFromTheList && lastCardFromTheList?.order + 1) || 1;
 
-    newCard = db.card.create({
+    newCard = await db.card.create({
       data: {
         listId: listId,
         title: title,
         order: newCardOrder,
       },
+    });
+
+    // Activity
+    await createActivityLog({
+      entityId: newCard.id,
+      entityType: ENTITY_TYPE.CARD,
+      action: ACTIONS.CREATE,
+      entityTitle: `The Card: '${newCard.title}' was created`,
     });
   } catch (error: any) {
     return {
@@ -148,6 +158,14 @@ export async function editListTitle(
         data: null,
       };
     }
+
+    // Activity
+    await createActivityLog({
+      entityId: list.id,
+      entityType: ENTITY_TYPE.LIST,
+      action: ACTIONS.UPDATE,
+      entityTitle: `The List: '${title}' title  was updated`,
+    });
   } catch (error: any) {
     return {
       error: error.message || 'Error on editing list title, please try again',
@@ -235,13 +253,21 @@ export async function copyCard(
       };
     }
 
-    newCard = db.card.create({
+    newCard = await db.card.create({
       data: {
         listId: listId,
         title: cardToBeCopied.title + ' - Copy',
         description: cardToBeCopied.description,
         order: newCardOrder,
       },
+    });
+
+    // Activity
+    await createActivityLog({
+      entityId: newCard.id,
+      entityType: ENTITY_TYPE.CARD,
+      action: ACTIONS.UPDATE,
+      entityTitle: `The Card: '${cardToBeCopied.title}' was copied`,
     });
   } catch (error: any) {
     return {
@@ -321,11 +347,19 @@ export async function deleteCard(
       };
     }
 
-    newCard = db.card.delete({
+    newCard = await db.card.delete({
       where: {
         id: cardId,
         listId: listId,
       },
+    });
+
+    // Activity
+    await createActivityLog({
+      entityId: newCard.id,
+      entityType: ENTITY_TYPE.CARD,
+      action: ACTIONS.DELETE,
+      entityTitle: `The Card: '${cardToBeDeleted.title}' was deleted`,
     });
   } catch (error: any) {
     return {
@@ -413,7 +447,7 @@ export async function editCard({
       };
     }
 
-    newCard = db.card.update({
+    newCard = await db.card.update({
       where: {
         id: cardId,
         listId: listId,
@@ -424,6 +458,16 @@ export async function editCard({
         description: description ? description : editedCard.description,
         order: editedCard.order,
       },
+    });
+
+    // Activity
+    await createActivityLog({
+      entityId: newCard.id,
+      entityType: ENTITY_TYPE.CARD,
+      action: ACTIONS.UPDATE,
+      entityTitle: `The Card: '${editedCard.title}' ${
+        title ? 'title' : 'description'
+      }  was updated`,
     });
   } catch (error: any) {
     return {

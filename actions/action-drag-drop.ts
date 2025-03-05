@@ -1,13 +1,15 @@
 'use server';
+import { createActivityLog } from '@/lib/createActivityLog';
 import { db } from '@/lib/db';
 import { auth } from '@clerk/nextjs/server';
-import { Card, List } from '@prisma/client';
+import { ACTIONS, Card, ENTITY_TYPE, List } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 
 export async function updateListOrder(
   reorderedListItems: List[],
   boardId: string,
-  listId: string
+  listId: string,
+  destinationIndex: number
 ) {
   const { orgId } = await auth();
 
@@ -23,7 +25,7 @@ export async function updateListOrder(
   try {
     // Check if list exists
 
-    const list = db.list.findUnique({
+    const list = await db.list.findUnique({
       where: {
         id: listId,
         boardId: boardId,
@@ -61,6 +63,16 @@ export async function updateListOrder(
     });
 
     updatedLists = await db.$transaction(reorderedListsInDB);
+
+    // Activity
+    await createActivityLog({
+      entityId: list.id,
+      entityType: ENTITY_TYPE.LIST,
+      action: ACTIONS.UPDATE,
+      entityTitle: `The List: '${list.title}' was moved to Column: '${
+        destinationIndex + 1
+      }'`,
+    });
   } catch (error: any) {
     return {
       error: error.message || 'Error on changing list order, please try again',
@@ -78,7 +90,9 @@ export async function updateListOrder(
 
 export async function updateCardOrder(
   newReorderedCards: Card[],
-  boardId: string
+  boardId: string,
+  cardId: string,
+  destinationId?: string
 ) {
   const { orgId } = await auth();
 
@@ -92,6 +106,26 @@ export async function updateCardOrder(
 
   let updatedCards;
   try {
+    const card = await db.card.findUnique({
+      where: {
+        id: cardId,
+
+        list: {
+          boardId: boardId,
+          board: {
+            orgId: orgId,
+          },
+        },
+      },
+    });
+
+    if (!card) {
+      return {
+        error: 'Card not found',
+        data: null,
+      };
+    }
+
     const reorderedCardsInDb = newReorderedCards.map((card) => {
       return db.card.update({
         where: {
@@ -112,6 +146,43 @@ export async function updateCardOrder(
     });
 
     updatedCards = await db.$transaction(reorderedCardsInDb);
+
+    if (destinationId) {
+      const destinationList = await db.list.findUnique({
+        where: {
+          id: destinationId,
+          boardId: boardId,
+          board: {
+            orgId: orgId,
+          },
+        },
+      });
+
+      if (!destinationList) {
+        return {
+          error: 'Destination list not found',
+          data: null,
+        };
+      }
+
+      // Activity
+      await createActivityLog({
+        entityId: card.id,
+        entityType: ENTITY_TYPE.CARD,
+        action: ACTIONS.UPDATE,
+        entityTitle: `The Card: '${card.title}' was moved in the List: '${
+          destinationList?.title || 'New list'
+        }'`,
+      });
+    } else {
+      // Activity
+      await createActivityLog({
+        entityId: card.id,
+        entityType: ENTITY_TYPE.CARD,
+        action: ACTIONS.UPDATE,
+        entityTitle: `The Card: '${card.title}' was reordered in the same List`,
+      });
+    }
   } catch (error: any) {
     return {
       error: error.message || 'Error on changing list order, please try again',
