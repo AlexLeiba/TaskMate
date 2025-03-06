@@ -4,7 +4,6 @@ import { createActivityLog } from '@/lib/createActivityLog';
 import { db } from '@/lib/db';
 import { auth } from '@clerk/nextjs/server';
 import { ACTIONS, ENTITY_TYPE } from '@prisma/client';
-import { error } from 'console';
 import { revalidatePath } from 'next/cache';
 
 export async function editBoardTitle(boardId: string, title: string) {
@@ -45,7 +44,7 @@ export async function editBoardTitle(boardId: string, title: string) {
       entityId: board.id,
       entityType: ENTITY_TYPE.BOARD,
       action: ACTIONS.UPDATE,
-      entityTitle: `The Board: '${board.title}' title was updated`,
+      entityTitle: `updated Board title from '${board.title} to ${title}' `,
     });
   } catch (error: any) {
     return {
@@ -126,7 +125,7 @@ export async function addNewListTitle(boardId: string, title: string) {
       entityId: board.id,
       entityType: ENTITY_TYPE.LIST,
       action: ACTIONS.CREATE,
-      entityTitle: `New List: '${list.title}' was created`,
+      entityTitle: `created List: '${list.title}'`,
     });
   } catch (error: any) {
     return {
@@ -210,7 +209,7 @@ export async function editListTitle(
       entityId: board.id,
       entityType: ENTITY_TYPE.LIST,
       action: ACTIONS.UPDATE,
-      entityTitle: `The List: '${list.title}'  title was updated`,
+      entityTitle: `updated List title from  '${isListExist.title} to ${title}' `,
     });
   } catch (error: any) {
     return {
@@ -284,7 +283,7 @@ export async function deleteList(boardId: string, listId: string) {
       entityId: board.id,
       entityType: ENTITY_TYPE.LIST,
       action: ACTIONS.DELETE,
-      entityTitle: `The List: '${list.title}' was deleted`,
+      entityTitle: `deleted List: '${list.title}' `,
     });
   } catch (error: any) {
     return {
@@ -403,7 +402,7 @@ export async function copyList(boardId: string, listId: string) {
       entityId: board.id,
       entityType: ENTITY_TYPE.LIST,
       action: ACTIONS.UPDATE,
-      entityTitle: `The List: '${listToCopyData.title}' was copied`,
+      entityTitle: `copied List: '${listToCopyData.title}' `,
     });
   } catch (error: any) {
     return {
