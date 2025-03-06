@@ -69,7 +69,7 @@ export async function updateListOrder(
       entityId: list.id,
       entityType: ENTITY_TYPE.LIST,
       action: ACTIONS.UPDATE,
-      entityTitle: `The List: '${list.title}' was moved to Column: '${
+      entityTitle: `Moved List: '${list.title}' to Column: '${
         destinationIndex + 1
       }'`,
     });
@@ -170,7 +170,7 @@ export async function updateCardOrder(
         entityId: card.id,
         entityType: ENTITY_TYPE.CARD,
         action: ACTIONS.UPDATE,
-        entityTitle: `The Card: '${card.title}' was moved in the List: '${
+        entityTitle: `Moved Card: '${card.title}' in the List: '${
           destinationList?.title || 'New list'
         }'`,
       });

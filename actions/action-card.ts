@@ -80,7 +80,7 @@ export async function createNewCardInList(
       entityId: newCard.id,
       entityType: ENTITY_TYPE.CARD,
       action: ACTIONS.CREATE,
-      entityTitle: `created Card: '${newCard.title}' `,
+      entityTitle: `Created Card: '${newCard.title}' `,
     });
   } catch (error: any) {
     return {
@@ -164,7 +164,7 @@ export async function editListTitle(
       entityId: list.id,
       entityType: ENTITY_TYPE.LIST,
       action: ACTIONS.UPDATE,
-      entityTitle: `updated List title from '${isListExist.title} to ${title}'`,
+      entityTitle: `Updated List title from '${isListExist.title}' to '${title}'`,
     });
   } catch (error: any) {
     return {
@@ -267,7 +267,7 @@ export async function copyCard(
       entityId: newCard.id,
       entityType: ENTITY_TYPE.CARD,
       action: ACTIONS.UPDATE,
-      entityTitle: `copied Card: '${cardToBeCopied.title}'`,
+      entityTitle: `Copied Card: '${cardToBeCopied.title}'`,
     });
   } catch (error: any) {
     return {
@@ -359,7 +359,7 @@ export async function deleteCard(
       entityId: newCard.id,
       entityType: ENTITY_TYPE.CARD,
       action: ACTIONS.DELETE,
-      entityTitle: `deleted Card: '${cardToBeDeleted.title}'`,
+      entityTitle: `Deleted Card: '${cardToBeDeleted.title}'`,
     });
   } catch (error: any) {
     return {
@@ -465,7 +465,7 @@ export async function editCard({
       entityId: newCard.id,
       entityType: ENTITY_TYPE.CARD,
       action: ACTIONS.UPDATE,
-      entityTitle: `updated ${title ? 'title' : 'description'} of Card: '${
+      entityTitle: `Updated ${title ? 'title' : 'description'} of Card: '${
         editedCard.title
       } '`,
     });
