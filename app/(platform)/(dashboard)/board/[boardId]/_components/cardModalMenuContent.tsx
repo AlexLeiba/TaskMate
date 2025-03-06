@@ -9,7 +9,7 @@ import { Fetcher } from '@/lib/fetcher';
 import { createCardSchema } from '@/lib/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
-import { Copy, Delete, Locate, LocateIcon, Logs, MapPin } from 'lucide-react';
+import { Copy, Delete } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';

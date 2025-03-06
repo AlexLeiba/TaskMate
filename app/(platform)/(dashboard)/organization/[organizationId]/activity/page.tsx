@@ -1,7 +1,16 @@
 import React from 'react';
+import { Spacer } from '@/components/ui/spacer';
+import Activities from '../_components/Activities';
 
-function page() {
-  return <div>page</div>;
+function ActivitiesPage() {
+  return (
+    <div className='w-full overflow-y-auto'>
+      {' '}
+      {/* ACTIVITY */}
+      <Spacer size={6} />
+      <Activities />
+    </div>
+  );
 }
 
-export default page;
+export default ActivitiesPage;

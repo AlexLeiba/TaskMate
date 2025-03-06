@@ -43,7 +43,7 @@ function AccordionNavItem({
     {
       label: 'Activity',
       icon: <Activity className='w-4 h-4 mr-2' />,
-      link: `/organization/${organization.id}/activity`,
+      link: `/organization/${organization.id}/activity?page=1`,
     },
     {
       label: 'Settings',

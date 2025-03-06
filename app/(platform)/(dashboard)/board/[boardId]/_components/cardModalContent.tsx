@@ -9,14 +9,7 @@ import { TextArea } from '@/components/ui/textArea';
 import { Fetcher } from '@/lib/fetcher';
 import { Activity } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  Activity as ActivityIcon,
-  Check,
-  Copy,
-  Delete,
-  Logs,
-  MapPin,
-} from 'lucide-react';
+import { Check, Copy, Delete, Logs, MapPin } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
