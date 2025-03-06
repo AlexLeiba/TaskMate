@@ -45,6 +45,7 @@ export async function editBoardTitle(boardId: string, title: string) {
       entityType: ENTITY_TYPE.BOARD,
       action: ACTIONS.UPDATE,
       entityTitle: `Updated Board title from '${board.title}' to '${title}' `,
+      boardTitle: board.title,
     });
   } catch (error: any) {
     return {
@@ -126,6 +127,7 @@ export async function addNewListTitle(boardId: string, title: string) {
       entityType: ENTITY_TYPE.LIST,
       action: ACTIONS.CREATE,
       entityTitle: `Created List: '${list.title}'`,
+      boardTitle: board.title,
     });
   } catch (error: any) {
     return {
@@ -210,6 +212,7 @@ export async function editListTitle(
       entityType: ENTITY_TYPE.LIST,
       action: ACTIONS.UPDATE,
       entityTitle: `Updated List title from  '${isListExist.title}' to '${title}' `,
+      boardTitle: board.title,
     });
   } catch (error: any) {
     return {
@@ -284,6 +287,7 @@ export async function deleteList(boardId: string, listId: string) {
       entityType: ENTITY_TYPE.LIST,
       action: ACTIONS.DELETE,
       entityTitle: `Deleted List: '${list.title}' `,
+      boardTitle: board.title,
     });
   } catch (error: any) {
     return {
@@ -403,6 +407,7 @@ export async function copyList(boardId: string, listId: string) {
       entityType: ENTITY_TYPE.LIST,
       action: ACTIONS.UPDATE,
       entityTitle: `Copied List: '${listToCopyData.title}' `,
+      boardTitle: board.title,
     });
   } catch (error: any) {
     return {

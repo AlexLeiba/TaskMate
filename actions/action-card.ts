@@ -81,6 +81,7 @@ export async function createNewCardInList(
       entityType: ENTITY_TYPE.CARD,
       action: ACTIONS.CREATE,
       entityTitle: `Created Card: '${newCard.title}' `,
+      boardTitle: board.title,
     });
   } catch (error: any) {
     return {
@@ -165,6 +166,7 @@ export async function editListTitle(
       entityType: ENTITY_TYPE.LIST,
       action: ACTIONS.UPDATE,
       entityTitle: `Updated List title from '${isListExist.title}' to '${title}'`,
+      boardTitle: board.title,
     });
   } catch (error: any) {
     return {
@@ -268,6 +270,7 @@ export async function copyCard(
       entityType: ENTITY_TYPE.CARD,
       action: ACTIONS.UPDATE,
       entityTitle: `Copied Card: '${cardToBeCopied.title}'`,
+      boardTitle: board.title,
     });
   } catch (error: any) {
     return {
@@ -360,6 +363,7 @@ export async function deleteCard(
       entityType: ENTITY_TYPE.CARD,
       action: ACTIONS.DELETE,
       entityTitle: `Deleted Card: '${cardToBeDeleted.title}'`,
+      boardTitle: board.title,
     });
   } catch (error: any) {
     return {
@@ -465,9 +469,12 @@ export async function editCard({
       entityId: newCard.id,
       entityType: ENTITY_TYPE.CARD,
       action: ACTIONS.UPDATE,
-      entityTitle: `Updated ${title ? 'title' : 'description'} of Card: '${
-        editedCard.title
-      } '`,
+      entityTitle: `Updated ${
+        title
+          ? `title of Card: '${editedCard.title}', from "${editedCard.title}" to "${title}"`
+          : `description of Card: '${editedCard.title}`
+      } `,
+      boardTitle: board.title,
     });
   } catch (error: any) {
     return {

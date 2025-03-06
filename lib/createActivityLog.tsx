@@ -8,12 +8,14 @@ type Props = {
   entityType: ENTITY_TYPE;
   action: ACTIONS;
   entityTitle: string;
+  boardTitle: string;
 };
 export async function createActivityLog({
   entityId,
   entityType,
   action,
   entityTitle,
+  boardTitle,
 }: Props) {
   const { orgId } = await auth();
   const user = await currentUser();
@@ -33,6 +35,7 @@ export async function createActivityLog({
         userId: user.id,
         userImage: user?.imageUrl,
         userName: user?.firstName + ' ' + user?.lastName,
+        boardTitle: boardTitle,
       },
     });
   } catch (error: any) {

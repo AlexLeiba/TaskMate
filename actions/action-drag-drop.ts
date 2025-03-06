@@ -23,6 +23,18 @@ export async function updateListOrder(
 
   let updatedLists;
   try {
+    const board = await db.board.findUnique({
+      where: {
+        id: boardId,
+        orgId: orgId,
+      },
+    });
+
+    if (!board) {
+      return {
+        error: 'Board not found',
+      };
+    }
     // Check if list exists
 
     const list = await db.list.findUnique({
@@ -72,6 +84,7 @@ export async function updateListOrder(
       entityTitle: `Moved List: '${list.title}' to Column: '${
         destinationIndex + 1
       }'`,
+      boardTitle: board.title,
     });
   } catch (error: any) {
     return {
@@ -106,6 +119,19 @@ export async function updateCardOrder(
 
   let updatedCards;
   try {
+    const board = await db.board.findUnique({
+      where: {
+        id: boardId,
+        orgId: orgId,
+      },
+    });
+
+    if (!board) {
+      return {
+        error: 'Board not found',
+      };
+    }
+
     const card = await db.card.findUnique({
       where: {
         id: cardId,
@@ -173,6 +199,7 @@ export async function updateCardOrder(
         entityTitle: `Moved Card: '${card.title}' in the List: '${
           destinationList?.title || 'New list'
         }'`,
+        boardTitle: board.title,
       });
     } else {
       // Activity
@@ -181,6 +208,7 @@ export async function updateCardOrder(
         entityType: ENTITY_TYPE.CARD,
         action: ACTIONS.UPDATE,
         entityTitle: `The Card: '${card.title}' was reordered in the same List`,
+        boardTitle: board.title,
       });
     }
   } catch (error: any) {

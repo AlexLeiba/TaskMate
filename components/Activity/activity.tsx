@@ -45,7 +45,7 @@ export function ActivityList({ items }: ActivityType) {
                     </p>
 
                     <p className='body-xs text-gray-500'>
-                      {' '}
+                      <strong className='mr-4'>Board: {data.boardTitle}</strong>
                       {format(new Date(data.createdAt), 'MMM d, yyy')} at{' '}
                       {format(new Date(data.createdAt), 'hh:mm a')}
                     </p>

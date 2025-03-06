@@ -61,6 +61,7 @@ export async function createBoard(data: { title: string; image: string }) {
       entityType: ENTITY_TYPE.BOARD,
       action: ACTIONS.CREATE,
       entityTitle: `Created a new Board: '${board.title}'`,
+      boardTitle: board.title,
     });
 
     if (board.id) {
@@ -98,6 +99,7 @@ export async function deleteBoard(id: string) {
         entityType: ENTITY_TYPE.BOARD,
         action: ACTIONS.DELETE,
         entityTitle: `Deleted Board: '${result.title}'`,
+        boardTitle: result.title,
       });
 
       return {
