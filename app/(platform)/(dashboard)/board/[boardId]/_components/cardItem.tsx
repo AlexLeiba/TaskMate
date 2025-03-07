@@ -2,9 +2,18 @@
 import { Card } from '@prisma/client';
 import React, { useState } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
-import { Ellipsis } from 'lucide-react';
+import {
+  Check,
+  CircleUser,
+  Ellipsis,
+  Wifi,
+  WifiHigh,
+  WifiLow,
+} from 'lucide-react';
 import { Modal } from '@/components/Modal/modal';
 import { CardModalMenuContent } from './cardModalMenuContent';
+import { setPriority } from 'os';
+import { cn } from '@/lib/utils';
 
 function CardItem({
   data,
@@ -18,23 +27,65 @@ function CardItem({
   onClick: () => void;
 }) {
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
+  const [isAssignOpenModal, setIsAssignOpenModal] = useState(false);
+  const [isPrioritiesOpenModal, setIsPrioritiesOpenModal] = useState(false);
+  const [selectPriority, setSelectPriority] = useState<{
+    label: string;
+    value: string;
+    icon: React.JSX.Element;
+  }>({
+    label: '',
+    value: '',
+    icon: <>...</>,
+  });
+
+  const cardPrioritiesOptions = [
+    {
+      label: 'None',
+      value: 'none',
+      icon: <div className='w-4 h-4 flex justify-center items-center'>...</div>,
+    },
+    {
+      label: 'Urgent',
+      value: 'urgent',
+      icon: (
+        <div className='w-5 h-5 bg-red-400 rounded-sm flex justify-center items-center'>
+          !
+        </div>
+      ),
+    },
+    {
+      label: 'High',
+      value: 'high',
+      icon: <Wifi size={20} className='text-red-500' />,
+    },
+    {
+      label: 'Medium',
+      value: 'medium',
+      icon: <WifiHigh size={20} className='text-yellow-500' />,
+    },
+    {
+      label: 'Low',
+      value: 'low',
+      icon: <WifiLow size={20} className='text-green-500' />,
+    },
+  ];
+
   return (
     <Draggable draggableId={data.id} index={index}>
       {(provided) => {
         return (
+          // CARD
           <div
-            onClick={
-              // e.stopPropagation();
-              onClick
-            }
+            onClick={onClick}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             ref={provided.innerRef}
             tabIndex={0}
             role='button'
-            className='relative px-2 py-3 bg-white/90 rounded-md mb-2 w-full hover:ring-1 hover:ring-gray-500 hover:bg-white/70 shadow-md !cursor-pointer'
+            className='relative min-h-12 p-2 bg-white/90 rounded-md mb-2 w-full hover:ring-1 hover:ring-gray-500 hover:bg-white/70 shadow-md !cursor-pointer flex justify-between items-start flex-col'
           >
-            {data.title}
+            <p className='pr-6 pb-1'>{data.title}</p>
 
             <Modal
               onClose={() => setIsCardModalOpen(!isCardModalOpen)}
@@ -49,9 +100,99 @@ function CardItem({
                   setIsCardModalOpen(true);
                   e.stopPropagation();
                 }}
-                className='absolute top-1 right-1 cursor-pointer hover:bg-gray-300  transition-all rounded-full w-7 h-7 p-1'
+                className='absolute top-1 right-2 cursor-pointer hover:bg-gray-300  transition-all rounded-full w-7 h-7 p-1'
               />
             </Modal>
+
+            <div className='flex justify-between w-full'>
+              {/* PRIORITIES */}
+              <Modal
+                contentClassName='w-[170px]  '
+                onClose={() => setIsPrioritiesOpenModal(!isPrioritiesOpenModal)}
+                title='Priority'
+                isOpen={isPrioritiesOpenModal}
+                content={
+                  <>
+                    {cardPrioritiesOptions.map((data, index) => {
+                      return (
+                        <div
+                          key={index}
+                          className={cn(
+                            selectPriority.value === data.value &&
+                              'bg-gray-400 text-white',
+                            'flex items-center justify-start gap-x-4 cursor-pointer mb-1 hover:bg-gray-300 hover:text-black h-4 py-4 px-2 rounded-md'
+                          )}
+                          onClick={() => {
+                            setSelectPriority(data);
+                            console.log(data.value);
+                            setIsPrioritiesOpenModal(false);
+                          }}
+                        >
+                          <div>
+                            <div className='flex justify-center items-center gap-x-2'>
+                              <div>{data.icon}</div>
+                              <p>{data.label}</p>
+                            </div>
+                          </div>
+                          {selectPriority.value === data.value && <Check />}
+                        </div>
+                      );
+                    })}
+                  </>
+                }
+              >
+                <div
+                  role='button'
+                  onClick={(e) => {
+                    setIsPrioritiesOpenModal(true);
+                    e.stopPropagation();
+                  }}
+                  className='w-6 h-6 rounded-md border-[1px] bg-white border-gray-400 hover:border-gray-200 flex justify-center items-center'
+                >
+                  <div className=' flex justify-center items-center'>
+                    {selectPriority.icon}
+                  </div>
+                </div>
+              </Modal>
+
+              {/* ASSIGN TASK */}
+
+              <Modal
+                contentClassName='w-[170px]  '
+                onClose={() => setIsAssignOpenModal(!isAssignOpenModal)}
+                title='Assign'
+                isOpen={isAssignOpenModal}
+                content={
+                  <>
+                    {cardPrioritiesOptions.map((data, index) => {
+                      return (
+                        <div
+                          key={index}
+                          className='flex items-center justify-start gap-x-2 cursor-pointer mb-1 hover:bg-gray-300 h-4 py-4 px-2 rounded-md'
+                          onClick={() => {
+                            console.log(data.value);
+                          }}
+                        >
+                          {data.icon}
+                          <p>{data.label}</p>
+                        </div>
+                      );
+                    })}
+                  </>
+                }
+              >
+                <div className='cursor-pointer hover:bg-gray-300  transition-all rounded-full w-7 h-7 flex justify-center items-center'>
+                  <CircleUser
+                    size={20}
+                    onClick={(e) => {
+                      setIsAssignOpenModal(true);
+                      e.stopPropagation();
+                    }}
+                    className=''
+                  />
+                </div>
+              </Modal>
+            </div>
           </div>
         );
       }}

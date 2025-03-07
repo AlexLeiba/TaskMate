@@ -111,6 +111,7 @@ export async function addNewListTitle(boardId: string, title: string) {
         boardId: boardId,
         title: title,
         order: lastOrderedList,
+        status: 'none',
       },
     });
 
@@ -217,6 +218,92 @@ export async function editListTitle(
   } catch (error: any) {
     return {
       error: error.message || 'Error on editing list title, please try again',
+      data: null,
+    };
+  }
+
+  revalidatePath(`/board/${boardId}`); // revalidate the path to update the cache
+
+  return {
+    data: list,
+    error: null,
+  };
+}
+
+export async function editListStatus(
+  boardId: string,
+  status: string,
+  listId: string
+) {
+  const { orgId } = await auth();
+
+  if (!orgId) {
+    return {
+      error: 'Organization not found',
+      data: null,
+    };
+  }
+
+  let list;
+  try {
+    // Will prevent creating a list if the board doesn't exist
+    const board = await db.board.findUnique({
+      where: {
+        id: boardId,
+        orgId: orgId,
+      },
+    });
+
+    if (!board) {
+      return {
+        error: 'Board not found',
+      };
+    }
+    //
+
+    const isListExist = await db.list.findUnique({
+      where: {
+        id: listId,
+      },
+    });
+
+    if (!isListExist) {
+      return {
+        error: 'List not found',
+      };
+    }
+
+    list = await db.list.update({
+      where: {
+        id: listId,
+        boardId: boardId,
+        board: {
+          orgId: orgId,
+        },
+      },
+      data: {
+        status: status,
+      },
+    });
+
+    if (!list) {
+      return {
+        error: 'Error on editing list title, please try again',
+        data: null,
+      };
+    }
+
+    // Activity
+    await createActivityLog({
+      entityId: board.id,
+      entityType: ENTITY_TYPE.LIST,
+      action: ACTIONS.UPDATE,
+      entityTitle: `Updated List status from  '${isListExist.status}' to '${status}' `,
+      boardTitle: board.title,
+    });
+  } catch (error: any) {
+    return {
+      error: error.message || 'Error on editing list status, please try again',
       data: null,
     };
   }
@@ -385,6 +472,7 @@ export async function copyList(boardId: string, listId: string) {
         boardId: boardId,
         title: listToCopyData.title + ' - Copy',
         order: newOrder,
+        status: 'none',
         cards: {
           createMany: {
             //copy cards as well
@@ -392,6 +480,10 @@ export async function copyList(boardId: string, listId: string) {
               title: card.title,
               description: card.description ? card.description : '',
               order: card.order,
+              priority: 'none',
+              assignedImageUrl: '',
+              assignedName: '',
+              assignedId: '',
             })),
           },
         },

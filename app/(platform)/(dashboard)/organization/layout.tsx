@@ -9,7 +9,7 @@ function OrganizationLayout({
     <>
       {/* gap-x-7 - to make space from sidebar to the body content */}
       {/* md:pl-0 - to remove spacing on left of the sidebar on tablet and desktop / on mobile px-4 */}
-      <main className='flex gap-x-4 mx-auto px-4 md:pl-0 '>
+      <main className='flex gap-x-4 mx-auto max-w-screen-2xl px-4 md:pl-0 '>
         {/* SIDEBAR */}
         {/* shrink 0 to prevent the sidebar from shrinking when the screen is resized */}
         {/* sidebar is hidden on mobile size */}

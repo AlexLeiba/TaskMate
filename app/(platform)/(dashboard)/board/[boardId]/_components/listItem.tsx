@@ -44,7 +44,7 @@ function ListItem({ data, index }: { data: ListWithCardsType; index: number }) {
           <li
             {...provided.draggableProps}
             ref={provided.innerRef}
-            className='shrink-0 h-full w-[270px] select-none mb-2'
+            className='shrink-0 h-full w-[300px] select-none mb-2'
           >
             <div
               {...provided.dragHandleProps} //by grabbind this handle we can drag the list
@@ -137,7 +137,7 @@ function ListItem({ data, index }: { data: ListWithCardsType; index: number }) {
                       />
                     }
                   >
-                    <div className=' text-white absolute top-1 right-2  cursor-pointer rounded-full p-1  hover:bg-white/60 transition-all '>
+                    <div className=' text-white absolute top-0 right-2  cursor-pointer rounded-full p-1  hover:bg-white/60 transition-all '>
                       <Ellipsis size={20} />
                     </div>
                   </ModalDropdown>

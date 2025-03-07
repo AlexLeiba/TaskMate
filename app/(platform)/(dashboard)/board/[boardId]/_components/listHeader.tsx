@@ -1,8 +1,21 @@
 'use client';
-import { List } from '@prisma/client';
+import { Card, List } from '@prisma/client';
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus, X } from 'lucide-react';
+import {
+  Archive,
+  Check,
+  Circle,
+  CircleCheck,
+  Clock,
+  Clock4,
+  Plus,
+  SearchCode,
+  Wifi,
+  WifiHigh,
+  WifiLow,
+  X,
+} from 'lucide-react';
 import { useEventListener, useOnClickOutside } from 'usehooks-ts';
 import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
@@ -11,13 +24,14 @@ import { createListSchema } from '@/lib/schemas';
 import { editListTitle } from '@/actions/action-board';
 import { useParams } from 'next/navigation';
 import { toast } from 'react-toastify';
+import { Modal } from '@/components/Modal/modal';
 
 function ListHeader({
   data,
   isEditing,
   setIsEditing,
 }: {
-  data: List;
+  data: List & { cards: Card[] };
   isEditing: boolean;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
@@ -81,6 +95,34 @@ function ListHeader({
 
   // When edit is enabled we will turn Add a list Button into Input
 
+  const listStatusOptions = [
+    {
+      label: 'Todo',
+      value: 'todo',
+      icon: <Circle />,
+    },
+    {
+      label: 'In Progress',
+      value: 'in-progress',
+      icon: <Clock4 />,
+    },
+    {
+      label: 'In Review',
+      value: 'in-review',
+      icon: <SearchCode />,
+    },
+    {
+      label: 'Done',
+      value: 'done',
+      icon: <CircleCheck />,
+    },
+    {
+      label: 'Backlog',
+      value: 'backlog',
+      icon: <Archive />,
+    },
+  ];
+
   if (isEditing) {
     return (
       <div
@@ -123,11 +165,45 @@ function ListHeader({
   }
 
   return (
-    <div
-      className='text-white body-sm  flex justify-between items-start gap-x-2 cursor-text py-1'
-      onClick={handleEnableEditing}
-    >
-      <p className='body-md font-semibold'>{data.title}</p>
+    <div className='text-white body-sm  flex  items-center gap-x-2 cursor-text py-2 pr-6'>
+      <div className='flex items-start gap-x-2'>
+        {/* STATUS SELECTOR */}
+        <Modal
+          contentClassName='w-[170px]  '
+          title='Status'
+          content={
+            <>
+              {listStatusOptions.map((data, index) => {
+                return (
+                  <div
+                    key={index}
+                    className='flex items-center justify-start gap-x-2 cursor-pointer mb-1 hover:bg-gray-300 h-4 py-4 px-2 rounded-md'
+                    onClick={() => {
+                      console.log(data.value);
+                    }}
+                  >
+                    {data.icon}
+                    <p>{data.label}</p>
+                  </div>
+                );
+              })}
+            </>
+          }
+        >
+          <div>
+            <div
+              role='button'
+              className='mt-px rounded-full border-2 border-white w-3 h-3 flex justify-center items-center hover:border-gray-400 text-white p-2'
+            />
+          </div>
+        </Modal>
+        {/*  */}
+
+        <div role='button' onClick={handleEnableEditing}>
+          <p className='body-md font-semibold line-clamp-2 '>{data.title}</p>
+        </div>
+        <p className='body-md text-gray-400 px-2'>{data?.cards?.length} </p>
+      </div>
     </div>
   );
 }

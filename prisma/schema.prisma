@@ -46,6 +46,8 @@ model List {
 
   cards     Card[]
 
+  status    String
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -59,6 +61,12 @@ model Card {
 
   listId   String
   list     List @relation(fields: [listId], references: [id],onDelete: Cascade)
+
+  priority String
+
+  assignedImageUrl String
+  assignedName String
+  assignedId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

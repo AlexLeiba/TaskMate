@@ -29,7 +29,7 @@ function Board({ board }: Board | any) {
           router.push(`/board/${board.id}`);
         }}
       >
-        <div className='relative w-full h-full  py-2 pl-2 pr-9'>
+        <div className='relative w-full h-full    '>
           {board.imageThumbUrl && (
             <Image
               fill

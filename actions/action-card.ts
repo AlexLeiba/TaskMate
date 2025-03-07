@@ -72,6 +72,10 @@ export async function createNewCardInList(
         listId: listId,
         title: title,
         order: newCardOrder,
+        assignedId: '',
+        assignedName: '',
+        assignedImageUrl: '',
+        priority: 'none',
       },
     });
 
@@ -261,6 +265,10 @@ export async function copyCard(
         title: cardToBeCopied.title + ' - Copy',
         description: cardToBeCopied.description,
         order: newCardOrder,
+        assignedId: '',
+        assignedName: '',
+        assignedImageUrl: '',
+        priority: 'none',
       },
     });
 
@@ -474,6 +482,214 @@ export async function editCard({
           ? `title of Card: '${editedCard.title}', from "${editedCard.title}" to "${title}"`
           : `description of Card: '${editedCard.title}`
       } `,
+      boardTitle: board.title,
+    });
+  } catch (error: any) {
+    return {
+      error: error.message || 'Error on editing card, please try again',
+      data: null,
+    };
+  }
+
+  revalidatePath(`/board/${boardId}`); // revalidate the path to update the cache
+
+  return {
+    data: newCard,
+    error: null,
+  };
+}
+export async function editPriorityCard({
+  priority,
+  boardId,
+  listId,
+  cardId,
+}: {
+  priority: string;
+  boardId: string;
+  listId: string;
+  cardId: string;
+}) {
+  const { orgId } = await auth();
+
+  if (!orgId) {
+    return {
+      error: 'Organization not found',
+      data: null,
+    };
+  }
+
+  let newCard;
+  try {
+    // Will prevent creating a list if the board doesn't exist
+    const board = await db.board.findUnique({
+      where: {
+        id: boardId,
+        orgId: orgId,
+      },
+    });
+
+    if (!board) {
+      return {
+        error: 'Board not found',
+      };
+    }
+    //
+
+    // Check if list exists
+    const currentList = await db.list.findUnique({
+      where: {
+        id: listId,
+        boardId: boardId,
+        board: {
+          orgId: orgId,
+        },
+      },
+    });
+
+    if (!currentList) {
+      return {
+        error: 'List not found, please try again',
+        data: null,
+      };
+    }
+
+    const editedCard = await db.card.findUnique({
+      where: {
+        id: cardId,
+        listId: listId,
+      },
+    });
+
+    if (!editedCard) {
+      return {
+        error: 'Card not found',
+        data: null,
+      };
+    }
+
+    newCard = await db.card.update({
+      where: {
+        id: cardId,
+        listId: listId,
+      },
+      data: {
+        listId: listId,
+        priority: priority,
+        order: editedCard.order,
+      },
+    });
+
+    // Activity
+    await createActivityLog({
+      entityId: newCard.id,
+      entityType: ENTITY_TYPE.CARD,
+      action: ACTIONS.UPDATE,
+      entityTitle: `Updated priority of Card: '${editedCard.title}' from '${editedCard.priority}' to '${priority}'`,
+      boardTitle: board.title,
+    });
+  } catch (error: any) {
+    return {
+      error: error.message || 'Error on editing card, please try again',
+      data: null,
+    };
+  }
+
+  revalidatePath(`/board/${boardId}`); // revalidate the path to update the cache
+
+  return {
+    data: newCard,
+    error: null,
+  };
+}
+export async function editAssignCard({
+  user,
+  boardId,
+  listId,
+  cardId,
+}: {
+  user: { fullName: string; imageUrl: string; id: string };
+  boardId: string;
+  listId: string;
+  cardId: string;
+}) {
+  const { orgId } = await auth();
+
+  if (!orgId) {
+    return {
+      error: 'Organization not found',
+      data: null,
+    };
+  }
+
+  let newCard;
+  try {
+    // Will prevent creating a list if the board doesn't exist
+    const board = await db.board.findUnique({
+      where: {
+        id: boardId,
+        orgId: orgId,
+      },
+    });
+
+    if (!board) {
+      return {
+        error: 'Board not found',
+      };
+    }
+    //
+
+    // Check if list exists
+    const currentList = await db.list.findUnique({
+      where: {
+        id: listId,
+        boardId: boardId,
+        board: {
+          orgId: orgId,
+        },
+      },
+    });
+
+    if (!currentList) {
+      return {
+        error: 'List not found, please try again',
+        data: null,
+      };
+    }
+
+    const editedCard = await db.card.findUnique({
+      where: {
+        id: cardId,
+        listId: listId,
+      },
+    });
+
+    if (!editedCard) {
+      return {
+        error: 'Card not found',
+        data: null,
+      };
+    }
+
+    newCard = await db.card.update({
+      where: {
+        id: cardId,
+        listId: listId,
+      },
+      data: {
+        listId: listId,
+        assignedImageUrl: user.imageUrl,
+        assignedName: user.fullName,
+        assignedId: user.id,
+        order: editedCard.order,
+      },
+    });
+
+    // Activity
+    await createActivityLog({
+      entityId: newCard.id,
+      entityType: ENTITY_TYPE.CARD,
+      action: ACTIONS.UPDATE,
+      entityTitle: `Assigned Card: '${editedCard.title}' to '${user.fullName}'`,
       boardTitle: board.title,
     });
   } catch (error: any) {

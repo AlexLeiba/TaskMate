@@ -174,11 +174,6 @@ export default function ListContainer({ listData, boardId }: Props) {
           destination.droppableId
         );
 
-        console.log(
-          '🚀 ~ onDragEnd ~ reorderedListItems:',
-          destination.droppableId
-        );
-
         if (response.error) {
           toast.error(response.error);
         }

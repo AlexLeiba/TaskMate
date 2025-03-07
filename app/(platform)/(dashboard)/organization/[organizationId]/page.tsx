@@ -43,7 +43,7 @@ async function OrganizationPage({}: {
           </div>
 
           {/* BOARDS LIST */}
-          <div className=' grid grid-cols-2 sm:gid-cols-3 lg:grid-cols-4 gap-4'>
+          <div className=' grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4'>
             {boards?.map((board) => (
               <Board board={board} key={board.id} />
             ))}
