@@ -3,22 +3,13 @@ import { Separator } from '@/components/ui/separator';
 import { Spacer } from '@/components/ui/spacer';
 import { redirect } from 'next/navigation';
 import { auth } from '@clerk/nextjs/server';
-import { User, Info as InfoIcon } from 'lucide-react';
-import {
-  TooltipProvider,
-  TooltipTrigger,
-  Tooltip,
-  TooltipContent,
-} from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
-import { Modal } from '@/components/Modal/modal';
+import { User } from 'lucide-react';
 import { db } from '@/lib/db';
-import FormBoard from './_components/formBoard';
 import Board from './_components/board';
 import Info from './_components/info';
+import CreateNewBoardModal from './_components/CreateNewBoardModal';
 
-async function OrganizationPage({}: // params,
-{
+async function OrganizationPage({}: {
   params: { organizationId: Promise<string> };
 }) {
   const { orgId } = await auth();
@@ -56,50 +47,12 @@ async function OrganizationPage({}: // params,
             {boards?.map((board) => (
               <Board board={board} key={board.id} />
             ))}
-            <Modal
-              contentClassName='w-[450px] bg-gray-300'
-              title='Create a board'
-              description=''
-              sideOffset={-40}
-              side='top'
-              content={<FormBoard type='boards' />}
-            >
-              <div
-                role='button'
-                className='inline-flex pl-3 pr-12 py-3 h-28 bg-gray-200 relative rounded-md hover:opacity-80'
-              >
-                <div className='flex flex-col'>
-                  Create new board
-                  <p className='body-xs text-gray-600'>10 remaining</p>
-                </div>
-                <TooltipProvider delayDuration={250}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <InfoIcon
-                        size={20}
-                        className={cn([
-                          'z-20 cursor-help',
-                          'absolute right-2 top-1/2 -translate-y-1/2',
-                          'text-gray-400',
-                          'right-3',
-                        ])}
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      dark={false}
-                      iconHelpTooltip={{
-                        title:
-                          'Free workspaces can have up to 5 open boards, for unlimited boards upgrade the plan!',
-                        description: '',
-                      }}
-                    />
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-            </Modal>
+
+            <CreateNewBoardModal />
           </div>
         </div>
       </div>
+      <Spacer size={32} />
     </div>
   );
 }

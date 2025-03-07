@@ -1,5 +1,5 @@
 'use client';
-import React, { ElementRef, useEffect } from 'react';
+import React from 'react';
 import ListWrapper from './listWrapper';
 import { Button } from '@/components/ui/button';
 import { Plus, X } from 'lucide-react';

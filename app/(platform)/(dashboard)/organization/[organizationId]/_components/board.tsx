@@ -3,7 +3,7 @@ import { deleteBoard } from '@/actions/action-dashboard';
 import { Button } from '@/components/ui/button';
 import Modal from '@/components/ui/modal-dialog';
 import { type Board } from '@prisma/client';
-import { Info, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -29,7 +29,7 @@ function Board({ board }: Board | any) {
           router.push(`/board/${board.id}`);
         }}
       >
-        <div className='relative w-full h-full z-40 py-2 pl-2 pr-9'>
+        <div className='relative w-full h-full  py-2 pl-2 pr-9'>
           {board.imageThumbUrl && (
             <Image
               fill

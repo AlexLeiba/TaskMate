@@ -6,7 +6,7 @@ import { createCardSchema } from '@/lib/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus, X } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import React, { RefObject, useRef } from 'react';
+import React, { RefObject } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useEventListener, useOnClickOutside } from 'usehooks-ts';

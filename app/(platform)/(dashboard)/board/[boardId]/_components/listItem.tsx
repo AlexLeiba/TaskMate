@@ -75,6 +75,7 @@ function ListItem({ data, index }: { data: ListWithCardsType; index: number }) {
                         data?.cards.length > 0 ? 'mt-2' : 'mt-0'
                       )}
                     >
+                      {/* ON OPEN A CARD MODAL */}
                       {data.cards.map((card, index) => (
                         <Modal
                           open={cardModalOpen}
@@ -103,28 +104,10 @@ function ListItem({ data, index }: { data: ListWithCardsType; index: number }) {
                         </Modal>
                       ))}
                       {provided.placeholder}
-
-                      {/* <Modal
-                        open={isDeleteModalOpen}
-                        onOpenChange={() => setIsDeleteModalOpen(false)}
-                        onConfirm={handleDeleteList}
-                        positionFooter={'horizontal-fill'}
-                        positionHeader={'left-aligned'}
-                        title={'Delete list'}
-                        description={`This action cannot be undone. Are you sure you want to delete  "${cardData?.title}" card?`}
-                        triggerTitle={''}
-                        customConfirmButtonText='Delete list'
-                      /> */}
                     </ol>
                   );
                 }}
               </Droppable>
-
-              {/* CARD MODAL */}
-              {/* <CardModalContent
-                cardModalOpen={cardModalOpen}
-                setCardModalOpen={setCardModalOpen}
-              /> */}
 
               {/* ADD CARD FORM */}
               {!isEditingListHeader && (

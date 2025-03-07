@@ -1,7 +1,7 @@
 'use client';
 import { Card } from '@prisma/client';
 import React, { useState } from 'react';
-import { Droppable, Draggable } from '@hello-pangea/dnd';
+import { Draggable } from '@hello-pangea/dnd';
 import { Ellipsis } from 'lucide-react';
 import { Modal } from '@/components/Modal/modal';
 import { CardModalMenuContent } from './cardModalMenuContent';

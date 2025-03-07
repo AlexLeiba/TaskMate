@@ -44,7 +44,7 @@ type Props = {
   hideConfirm?: boolean;
   disabledConfirmButton?: boolean;
 
-  onConfirm: () => void;
+  onConfirm?: () => void;
   onCancel?: () => void;
   onLinkButton?: () => void;
   onCheckbox?: (checked: boolean) => void;

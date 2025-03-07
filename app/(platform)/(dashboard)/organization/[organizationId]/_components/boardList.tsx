@@ -9,7 +9,6 @@ import {
 import { cn } from '@/lib/utils';
 import { Modal } from '@/components/Modal/modal';
 import FormBoard from './formBoard';
-import { db } from '@/lib/db';
 import Board from './board';
 
 async function BoardList({

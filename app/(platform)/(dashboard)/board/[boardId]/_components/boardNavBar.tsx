@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Spacer } from '@/components/ui/spacer';
 
 import { type Board as BoardType } from '@prisma/client';
-import { Edit, Ellipsis, X } from 'lucide-react';
+import { Ellipsis, X } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'react-toastify';

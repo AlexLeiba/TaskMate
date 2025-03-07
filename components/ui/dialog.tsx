@@ -257,7 +257,7 @@ const DialogFooter = ({
   disabledConfirmButton?: boolean;
 
   onCancel?: () => void;
-  onConfirm: () => void;
+  onConfirm?: () => void;
   onLinkButton?: () => void;
   onCheckbox?: (checked: boolean) => void;
 }) => {
@@ -338,7 +338,7 @@ const DialogFooter = ({
             variant={'destructive'}
             onClick={(e) => {
               e.stopPropagation();
-              onConfirm();
+              onConfirm?.();
             }}
           >
             {customConfirmButtonText || 'Confirm'}

@@ -9,22 +9,20 @@ import { DEFAULT_IMAGES } from '@/consts/images';
 import { useFormContext } from 'react-hook-form';
 
 type Props = {
-  id: string;
+  type: 'header' | 'boards';
+  setSelectedImageId: React.Dispatch<React.SetStateAction<string | null>>;
+  selectedImageId: string | null;
 };
 
-function ImagePicker({ id }: Props) {
+function ImagePicker({ type, setSelectedImageId, selectedImageId }: Props) {
   const {
     setValue,
     formState: { errors },
   } = useFormContext();
 
   const [images, setImages] = React.useState<Array<Record<string, any>>>([]);
-  console.log('🚀 ~ ImagePicker ~ images:', images);
 
   const [isLoading, setIsLoading] = React.useState(false);
-  const [selectedImageId, setSelectedImageId] = React.useState<string | null>(
-    null
-  );
 
   async function fetchImages() {
     setIsLoading(true);
@@ -33,7 +31,7 @@ function ImagePicker({ id }: Props) {
     try {
       const result = await unsplash.photos.getRandom({
         collectionIds: ['317099'], //ids of a specific collection from library
-        count: 9,
+        count: type === 'boards' ? 10 : 6,
       });
 
       if (result && result.response) {
@@ -58,7 +56,7 @@ function ImagePicker({ id }: Props) {
   }
 
   // SKELETON
-  const skeletonData = Array(9).fill(0);
+  const skeletonData = new Array(type === 'boards' ? 10 : 6).fill(0);
 
   function imageSkeleton() {
     return (
@@ -68,9 +66,10 @@ function ImagePicker({ id }: Props) {
             <div
               key={index}
               className={cn(
-                'rounded-md bg-gray-200 animate-pulse  relative cursor-pointer aspect-video group hover:opacity-50 transition bg-muted w-[135px] h-24  z-10'
+                type === 'boards' ? 'lg:max-w-[135px]' : 'max-w-[135px]',
+                'rounded-md !bg-gray-400 animate-pulse  relative cursor-pointer aspect-video group hover:opacity-50 transition bg-muted  h-24  z-10'
               )}
-            />
+            ></div>
           );
         })}
       </>
@@ -109,10 +108,11 @@ function ImagePicker({ id }: Props) {
                 }}
                 className={cn(
                   'relative',
+                  type === 'boards' ? 'lg:max-w-[135px]' : 'max-w-[135px]',
                   isLoading && ' hover:opacity-90 cursor-auto',
                   selectedImageId === image.id &&
                     'border-2 border-white   transition-all',
-                  'relative rounded-md cursor-pointer aspect-video group hover:opacity-90 transition bg-muted w-[135px] h-24  z-10'
+                  'relative rounded-md cursor-pointer aspect-video group hover:opacity-90 transition bg-muted   h-24  z-10'
                 )}
               >
                 <Image
@@ -146,10 +146,16 @@ function ImagePicker({ id }: Props) {
             );
           })
         : imageSkeleton()}
+
       <p className='body-xs text-red-500'>{errors?.image?.message as string}</p>
 
       <div className='w-full flex justify-end'>
-        <Button size={'sm'} onClick={handleRefetchImages} disabled={isLoading}>
+        <Button
+          type='button'
+          size={'sm'}
+          onClick={handleRefetchImages}
+          disabled={isLoading}
+        >
           {isLoading ? (
             <div className=' flex items-center justify-center'>
               <Loader2 className='w-5 h-5 animate-spin text-white' />
