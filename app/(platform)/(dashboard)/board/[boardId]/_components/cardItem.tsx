@@ -4,15 +4,14 @@ import React, { useState } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
 import {
   Check,
-  CircleUser,
   Ellipsis,
+  UserRoundPlus,
   Wifi,
   WifiHigh,
   WifiLow,
 } from 'lucide-react';
 import { Modal } from '@/components/Modal/modal';
 import { CardModalMenuContent } from './cardModalMenuContent';
-import { setPriority } from 'os';
 import { cn } from '@/lib/utils';
 
 function CardItem({
@@ -83,10 +82,10 @@ function CardItem({
             ref={provided.innerRef}
             tabIndex={0}
             role='button'
-            className='relative min-h-12 p-2 bg-white/90 rounded-md mb-2 w-full hover:ring-1 hover:ring-gray-500 hover:bg-white/70 shadow-md !cursor-pointer flex justify-between items-start flex-col'
+            className='relative min-h-12 p-2 bg-white/70 rounded-md mb-2 w-full hover:ring-1 hover:ring-gray-500 hover:bg-white/80 shadow-md !cursor-pointer flex justify-between items-start flex-col'
           >
             <p className='pr-6 pb-1'>{data.title}</p>
-
+            {/* ELLIPSIS */}
             <Modal
               onClose={() => setIsCardModalOpen(!isCardModalOpen)}
               title='Card Options'
@@ -100,7 +99,7 @@ function CardItem({
                   setIsCardModalOpen(true);
                   e.stopPropagation();
                 }}
-                className='absolute top-1 right-2 cursor-pointer hover:bg-gray-300  transition-all rounded-full w-7 h-7 p-1'
+                className='absolute top-2 right-2 cursor-pointer hover:bg-gray-800 hover:text-white transition-all rounded-full w-7 h-7 p-1'
               />
             </Modal>
 
@@ -119,8 +118,8 @@ function CardItem({
                           key={index}
                           className={cn(
                             selectPriority.value === data.value &&
-                              'bg-gray-400 text-white',
-                            'flex items-center justify-start gap-x-4 cursor-pointer mb-1 hover:bg-gray-300 hover:text-black h-4 py-4 px-2 rounded-md'
+                              'bg-gray-800 text-white',
+                            'flex items-center justify-start gap-x-4 cursor-pointer mb-1 hover:bg-gray-400 hover:text-white h-4 py-4 px-2 rounded-md'
                           )}
                           onClick={() => {
                             setSelectPriority(data);
@@ -147,9 +146,9 @@ function CardItem({
                     setIsPrioritiesOpenModal(true);
                     e.stopPropagation();
                   }}
-                  className='w-6 h-6 rounded-md border-[1px] bg-white border-gray-400 hover:border-gray-200 flex justify-center items-center'
+                  className='w-6 h-6 rounded-md border-[2px] bg-gray-800 border-white hover:border-gray-300 flex justify-center items-center'
                 >
-                  <div className=' flex justify-center items-center'>
+                  <div className='text-white flex justify-center items-center'>
                     {selectPriority.icon}
                   </div>
                 </div>
@@ -168,7 +167,7 @@ function CardItem({
                       return (
                         <div
                           key={index}
-                          className='flex items-center justify-start gap-x-2 cursor-pointer mb-1 hover:bg-gray-300 h-4 py-4 px-2 rounded-md'
+                          className='flex items-center justify-start gap-x-2 cursor-pointer mb-1 hover:bg-gray-800 h-4 py-4 px-2 rounded-md'
                           onClick={() => {
                             console.log(data.value);
                           }}
@@ -181,9 +180,9 @@ function CardItem({
                   </>
                 }
               >
-                <div className='cursor-pointer hover:bg-gray-300  transition-all rounded-full w-7 h-7 flex justify-center items-center'>
-                  <CircleUser
-                    size={20}
+                <div className='cursor-pointer hover:bg-gray-800 hover:text-white  transition-all rounded-full w-7 h-7 flex justify-center items-center'>
+                  <UserRoundPlus
+                    size={15}
                     onClick={(e) => {
                       setIsAssignOpenModal(true);
                       e.stopPropagation();
