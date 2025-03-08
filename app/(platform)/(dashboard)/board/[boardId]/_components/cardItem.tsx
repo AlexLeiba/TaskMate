@@ -1,6 +1,6 @@
 'use client';
 import { Card } from '@prisma/client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
 import {
   Check,
@@ -13,6 +13,45 @@ import {
 import { Modal } from '@/components/Modal/modal';
 import { CardModalMenuContent } from './cardModalMenuContent';
 import { cn } from '@/lib/utils';
+import { editAssignCard, editPriorityCard } from '@/actions/action-card';
+import { toast } from 'react-toastify';
+import { useParams } from 'next/navigation';
+import { useAuth } from '@clerk/nextjs';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Fetcher } from '@/lib/fetcher';
+import { AssignCardUserList } from './assignCardUserList';
+
+const cardPrioritiesOptions = [
+  {
+    label: 'None',
+    value: 'none',
+    icon: <div className='w-4 h-4 flex justify-center items-center'>...</div>,
+  },
+  {
+    label: 'Urgent',
+    value: 'urgent',
+    icon: (
+      <div className='w-5 h-5 bg-red-400 rounded-sm flex justify-center items-center'>
+        !
+      </div>
+    ),
+  },
+  {
+    label: 'High',
+    value: 'high',
+    icon: <Wifi size={20} className='text-red-500' />,
+  },
+  {
+    label: 'Medium',
+    value: 'medium',
+    icon: <WifiHigh size={20} className='text-yellow-500' />,
+  },
+  {
+    label: 'Low',
+    value: 'low',
+    icon: <WifiLow size={20} className='text-green-500' />,
+  },
+];
 
 function CardItem({
   data,
@@ -25,8 +64,11 @@ function CardItem({
   listId: string;
   onClick: () => void;
 }) {
+  const params = useParams();
+  const boardId = params?.boardId;
+
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
-  const [isAssignOpenModal, setIsAssignOpenModal] = useState(false);
+
   const [isPrioritiesOpenModal, setIsPrioritiesOpenModal] = useState(false);
   const [selectPriority, setSelectPriority] = useState<{
     label: string;
@@ -38,37 +80,35 @@ function CardItem({
     icon: <>...</>,
   });
 
-  const cardPrioritiesOptions = [
-    {
-      label: 'None',
-      value: 'none',
-      icon: <div className='w-4 h-4 flex justify-center items-center'>...</div>,
-    },
-    {
-      label: 'Urgent',
-      value: 'urgent',
-      icon: (
-        <div className='w-5 h-5 bg-red-400 rounded-sm flex justify-center items-center'>
-          !
-        </div>
-      ),
-    },
-    {
-      label: 'High',
-      value: 'high',
-      icon: <Wifi size={20} className='text-red-500' />,
-    },
-    {
-      label: 'Medium',
-      value: 'medium',
-      icon: <WifiHigh size={20} className='text-yellow-500' />,
-    },
-    {
-      label: 'Low',
-      value: 'low',
-      icon: <WifiLow size={20} className='text-green-500' />,
-    },
-  ];
+  useEffect(() => {
+    const selectedPriority = cardPrioritiesOptions.find(
+      (priority) => priority.value === data.priority
+    );
+    if (!selectedPriority) return;
+    setSelectPriority(selectedPriority);
+  }, []);
+
+  async function handleAddCardPriority(priority: {
+    label: string;
+    value: string;
+    icon: React.JSX.Element;
+  }) {
+    setSelectPriority(priority);
+
+    const response = await editPriorityCard({
+      priority: priority.value,
+      boardId: boardId as string,
+      listId,
+      cardId: data.id,
+    });
+
+    if (response?.data) {
+      toast.success('Card priority was edited successfully');
+    }
+    if (response?.error) {
+      toast.error(response?.error);
+    }
+  }
 
   return (
     <Draggable draggableId={data.id} index={index}>
@@ -122,8 +162,8 @@ function CardItem({
                             'flex items-center justify-start gap-x-4 cursor-pointer mb-1 hover:bg-gray-400 hover:text-white h-4 py-4 px-2 rounded-md'
                           )}
                           onClick={() => {
-                            setSelectPriority(data);
-                            console.log(data.value);
+                            handleAddCardPriority(data);
+
                             setIsPrioritiesOpenModal(false);
                           }}
                         >
@@ -155,42 +195,11 @@ function CardItem({
               </Modal>
 
               {/* ASSIGN TASK */}
-
-              <Modal
-                contentClassName='w-[170px]  '
-                onClose={() => setIsAssignOpenModal(!isAssignOpenModal)}
-                title='Assign'
-                isOpen={isAssignOpenModal}
-                content={
-                  <>
-                    {cardPrioritiesOptions.map((data, index) => {
-                      return (
-                        <div
-                          key={index}
-                          className='flex items-center justify-start gap-x-2 cursor-pointer mb-1 hover:bg-gray-800 h-4 py-4 px-2 rounded-md'
-                          onClick={() => {
-                            console.log(data.value);
-                          }}
-                        >
-                          {data.icon}
-                          <p>{data.label}</p>
-                        </div>
-                      );
-                    })}
-                  </>
-                }
-              >
-                <div className='cursor-pointer hover:bg-gray-800 hover:text-white  transition-all rounded-full w-7 h-7 flex justify-center items-center'>
-                  <UserRoundPlus
-                    size={15}
-                    onClick={(e) => {
-                      setIsAssignOpenModal(true);
-                      e.stopPropagation();
-                    }}
-                    className=''
-                  />
-                </div>
-              </Modal>
+              <AssignCardUserList
+                card={data}
+                listId={listId}
+                boardId={boardId as string}
+              />
             </div>
           </div>
         );

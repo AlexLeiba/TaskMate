@@ -10,7 +10,6 @@ type ActivityType = {
 };
 
 export function ActivityList({ items }: ActivityType) {
-  console.log('🚀 ~ ActivityList ~ items:', items);
   return (
     <div className=' flex items-start gap-x-3 w-full'>
       <ActivityIcon />
@@ -21,7 +20,6 @@ export function ActivityList({ items }: ActivityType) {
         <ol className='mb-2 '>
           {items && items.length > 0 ? (
             items.map((data) => {
-              console.log('🚀 ~ items.map ~ data:', data);
               return (
                 <div className='flex gap-2 items-center mb-3' key={data.id}>
                   <div className='flex flex-col items-start justify-start w-[35px]'>

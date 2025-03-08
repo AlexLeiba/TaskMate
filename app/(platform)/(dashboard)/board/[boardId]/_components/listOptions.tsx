@@ -25,7 +25,7 @@ function ListOptions({
 
   async function handleDeleteList() {
     setIsDeleteModalOpen(false);
-    console.log('handleDeleteList');
+
     const response = await deleteList(data.boardId, data.id);
 
     if (response?.error) {

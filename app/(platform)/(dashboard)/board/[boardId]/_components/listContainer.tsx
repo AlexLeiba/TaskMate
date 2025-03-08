@@ -36,7 +36,6 @@ export default function ListContainer({ listData, boardId }: Props) {
 
   //////////////////DRAG AND DROP FUNCTIONS ///////////////////
   async function onDragEnd(result: any) {
-    console.log('🚀 ~ onDragEnd ~ result:', result);
     const { destination, source, type, draggableId } = result;
 
     if (!source?.droppableId || !destination?.droppableId) {
