@@ -1,14 +1,12 @@
 'use client';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Fetcher } from '@/lib/fetcher';
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '@clerk/nextjs';
 import { editAssignCard } from '@/actions/action-card';
 import { toast } from 'react-toastify';
 import { Modal } from '@/components/Modal/modal';
 import { Check, User, UserRoundPlus } from 'lucide-react';
 import Image from 'next/image';
-import { set } from 'date-fns';
 import { Card } from '@prisma/client';
 import { cn } from '@/lib/utils';
 
@@ -22,10 +20,6 @@ export function AssignCardUserList({
   boardId: string;
 }) {
   const [isAssignOpenModal, setIsAssignOpenModal] = useState(false);
-
-  const { orgId } = useAuth();
-
-  const queryClient = useQueryClient();
 
   const [selectAssignUser, setSelectAssignUser] = useState<{
     imageUrl: string;
@@ -41,7 +35,6 @@ export function AssignCardUserList({
     queryKey: ['getUsers', card.id],
     queryFn: () => Fetcher(`/api/getUsers`),
   });
-  console.log('🚀 ~ organizationUsers:\n\n\n\n=>>', selectedOrganizationUsers);
 
   useEffect(() => {
     const selectedUser = selectedOrganizationUsers?.find((data: any) => {
@@ -53,13 +46,11 @@ export function AssignCardUserList({
     }
   }, [selectedOrganizationUsers]);
 
-  // const users = getUsers
   async function handleAssignCardToUser(user: {
     imageUrl: string;
     fullName: string;
     id: string;
   }) {
-    // queryClient.invalidateQueries({ queryKey: ['getUsers', data.id] });
     setIsAssignOpenModal(false);
     setSelectAssignUser(user);
 

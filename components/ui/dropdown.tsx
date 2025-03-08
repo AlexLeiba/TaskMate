@@ -28,6 +28,7 @@ type Props = {
     label: string;
     value: string;
     image?: string;
+    id?: string;
   }>;
   type?: 'input' | 'search';
   size?: 'small' | 'medium';

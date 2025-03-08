@@ -1,5 +1,10 @@
 'use client';
-import { copyCard, deleteCard, editCard } from '@/actions/action-card';
+import {
+  copyCard,
+  deleteCard,
+  editAssignCard,
+  editCard,
+} from '@/actions/action-card';
 import { ActivityList } from '@/components/Activity/activity';
 import { Button } from '@/components/ui/button';
 import Dropdown from '@/components/ui/dropdown';
@@ -9,7 +14,15 @@ import { TextArea } from '@/components/ui/textArea';
 import { Fetcher } from '@/lib/fetcher';
 import { Activity } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Check, Copy, Delete, Logs, MapPin } from 'lucide-react';
+import {
+  Check,
+  Copy,
+  Delete,
+  Logs,
+  MapPin,
+  UserRoundPlus,
+  Wifi,
+} from 'lucide-react';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -38,6 +51,39 @@ export function CardModalContent({
     queryFn: () => Fetcher(`/api/cards/${cardId}/activity`),
   });
 
+  const { data: selectedOrganizationUsers } = useQuery({
+    queryKey: ['getUsers', cardId],
+    queryFn: () => Fetcher(`/api/getUsers`),
+  });
+
+  const [organizationUsers, setOrganizationUsers] = useState<
+    {
+      image: string;
+      label: string;
+      id: string;
+      value: string;
+    }[]
+  >([
+    {
+      image: '',
+      label: 'No assignee',
+      id: '',
+      value: 'No assignee',
+    },
+  ]);
+
+  const [selectAssignUser, setSelectAssignUser] = useState<{
+    image: string;
+    label: string;
+    id: string;
+    value: string;
+  }>({
+    image: '',
+    label: 'No assignee',
+    id: '',
+    value: 'no-assignee',
+  });
+
   const {
     control,
     handleSubmit,
@@ -53,6 +99,36 @@ export function CardModalContent({
   useEffect(() => {
     setValue('description', cardData?.description);
     textareaRef.current?.blur();
+    const users = [
+      {
+        image: '',
+        label: 'No assignee',
+        id: '',
+        value: 'no-assignee',
+      },
+    ];
+    selectedOrganizationUsers &&
+      selectedOrganizationUsers.map((data: any) => {
+        const userData = {
+          image: data.imageUrl,
+          label: data.firstName + ' ' + data.lastName,
+          id: data.id,
+          value: data.id,
+        };
+        users.push(userData);
+      });
+    setOrganizationUsers(users);
+
+    // DEFAULT ASSIGNED
+    if (cardData?.assignedId) {
+      const userData = {
+        image: cardData?.assignedImageUrl,
+        label: cardData?.assignedName,
+        id: cardData?.assignedId,
+        value: cardData?.assignedId,
+      };
+      setSelectAssignUser(userData);
+    }
   }, [cardData]);
 
   async function onSubmit({ description }: { description: string }) {
@@ -104,6 +180,44 @@ export function CardModalContent({
       toast.success('Card copied successfully');
     }
   }
+
+  async function handleAssignCardToUser(userId: string) {
+    const selectedUser =
+      userId === 'no-assignee'
+        ? {
+            image: '',
+            label: '',
+            id: '',
+            value: '',
+          }
+        : organizationUsers.find((data: any) => {
+            return data.id === userId;
+          });
+
+    if (!selectedUser) {
+      return;
+    }
+
+    setSelectAssignUser(selectedUser);
+
+    const response = await editAssignCard({
+      user: {
+        fullName: selectedUser.label,
+        imageUrl: selectedUser.image,
+        id: selectedUser.id,
+      },
+      boardId: boardId as string,
+      listId,
+      cardId,
+    });
+
+    if (response?.error) {
+      toast.error(response?.error);
+    }
+    if (response?.data) {
+      toast.success('Card was assigned successfully');
+    }
+  }
   return (
     <div>
       {/* LIST LOCATION */}
@@ -153,55 +267,60 @@ export function CardModalContent({
               </form>
             </div>
           </div>
-          {/* STATUS */}
-          <div className='w-[200px]'>
-            <div className='flex gap-2'>
-              <Check />
-              <p className='body-md font-semibold'>Status</p>
-            </div>
-            <Spacer size={2} />
-            <Controller
-              name='status'
-              control={control}
-              defaultValue=''
-              render={({ field: { onChange, value, ref } }) => (
-                <Dropdown
-                  defaultValue={value}
-                  label=''
-                  options={[
-                    { label: 'None', value: 'none', image: '' },
-                    { label: 'Todo', value: 'todo', image: '/todo.png' },
-                    {
-                      label: 'Progress',
-                      value: 'progress',
-                      image: '/progress.png',
-                    },
-                    { label: 'Done', value: 'Done', image: '/check.png' },
-                  ]}
-                  onChange={onChange}
-                  value={value}
-                />
-              )}
-            />
-            <Spacer size={7} />
-            <p className='body-md font-medium'>Actions</p>
-            <Spacer size={2} />
+          <div>
+            {/* ASSIGNED */}
+            <div className='w-[250px]'>
+              <div className='flex gap-2 items-center'>
+                <UserRoundPlus />
+                <p className='body-md font-semibold'>Assigne to</p>
+              </div>
+              <Spacer size={2} />
 
-            <div className='flex flex-col gap-2 '>
-              <Button
-                variant={'secondary'}
-                className='w-full justify-start'
-                onClick={handleCopyCard}
-              >
-                <Copy /> Copy
-              </Button>
-              <Button
-                variant={'destructive'}
-                className='w-full justify-start'
-                onClick={() => setIsDeleteModalOpen(true)}
-              >
-                <Delete /> Delete
-              </Button>
+              <Dropdown
+                // defaultValue={selectAssignUser.value}
+                label=''
+                options={organizationUsers}
+                onChange={(v) => handleAssignCardToUser(v)}
+                value={selectAssignUser.value}
+              />
+            </div>
+            {/* PRIORITY */}
+            <Spacer size={7} />
+            <div className='w-[250px]'>
+              <div className='flex gap-2 items-center'>
+                <Wifi />
+                <p className='body-md font-semibold'>Priority</p>
+              </div>
+              <Spacer size={2} />
+
+              <Dropdown
+                // defaultValue={selectAssignUser.value}
+                label=''
+                options={organizationUsers}
+                onChange={(v) => handleAssignCardToUser(v)}
+                value={selectAssignUser.value}
+              />
+
+              <Spacer size={7} />
+              <p className='body-md font-medium'>Actions</p>
+              <Spacer size={2} />
+
+              <div className='flex flex-col gap-2 '>
+                <Button
+                  variant={'secondary'}
+                  className='w-full justify-start'
+                  onClick={handleCopyCard}
+                >
+                  <Copy /> Copy
+                </Button>
+                <Button
+                  variant={'destructive'}
+                  className='w-full justify-start'
+                  onClick={() => setIsDeleteModalOpen(true)}
+                >
+                  <Delete /> Delete
+                </Button>
+              </div>
             </div>
           </div>
         </div>

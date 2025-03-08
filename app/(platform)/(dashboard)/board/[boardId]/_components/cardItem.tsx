@@ -2,23 +2,13 @@
 import { Card } from '@prisma/client';
 import React, { useEffect, useState } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
-import {
-  Check,
-  Ellipsis,
-  UserRoundPlus,
-  Wifi,
-  WifiHigh,
-  WifiLow,
-} from 'lucide-react';
+import { Check, Ellipsis, Wifi, WifiHigh, WifiLow } from 'lucide-react';
 import { Modal } from '@/components/Modal/modal';
 import { CardModalMenuContent } from './cardModalMenuContent';
 import { cn } from '@/lib/utils';
-import { editAssignCard, editPriorityCard } from '@/actions/action-card';
+import { editPriorityCard } from '@/actions/action-card';
 import { toast } from 'react-toastify';
 import { useParams } from 'next/navigation';
-import { useAuth } from '@clerk/nextjs';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Fetcher } from '@/lib/fetcher';
 import { AssignCardUserList } from './assignCardUserList';
 
 const cardPrioritiesOptions = [
