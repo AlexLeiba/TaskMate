@@ -1,9 +1,11 @@
 'use client';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   copyCard,
   deleteCard,
   editAssignCard,
   editCard,
+  editPriorityCard,
 } from '@/actions/action-card';
 import { ActivityList } from '@/components/Activity/activity';
 import { Button } from '@/components/ui/button';
@@ -12,22 +14,14 @@ import Modal from '@/components/ui/modal-dialog';
 import { Spacer } from '@/components/ui/spacer';
 import { TextArea } from '@/components/ui/textArea';
 import { Fetcher } from '@/lib/fetcher';
-import { Activity } from '@prisma/client';
+import { Activity, Card } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  Check,
-  Copy,
-  Delete,
-  Logs,
-  MapPin,
-  UserRoundPlus,
-  Wifi,
-} from 'lucide-react';
+import { Copy, Delete, Logs, MapPin, UserRoundPlus, Wifi } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import React, { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useEventListener } from 'usehooks-ts';
+import { cardPrioritiesOptions } from './cardItem';
 
 export function CardModalContent({
   cardId,
@@ -36,13 +30,23 @@ export function CardModalContent({
   cardId: string;
   listId: string;
 }) {
+  const [loading, setLoading] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const params = useParams();
   const { boardId } = params;
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectPriority, setSelectPriority] = useState<{
+    label: string;
+    value: string;
+    icon: React.JSX.Element;
+  }>({
+    label: '',
+    value: '',
+    icon: <>...</>,
+  });
   const queryClient = useQueryClient();
 
-  const { data: cardData } = useQuery({
+  const { data: cardData } = useQuery<Card & { list: { title: string } }>({
     queryKey: ['card', cardId],
     queryFn: () => Fetcher(`/api/cards/${cardId}`),
   });
@@ -55,6 +59,7 @@ export function CardModalContent({
     queryKey: ['getUsers', cardId],
     queryFn: () => Fetcher(`/api/getUsers`),
   });
+  console.log('🚀 ~ selectedOrganizationUsers:', selectedOrganizationUsers);
 
   const [organizationUsers, setOrganizationUsers] = useState<
     {
@@ -92,13 +97,28 @@ export function CardModalContent({
   } = useForm({
     defaultValues: {
       description: cardData?.description || '',
-      status: cardData?.status || 'none',
     },
   });
 
   useEffect(() => {
-    setValue('description', cardData?.description);
+    setLoading(true);
+
+    setValue('description', cardData?.description as string);
     textareaRef.current?.blur();
+
+    // INITIAL STATE OF PRIORITY
+    if (cardData?.priority) {
+      const priorityData = cardPrioritiesOptions.find(
+        (priority) => priority.value === cardData?.priority
+      );
+      priorityData?.value && setSelectPriority(priorityData);
+    }
+
+    setLoading(false);
+  }, [cardData, cardId, boardId]);
+
+  useEffect(() => {
+    // INITIAL STATE OF ASSIGN TASK
     const users = [
       {
         image: '',
@@ -107,6 +127,7 @@ export function CardModalContent({
         value: 'no-assignee',
       },
     ];
+
     selectedOrganizationUsers &&
       selectedOrganizationUsers.map((data: any) => {
         const userData = {
@@ -129,7 +150,7 @@ export function CardModalContent({
       };
       setSelectAssignUser(userData);
     }
-  }, [cardData]);
+  }, [selectedOrganizationUsers]);
 
   async function onSubmit({ description }: { description: string }) {
     const response = await editCard({
@@ -215,7 +236,29 @@ export function CardModalContent({
       toast.error(response?.error);
     }
     if (response?.data) {
+      queryClient.invalidateQueries({ queryKey: ['getUsers', cardId] });
       toast.success('Card was assigned successfully');
+    }
+  }
+  async function handleAddCardPriority(value: string) {
+    const selectedPriorityData = cardPrioritiesOptions.find(
+      (priority) => priority.value === value
+    );
+
+    selectedPriorityData?.value && setSelectPriority(selectedPriorityData);
+
+    const response = await editPriorityCard({
+      priority: value,
+      boardId: boardId as string,
+      listId,
+      cardId,
+    });
+
+    if (response?.data) {
+      toast.success('Card priority was edited successfully');
+    }
+    if (response?.error) {
+      toast.error(response?.error);
     }
   }
   return (
@@ -277,7 +320,6 @@ export function CardModalContent({
               <Spacer size={2} />
 
               <Dropdown
-                // defaultValue={selectAssignUser.value}
                 label=''
                 options={organizationUsers}
                 onChange={(v) => handleAssignCardToUser(v)}
@@ -294,18 +336,17 @@ export function CardModalContent({
               <Spacer size={2} />
 
               <Dropdown
-                // defaultValue={selectAssignUser.value}
                 label=''
-                options={organizationUsers}
-                onChange={(v) => handleAssignCardToUser(v)}
-                value={selectAssignUser.value}
+                options={cardPrioritiesOptions}
+                onChange={(v) => handleAddCardPriority(v)}
+                value={selectPriority.value}
               />
 
               <Spacer size={7} />
               <p className='body-md font-medium'>Actions</p>
               <Spacer size={2} />
 
-              <div className='flex flex-col gap-2 '>
+              <div className='flex  gap-2 '>
                 <Button
                   variant={'secondary'}
                   className='w-full justify-start'

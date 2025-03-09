@@ -2,7 +2,14 @@
 import { Card } from '@prisma/client';
 import React, { useEffect, useState } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
-import { Check, Ellipsis, Wifi, WifiHigh, WifiLow } from 'lucide-react';
+import {
+  Check,
+  Ellipsis,
+  TriangleAlert,
+  Wifi,
+  WifiHigh,
+  WifiLow,
+} from 'lucide-react';
 import { Modal } from '@/components/Modal/modal';
 import { CardModalMenuContent } from './cardModalMenuContent';
 import { cn } from '@/lib/utils';
@@ -11,7 +18,7 @@ import { toast } from 'react-toastify';
 import { useParams } from 'next/navigation';
 import { AssignCardUserList } from './assignCardUserList';
 
-const cardPrioritiesOptions = [
+export const cardPrioritiesOptions = [
   {
     label: 'None',
     value: 'none',
@@ -20,16 +27,12 @@ const cardPrioritiesOptions = [
   {
     label: 'Urgent',
     value: 'urgent',
-    icon: (
-      <div className='w-5 h-5 bg-red-400 rounded-sm flex justify-center items-center'>
-        !
-      </div>
-    ),
+    icon: <TriangleAlert size={20} className='text-red-600' />,
   },
   {
     label: 'High',
     value: 'high',
-    icon: <Wifi size={20} className='text-red-500' />,
+    icon: <Wifi size={20} className='text-red-400' />,
   },
   {
     label: 'Medium',
@@ -42,6 +45,14 @@ const cardPrioritiesOptions = [
     icon: <WifiLow size={20} className='text-green-500' />,
   },
 ];
+
+const priorityOptionsIcon = {
+  high: <WifiHigh size={20} className='text-yellow-500' />,
+  medium: <Wifi size={20} className='text-yellow-500' />,
+  low: <WifiLow size={20} className='text-green-500' />,
+  none: <div className='w-4 h-4 flex justify-center items-center'>...</div>,
+  urgent: <TriangleAlert size={20} className='text-red-600' />,
+};
 
 function CardItem({
   data,
@@ -60,33 +71,10 @@ function CardItem({
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
 
   const [isPrioritiesOpenModal, setIsPrioritiesOpenModal] = useState(false);
-  const [selectPriority, setSelectPriority] = useState<{
-    label: string;
-    value: string;
-    icon: React.JSX.Element;
-  }>({
-    label: '',
-    value: '',
-    icon: <>...</>,
-  });
 
-  useEffect(() => {
-    const selectedPriority = cardPrioritiesOptions.find(
-      (priority) => priority.value === data.priority
-    );
-    if (!selectedPriority) return;
-    setSelectPriority(selectedPriority);
-  }, []);
-
-  async function handleAddCardPriority(priority: {
-    label: string;
-    value: string;
-    icon: React.JSX.Element;
-  }) {
-    setSelectPriority(priority);
-
+  async function handleAddCardPriority(value: string) {
     const response = await editPriorityCard({
-      priority: priority.value,
+      priority: value,
       boardId: boardId as string,
       listId,
       cardId: data.id,
@@ -142,28 +130,30 @@ function CardItem({
                 isOpen={isPrioritiesOpenModal}
                 content={
                   <>
-                    {cardPrioritiesOptions.map((data, index) => {
+                    {cardPrioritiesOptions.map((priorityData, index) => {
                       return (
                         <div
                           key={index}
                           className={cn(
-                            selectPriority.value === data.value &&
+                            data.priority === priorityData.value &&
                               'bg-gray-800 text-white',
                             'flex items-center justify-start gap-x-4 cursor-pointer mb-1 hover:bg-gray-400 hover:text-white h-4 py-4 px-2 rounded-md'
                           )}
                           onClick={() => {
-                            handleAddCardPriority(data);
+                            handleAddCardPriority(priorityData.value);
 
                             setIsPrioritiesOpenModal(false);
                           }}
                         >
                           <div>
                             <div className='flex justify-center items-center gap-x-2'>
-                              <div>{data.icon}</div>
-                              <p>{data.label}</p>
+                              <div className='flex justify-center items-center w-5 h-5'>
+                                {priorityData.icon}
+                              </div>
+                              <p>{priorityData.label}</p>
                             </div>
                           </div>
-                          {selectPriority.value === data.value && <Check />}
+                          {data.priority === priorityData.value && <Check />}
                         </div>
                       );
                     })}
@@ -179,7 +169,16 @@ function CardItem({
                   className='w-6 h-6 rounded-md border-[2px] bg-gray-800 border-white hover:border-gray-300 flex justify-center items-center'
                 >
                   <div className='text-white flex justify-center items-center'>
-                    {selectPriority.icon}
+                    {
+                      priorityOptionsIcon[
+                        data.priority as
+                          | 'high'
+                          | 'medium'
+                          | 'low'
+                          | 'none'
+                          | 'urgent'
+                      ]
+                    }
                   </div>
                 </div>
               </Modal>

@@ -1,7 +1,7 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
 import { Fetcher } from '@/lib/fetcher';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { editAssignCard } from '@/actions/action-card';
 import { toast } from 'react-toastify';
 import { Modal } from '@/components/Modal/modal';
@@ -21,30 +21,10 @@ export function AssignCardUserList({
 }) {
   const [isAssignOpenModal, setIsAssignOpenModal] = useState(false);
 
-  const [selectAssignUser, setSelectAssignUser] = useState<{
-    imageUrl: string;
-    fullName: string;
-    id: string;
-  }>({
-    imageUrl: '',
-    fullName: 'No assignee',
-    id: '',
-  });
-
   const { data: selectedOrganizationUsers } = useQuery({
     queryKey: ['getUsers', card.id],
     queryFn: () => Fetcher(`/api/getUsers`),
   });
-
-  useEffect(() => {
-    const selectedUser = selectedOrganizationUsers?.find((data: any) => {
-      return data.id === card.assignedId;
-    });
-
-    if (selectedUser) {
-      setSelectAssignUser(selectedUser);
-    }
-  }, [selectedOrganizationUsers]);
 
   async function handleAssignCardToUser(user: {
     imageUrl: string;
@@ -52,7 +32,6 @@ export function AssignCardUserList({
     id: string;
   }) {
     setIsAssignOpenModal(false);
-    setSelectAssignUser(user);
 
     const response = await editAssignCard({
       user: { fullName: user.fullName, imageUrl: user.imageUrl, id: user.id },
@@ -79,7 +58,7 @@ export function AssignCardUserList({
           <>
             <div
               className={cn(
-                selectAssignUser.id === '' && 'bg-gray-800 text-white',
+                card.assignedId === '' && 'bg-gray-800 text-white',
                 'flex items-center justify-between gap-2  cursor-pointer  hover:bg-gray-400 hover:text-white h-8 py-6 px-2 rounded-md mt-2'
               )}
               onClick={() => {
@@ -98,30 +77,32 @@ export function AssignCardUserList({
 
                 <p>{'No assignee'}</p>
               </div>
-              {selectAssignUser.id === '' && <Check />}
+              {card.assignedId === '' && <Check />}
             </div>
             {/* @ts-ignore */}
-            {selectedOrganizationUsers?.map((data, index) => {
+            {selectedOrganizationUsers?.map((orgUserData, index) => {
               return (
                 <div
                   key={index}
                   className={cn(
-                    data.id === selectAssignUser.id && 'bg-gray-800 text-white',
+                    orgUserData.id === card.assignedId &&
+                      'bg-gray-800 text-white',
                     'flex items-center justify-between gap-2  cursor-pointer  hover:bg-gray-400 hover:text-white h-8 py-6 px-2 rounded-md mt-2'
                   )}
                   onClick={() => {
                     const userData = {
-                      imageUrl: data.imageUrl,
-                      fullName: data.firstName + ' ' + data.lastName,
-                      id: data.id,
+                      imageUrl: orgUserData.imageUrl,
+                      fullName:
+                        orgUserData.firstName + ' ' + orgUserData.lastName,
+                      id: orgUserData.id,
                     };
                     handleAssignCardToUser(userData);
                   }}
                 >
                   <div className='flex gap-2 items-center'>
-                    {data.imageUrl ? (
+                    {orgUserData.imageUrl ? (
                       <Image
-                        src={data.imageUrl}
+                        src={orgUserData.imageUrl}
                         alt={'user'}
                         width={30}
                         height={30}
@@ -133,9 +114,9 @@ export function AssignCardUserList({
                       </div>
                     )}
 
-                    <p>{data.firstName + ' ' + data.lastName}</p>
+                    <p>{orgUserData.firstName + ' ' + orgUserData.lastName}</p>
                   </div>
-                  {data.id === selectAssignUser.id && <Check />}
+                  {orgUserData.id === card.assignedId && <Check />}
                 </div>
               );
             })}
@@ -143,10 +124,10 @@ export function AssignCardUserList({
         }
       >
         <div className='cursor-pointer hover:bg-gray-800 hover:text-white  transition-all rounded-full w-7 h-7 flex justify-center items-center'>
-          {selectAssignUser.id ? (
-            selectAssignUser.imageUrl ? (
+          {card.assignedId ? (
+            card.assignedImageUrl ? (
               <Image
-                src={selectAssignUser.imageUrl}
+                src={card.assignedImageUrl}
                 alt={'assigned-user'}
                 width={20}
                 height={20}

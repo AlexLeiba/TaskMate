@@ -1,10 +1,8 @@
-// pages/api/getUsers.ts
-
 import { auth, clerkClient } from '@clerk/nextjs/server';
-import type { NextApiRequest, NextApiResponse } from 'next';
+
 import { NextResponse } from 'next/server';
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET() {
   const { orgId, userId } = await auth();
 
   if (!orgId || !userId) {

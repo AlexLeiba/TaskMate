@@ -22,7 +22,6 @@ type Props = {
 function CardForm({
   listId,
   isEditingCard,
-  // textareaCardRef,
   disableEditingCard,
   enableEditingCard,
 }: Props) {

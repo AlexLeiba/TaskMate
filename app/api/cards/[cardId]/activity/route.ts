@@ -6,12 +6,10 @@ import { NextResponse } from 'next/server';
 export async function GET(
   req: Request,
   params: {
-    params: {
-      cardId: Promise<string>;
-    };
+    params: Promise<{ cardId: string }>;
   }
 ) {
-  const cardId = await params?.params?.cardId;
+  const { cardId } = await params.params;
 
   try {
     const { userId, orgId } = await auth();

@@ -206,7 +206,7 @@ function ListHeader({
         <Modal
           contentClassName='w-[200px]  '
           onClose={() => setIsPrioritiesOpenModal(!isPrioritiesOpenModal)}
-          title='Priority'
+          title='List Status'
           isOpen={isPrioritiesOpenModal}
           content={
             <>

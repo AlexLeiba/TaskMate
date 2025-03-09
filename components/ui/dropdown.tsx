@@ -29,6 +29,7 @@ type Props = {
     value: string;
     image?: string;
     id?: string;
+    icon?: React.JSX.Element;
   }>;
   type?: 'input' | 'search';
   size?: 'small' | 'medium';
@@ -209,6 +210,11 @@ function Dropdown({
                       width={24}
                       height={24}
                     />
+                  )}
+                  {category.icon && (
+                    <span className='flex items-center justify-center'>
+                      {category.icon}
+                    </span>
                   )}
 
                   {category.label}
