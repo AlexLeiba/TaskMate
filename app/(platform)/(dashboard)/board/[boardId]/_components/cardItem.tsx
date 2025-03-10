@@ -47,8 +47,8 @@ export const cardPrioritiesOptions = [
 ];
 
 const priorityOptionsIcon = {
-  high: <WifiHigh size={20} className='text-yellow-500' />,
-  medium: <Wifi size={20} className='text-yellow-500' />,
+  high: <Wifi size={20} className='text-red-400' />,
+  medium: <WifiHigh size={20} className='text-yellow-500' />,
   low: <WifiLow size={20} className='text-green-500' />,
   none: <div className='w-4 h-4 flex justify-center items-center'>...</div>,
   urgent: <TriangleAlert size={20} className='text-red-600' />,
@@ -102,7 +102,7 @@ function CardItem({
             role='button'
             className='relative min-h-12 p-2 bg-white/70 rounded-md mb-2 w-full hover:ring-1 hover:ring-gray-500 hover:bg-white/80 shadow-md !cursor-pointer flex justify-between items-start flex-col'
           >
-            <p className='pr-6 pb-1'>{data.title}</p>
+            <p className='pr-7 pb-1'>{data.title}</p>
             {/* ELLIPSIS */}
             <Modal
               onClose={() => setIsCardModalOpen(!isCardModalOpen)}
@@ -166,7 +166,7 @@ function CardItem({
                     setIsPrioritiesOpenModal(true);
                     e.stopPropagation();
                   }}
-                  className='w-6 h-6 rounded-md border-[2px] bg-gray-800 border-white hover:border-gray-300 flex justify-center items-center'
+                  className='w-6 h-6 rounded-md border-[2px] bg-gray-800 border-white hover:border-gray-800 flex justify-center items-center'
                 >
                   <div className='text-white flex justify-center items-center'>
                     {

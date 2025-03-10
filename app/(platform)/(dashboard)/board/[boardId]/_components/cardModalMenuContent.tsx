@@ -11,8 +11,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
 import { Copy, Delete } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useEffect, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 export function CardModalMenuContent({
@@ -22,6 +22,7 @@ export function CardModalMenuContent({
   cardId: string;
   listId: string;
 }) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const params = useParams();
   const { boardId } = params;
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -31,7 +32,7 @@ export function CardModalMenuContent({
   });
 
   const {
-    register,
+    control,
     handleSubmit,
     setValue,
     formState: { errors },
@@ -44,6 +45,7 @@ export function CardModalMenuContent({
 
   useEffect(() => {
     setValue('title', cardData?.title);
+    inputRef.current?.blur();
   }, [cardData]);
 
   async function onSubmit({ title }: { title: string }) {
@@ -92,13 +94,23 @@ export function CardModalMenuContent({
         action='
         '
       >
-        <Input
-          onClick={(e) => e.stopPropagation()}
-          onFocus={(e) => e.stopPropagation()}
-          label='Edit title'
-          {...register('title')}
-          placeholder='Type the new title here...'
-          error={errors?.title?.message as string}
+        <Controller
+          name='title'
+          control={control}
+          defaultValue={cardData?.title}
+          render={({ field: { onChange, value } }) => (
+            <Input
+              autoFocus={false}
+              disabled={!cardData?.title}
+              onChange={onChange}
+              ref={inputRef}
+              onClick={(e) => e.stopPropagation()}
+              label='Edit title'
+              value={value || ''}
+              placeholder='Type the new title here...'
+              error={errors?.title?.message as string}
+            />
+          )}
         />
       </form>
 
