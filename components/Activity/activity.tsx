@@ -52,7 +52,7 @@ export function ActivityList({ items }: ActivityType) {
               );
             })
           ) : (
-            <p className='body-sm'>No activity yet</p>
+            <p className='body-sm mb-3'>No activity yet</p>
           )}
         </ol>
       </div>

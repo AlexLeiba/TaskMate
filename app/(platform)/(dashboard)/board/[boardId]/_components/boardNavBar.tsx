@@ -9,11 +9,13 @@ import { Spacer } from '@/components/ui/spacer';
 import { type Board as BoardType } from '@prisma/client';
 import { Ellipsis, X } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useEventListener } from 'usehooks-ts';
 
 export function BoardNavBar({ board }: { board: BoardType }) {
-  const [titleValue, setTitleValue] = useState(board.title);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [titleValue, setTitleValue] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   async function handleEditTitle() {
     try {
@@ -24,6 +26,7 @@ export function BoardNavBar({ board }: { board: BoardType }) {
       }
 
       toast.success('Board title updated successfully');
+      setTitleValue('');
     } catch (error: any) {
       toast.error(error);
     } finally {
@@ -31,18 +34,32 @@ export function BoardNavBar({ board }: { board: BoardType }) {
       setIsOpen(false);
     }
   }
+
+  useEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      setIsOpen(false);
+    }
+    if (e.key === 'Enter' && titleValue.length > 2) {
+      handleEditTitle();
+    }
+  });
+
   return (
     <div className='bg-black/50  text-white  py-3 w-full fixed top-14 z-20 flex items-center gap-2  justify-between  '>
       <div className=' md:max-w-screen-2xl    mx-auto w-full px-4 flex justify-between'>
-        {/* <div className='flex gap-6 items-center w-full'> */}
         <div className='flex gap-4 items-center'>
-          <p className='text-white z-20'>{board?.title}</p>
+          <p className='text-white z-20 font-semibold body-xl'>
+            {board?.title}
+          </p>
           <Modal
+            onClose={() => setIsOpen(!isOpen)}
+            isOpen={isOpen}
             title={'Change board title'}
             description={'The title should be at least 3 characters long'}
             content={
               <>
                 <Input
+                  ref={inputRef}
                   value={titleValue}
                   onChange={(e) => setTitleValue(e.target.value)}
                   placeholder={'Enter new title'}
@@ -59,6 +76,7 @@ export function BoardNavBar({ board }: { board: BoardType }) {
             }
           >
             <Ellipsis
+              onClick={() => setIsOpen(true)}
               cursor={'pointer'}
               width={15}
               height={15}
@@ -73,7 +91,6 @@ export function BoardNavBar({ board }: { board: BoardType }) {
           </Link>
         </div>
       </div>
-      {/* </div> */}
     </div>
   );
 }

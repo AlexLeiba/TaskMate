@@ -22,6 +22,9 @@ import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useEventListener } from 'usehooks-ts';
 import { cardPrioritiesOptions } from './cardItem';
+import { DescriptionSkeleton } from './descriptionSkeleton';
+import { ActivitiesSkeleton } from './activitiesSkeleton';
+import { AssignToSkeleton } from './assignToSkeleton';
 
 export function CardModalContent({
   cardId,
@@ -30,7 +33,6 @@ export function CardModalContent({
   cardId: string;
   listId: string;
 }) {
-  const [loading, setLoading] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const params = useParams();
   const { boardId } = params;
@@ -46,20 +48,24 @@ export function CardModalContent({
   });
   const queryClient = useQueryClient();
 
-  const { data: cardData } = useQuery<Card & { list: { title: string } }>({
+  const { data: cardData, isLoading: isCardLoading } = useQuery<
+    Card & { list: { title: string } }
+  >({
     queryKey: ['card', cardId],
     queryFn: () => Fetcher(`/api/cards/${cardId}`),
   });
-  const { data: activityData } = useQuery<Activity[]>({
+  const { data: activityData, isLoading: isActivityLoading } = useQuery<
+    Activity[]
+  >({
     queryKey: ['activity', cardId],
     queryFn: () => Fetcher(`/api/cards/${cardId}/activity`),
   });
 
-  const { data: selectedOrganizationUsers } = useQuery({
-    queryKey: ['getUsers', cardId],
-    queryFn: () => Fetcher(`/api/getUsers`),
-  });
-  console.log('🚀 ~ selectedOrganizationUsers:', selectedOrganizationUsers);
+  const { data: selectedOrganizationUsers, isLoading: isOrganizationLoading } =
+    useQuery({
+      queryKey: ['getUsers', cardId],
+      queryFn: () => Fetcher(`/api/getUsers`),
+    });
 
   const [organizationUsers, setOrganizationUsers] = useState<
     {
@@ -92,8 +98,9 @@ export function CardModalContent({
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
     setValue,
+    reset,
   } = useForm({
     defaultValues: {
       description: cardData?.description || '',
@@ -101,10 +108,9 @@ export function CardModalContent({
   });
 
   useEffect(() => {
-    setLoading(true);
+    textareaRef.current?.blur();
 
     setValue('description', cardData?.description as string);
-    textareaRef.current?.blur();
 
     // INITIAL STATE OF PRIORITY
     if (cardData?.priority) {
@@ -113,8 +119,6 @@ export function CardModalContent({
       );
       priorityData?.value && setSelectPriority(priorityData);
     }
-
-    setLoading(false);
   }, [cardData, cardId, boardId]);
 
   useEffect(() => {
@@ -150,9 +154,11 @@ export function CardModalContent({
       };
       setSelectAssignUser(userData);
     }
+    textareaRef.current?.blur();
   }, [selectedOrganizationUsers]);
 
   async function onSubmit({ description }: { description: string }) {
+    if (!isDirty) return;
     const response = await editCard({
       description,
       boardId: boardId as string,
@@ -167,6 +173,8 @@ export function CardModalContent({
       toast.success('Card edited successfully');
 
       queryClient.invalidateQueries({ queryKey: ['activity', cardId] });
+
+      textareaRef.current?.blur();
     }
   }
 
@@ -261,6 +269,7 @@ export function CardModalContent({
       toast.error(response?.error);
     }
   }
+
   return (
     <div>
       {/* LIST LOCATION */}
@@ -283,32 +292,36 @@ export function CardModalContent({
               <p className='body-md font-semibold'>Description</p>
             </div>
             <Spacer size={2} />
-            <div className='flex gap-4'>
-              <form
-                className='w-full ml-8'
-                action=''
-                onSubmit={handleSubmit(onSubmit)}
-              >
-                <Controller
-                  name='description'
-                  control={control}
-                  render={({ field: { onChange, value } }) => (
-                    <TextArea
-                      ref={textareaRef}
-                      onChange={onChange}
-                      value={value || ''}
-                      rows={7}
-                      autoFocus={false}
-                      className='w-full'
-                      placeholder='Type the description here...'
-                      error={errors?.description?.message as string}
-                    />
-                  )}
-                />
+            {isCardLoading ? (
+              <DescriptionSkeleton />
+            ) : (
+              <div className='flex gap-4'>
+                <form
+                  className='w-full ml-8'
+                  action=''
+                  onSubmit={handleSubmit(onSubmit)}
+                >
+                  <Controller
+                    name='description'
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <TextArea
+                        ref={textareaRef}
+                        onChange={onChange}
+                        value={value || ''}
+                        rows={7}
+                        autoFocus={false}
+                        className='w-full'
+                        placeholder='Type the description here...'
+                        error={errors?.description?.message as string}
+                      />
+                    )}
+                  />
 
-                {/* Remove the second Controller and Dropdown */}
-              </form>
-            </div>
+                  {/* Remove the second Controller and Dropdown */}
+                </form>
+              </div>
+            )}
           </div>
           <div>
             {/* ASSIGNED */}
@@ -319,12 +332,16 @@ export function CardModalContent({
               </div>
               <Spacer size={2} />
 
-              <Dropdown
-                label=''
-                options={organizationUsers}
-                onChange={(v) => handleAssignCardToUser(v)}
-                value={selectAssignUser.value}
-              />
+              {isOrganizationLoading ? (
+                <AssignToSkeleton />
+              ) : (
+                <Dropdown
+                  label=''
+                  options={organizationUsers}
+                  onChange={(v) => handleAssignCardToUser(v)}
+                  value={selectAssignUser.value}
+                />
+              )}
             </div>
             {/* PRIORITY */}
             <Spacer size={7} />
@@ -368,7 +385,11 @@ export function CardModalContent({
 
         {/* ACTIVITY */}
         <Spacer size={6} />
-        <ActivityList items={activityData} />
+        {isActivityLoading ? (
+          <ActivitiesSkeleton />
+        ) : (
+          <ActivityList items={activityData} />
+        )}
       </div>
 
       {/* DELETE CARD MODAL */}

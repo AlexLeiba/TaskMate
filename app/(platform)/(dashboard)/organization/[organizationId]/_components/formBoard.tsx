@@ -48,6 +48,8 @@ function FormBoard({
     const { title, image } = formData;
 
     handleCreateBoard({ title, image });
+
+    closeModalOnSubmitRef?.current?.click();
   }
 
   async function handleCreateBoard({
@@ -80,7 +82,6 @@ function FormBoard({
   useEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       handleSubmit(onSubmit);
-      closeModalOnSubmitRef?.current?.click();
     }
   });
 
