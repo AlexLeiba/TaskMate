@@ -8,7 +8,7 @@ function MarketingLayout({ children }: { children: React.ReactNode }) {
     <div className='h-screen bg-slate-100'>
       <ClerkProvider>
         <Navbar />
-        <main className='pt-14 pb-14 bg-slate-100 overflow-y-auto'>
+        <main className='min-h-screen pt-14 pb-14 bg-slate-100 overflow-y-auto'>
           {children}
         </main>
         <Footer />

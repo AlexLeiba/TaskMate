@@ -3,13 +3,20 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
-function Logo(props: React.HTMLAttributes<HTMLDivElement>) {
+function Logo({
+  props,
+  type,
+}: {
+  props?: React.HTMLAttributes<HTMLDivElement>;
+  type?: 'header';
+}) {
   return (
     <Link href={'/'}>
       <div
         className={cn(
-          'hover:opacity-75 transition  gap-x-1  items-center hidden md:flex',
-          props.className
+          type === 'header' ? 'hidden md:flex' : 'flex',
+          'hover:opacity-75 transition  gap-x-1  items-center ',
+          props?.className
         )}
       >
         <Image src={'/logo.png'} alt='logo' width={30} height={30} />
