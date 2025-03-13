@@ -7,7 +7,7 @@ import { BoardNavBar } from './_components/boardNavBar';
 export async function generateMetadata({
   params,
 }: {
-  params: { boardId: string };
+  params: Promise<{ boardId: string }>;
 }) {
   const paramsData = await params;
 

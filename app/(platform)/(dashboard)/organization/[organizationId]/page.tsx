@@ -9,9 +9,7 @@ import Board from './_components/board';
 import Info from './_components/info';
 import CreateNewBoardModal from './_components/CreateNewBoardModal';
 
-async function OrganizationPage({}: {
-  params: { organizationId: Promise<string> };
-}) {
+async function OrganizationPage() {
   const { orgId } = await auth();
 
   if (!orgId) {
