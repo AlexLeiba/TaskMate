@@ -1,5 +1,5 @@
 import React from 'react';
-import OrgControl from './_components/org-control';
+import OrgControl from '../../../../../lib/org-control';
 import { auth } from '@clerk/nextjs/server';
 
 export async function generateMetadata() {

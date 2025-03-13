@@ -13,7 +13,7 @@ export function Navbar() {
   const currentPath = pathname.split('/')[1];
 
   return (
-    <div className='fixed top-0 w-full h-14 px-4 border-b shadow-sm bg-slate-100 flex items-center'>
+    <div className='fixed top-0 w-full h-14 px-4 border-b shadow-sm bg-slate-100 flex items-center z-40'>
       <div className='max-w-screen-2xl mx-auto  flex items-center justify-between w-full'>
         <Logo />
 
