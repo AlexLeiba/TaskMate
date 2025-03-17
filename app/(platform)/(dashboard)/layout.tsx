@@ -26,9 +26,9 @@ export default async function DashboardLayout({
           theme='dark'
           transition={Bounce}
         />
-        <div className='bg-slate-100'>
+        <div className='bg-slate-100 '>
           <Navbar />
-          <main className='pt-14  bg-slate-100 overflow-y-auto h-screen  '>
+          <main className='pt-14  bg-slate-100 overflow-y-auto h-screen  dark:bg-gray-950'>
             {children}
           </main>
           <Footer />

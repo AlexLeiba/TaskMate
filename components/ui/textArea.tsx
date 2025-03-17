@@ -14,7 +14,7 @@ export const textAreaVariants = cva(
   [
     'transition-all',
     'rounded-lg px-3 py-2 ',
-    'bg-white font-normal text-black',
+    'bg-white font-normal text-black dark:bg-gray-800 dark:text-white',
     'flex w-full border border-gray-200 ',
     'placeholder:text-gray-400',
     'disabled:cursor-not-allowed  disabled:bg-gray-300 disabled:border-gray-100 disabled:text-gray-400',

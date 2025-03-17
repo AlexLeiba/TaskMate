@@ -275,8 +275,8 @@ export function CardModalContent({
       {/* LIST LOCATION */}
       <div className='flex gap-2 w-full '>
         <MapPin />
-        <p className='body-sm text-gray-500'>in list</p>
-        <p className='body-md text-gray-700 underline'>
+        <p className='body-sm text-gray-500 dark:text-gray-300'>in list</p>
+        <p className='body-md text-gray-700 underline dark:text-gray-300'>
           {cardData?.list.title}
         </p>
       </div>

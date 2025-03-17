@@ -107,7 +107,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'shadow-10 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] bg-slate-100 fixed left-[50%] top-[50%] z-50 w-[400px] translate-x-[-50%] translate-y-[-50%] space-y-4 border p-6 duration-200',
+        'dark:bg-gray-900 dark:text-white shadow-10 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] bg-slate-100 fixed left-[50%] top-[50%] z-50 w-[400px] translate-x-[-50%] translate-y-[-50%] space-y-4 border p-6 duration-200',
         className
       )}
       {...props}
@@ -122,7 +122,10 @@ const DialogContent = React.forwardRef<
       >
         <X
           size={20}
-          className={cn(type === 'modal' && 'text-text-base', 'z-20')}
+          className={cn(
+            type === 'modal' && 'text-black dark:text-white',
+            'z-20 dark:text-white'
+          )}
         />
         <span className='sr-only'>Close</span>
       </DialogPrimitive.Close>
@@ -159,7 +162,7 @@ const DialogHeader = ({
   return (
     <div
       className={cn(
-        'flex flex-col gap-6 px-4 pt-4 lg:px-6 lg:pt-6',
+        'flex flex-col gap-6 px-4 pt-4 lg:px-6 lg:pt-6 dark:text-black ',
         position === 'center-aligned' && 'items-center text-center',
         position === 'horizontal-left-aligned' && 'flex-row items-start',
         className
@@ -170,7 +173,7 @@ const DialogHeader = ({
         {icon && (
           <div
             className={cn(
-              'bg-gray-400 size-12',
+              'bg-gray-400  size-12',
               'flex flex-shrink-0 items-center justify-center rounded-full',
               variant === 'destructive' && 'bg-red-500',
               variant === 'accent' && 'bg-sky-500'
@@ -190,12 +193,14 @@ const DialogHeader = ({
           <DialogPrimitive.DialogTitle
             // overwritten the classNames of text (body-lg) because didn't wotk applying directly  (body-lg) as a className
             className={
-              '!text-[16px] font-semibold !leading-[24px] lg:!text-[18px] lg:!leading-[28px]'
+              '!text-[16px] font-semibold !leading-[24px] lg:!text-[18px] lg:!leading-[28px] dark:text-white'
             }
           >
             {title}
           </DialogPrimitive.DialogTitle>
-          <DialogPrimitive.Description className={'text-text-light body-sm'}>
+          <DialogPrimitive.Description
+            className={'text-text-light body-sm dark:text-white '}
+          >
             {description}
           </DialogPrimitive.Description>
         </div>

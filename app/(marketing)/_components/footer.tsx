@@ -12,7 +12,7 @@ export function Footer() {
   const currentPath = pathname.split('/')[1];
   return (
     <div
-      className='relative w-full h-24 px-4  border-t shadow-sm bg-slate-100 flex items-center z-50'
+      className='relative w-full h-24 px-4  border-t shadow-sm bg-slate-100 dark:bg-gray-800 flex items-center z-50'
       style={{ display: hiddenListOfPaths.includes(currentPath) ? 'none' : '' }}
     >
       <div className=' max-w-screen-2xl mx-auto  flex items-center justify-between w-full'>

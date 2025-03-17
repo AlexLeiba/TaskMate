@@ -33,6 +33,7 @@ function AccordionNavItem({
   const pathName = usePathname();
 
   const isCurrentPath = pathName.split('/')[3];
+  console.log('🚀 ~ isCurrentPath:', isCurrentPath);
 
   const routesData = [
     {
@@ -60,50 +61,53 @@ function AccordionNavItem({
   function handleClick(link: string) {
     router.push(link);
   }
+
+  function handleCurrentSelectedPath(path: string) {
+    if (isCurrentPath === path && isActive) {
+      return true;
+    } else if (path === 'boards' && isActive && !isCurrentPath) {
+      return true;
+    }
+    return false;
+  }
   return (
     <AccordionItem value={organization.id} className='border-none'>
       {/* TRIGGER */}
       <AccordionTrigger
         onClick={() => onExpand(organization.id)}
         className={cn(
-          isActive && !isExpanded && 'bg-sky-500/20 text-sky-800',
+          isActive && 'bg-sky-500/20 text-sky-800 dark:text-gray-300',
           '!w-full',
-          'flex items-center gap-x-2 p-1.5 text-neutral-700 rounded-md hover:bg-neutral-700/10 transition text-start no-underline hover:no-underline'
+          'flex items-center gap-x-2 p-1.5 text-neutral-700 rounded-md hover:bg-neutral-700/10 transition text-start no-underline hover:no-underline dark:text-white'
         )}
       >
         <div
           className={cn(
-            isActive && !isExpanded && 'text-sky-800',
+            isActive && 'text-sky-800 dark:text-white',
+
             'flex items-center gap-x-2 font-bold'
           )}
         >
-          <div className='relative h-[30px] w-[30px]'>
+          <div className='relative h-[30px] w-[30px] dark:bg-gray-300 rounded-md'>
             <Image fill src={organization.imageUrl} alt={organization.name} />
           </div>
           <p className='body-sm f'>{organization.name}</p>
         </div>
       </AccordionTrigger>
       {/* CONTENT */}
-      <AccordionContent className='pt-1 '>
+      <AccordionContent className='pt-1 dark:text-black'>
         {routesData.map((data, index) => {
+          if (data.label === 'Billing') return;
+
           return (
             <div
               onClick={() => handleClick(data.link)}
               className={cn(
-                isActive && //if board is active
-                  data.label.toLocaleLowerCase() === 'boards'
-                  ? 'bg-sky-500/20 text-sky-700'
-                  : data.label.toLocaleLowerCase() === 'boards' && !isActive
-                  ? 'bg-slate-100'
-                  : isCurrentPath && //if the rest are active
-                    isCurrentPath === data.label.toLocaleLowerCase() &&
-                    isActive
-                  ? 'bg-sky-500/20 text-sky-700'
-                  : 'bg-slate-100',
-                //
+                handleCurrentSelectedPath(data.label.toLocaleLowerCase())
+                  ? 'text-sky-700'
+                  : 'bg-slate-100 dark:bg-transparent dark:text-white',
 
-                'flex  flex-col   justify-center hover:bg-gray-200 rounded-md cursor-pointer'
-                //
+                'flex  flex-col   justify-center  hover:opacity-50 d rounded-md cursor-pointer'
               )}
               key={index}
             >

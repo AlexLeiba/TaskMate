@@ -33,7 +33,7 @@ async function BoardList({
       >
         <div
           role='button'
-          className='inline-flex pl-3 pr-12 py-3 bg-gray-200 relative rounded-md hover:opacity-80'
+          className='inline-flex pl-3 pr-12 py-3 bg-gray-200 relative rounded-md hover:opacity-80 dark:text-black'
         >
           <div className='flex flex-col'>
             Create new board

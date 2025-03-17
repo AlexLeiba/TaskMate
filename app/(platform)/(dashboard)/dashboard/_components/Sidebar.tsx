@@ -104,7 +104,11 @@ function Sidebar({ storageKey = 'default-sidebar-state' }: Props) {
           <p className=' font-bold'>Workspaces</p>
 
           <Link href={'/select-org'}>
-            <Button variant={'ghost'} size={'sm'} className='h-7'>
+            <Button
+              variant={'ghost'}
+              size={'sm'}
+              className='h-7 dark:hover:text-gray-300'
+            >
               <Plus />
             </Button>
           </Link>

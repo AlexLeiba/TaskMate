@@ -100,7 +100,7 @@ function CardItem({
             ref={provided.innerRef}
             tabIndex={0}
             role='button'
-            className='relative min-h-12 p-2 bg-white/70 rounded-md mb-2 w-full hover:ring-1 hover:ring-gray-500 hover:bg-white/80 shadow-md !cursor-pointer flex justify-between items-start flex-col'
+            className='dark:bg-gray-800 relative min-h-12 p-2 bg-white/70 rounded-md mb-2 w-full hover:ring-1 hover:ring-gray-500 hover:bg-white/80 shadow-md !cursor-pointer flex justify-between items-start flex-col'
           >
             <p className='pr-7 pb-1'>{data.title}</p>
             {/* ELLIPSIS */}

@@ -12,7 +12,7 @@ function Info() {
   }
   return (
     <div className='flex items-center gap-x-4'>
-      <div className='w-[60px] h-[60px] relative'>
+      <div className='w-[60px] h-[60px] relative dark:bg-gray-300 rounded-md'>
         {organization?.imageUrl && (
           <Image
             fill

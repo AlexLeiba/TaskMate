@@ -14,7 +14,9 @@ export default function DashboardLayout({
       </div> */}
 
       <Navbar />
-      <main className=' bg-slate-100 overflow-y-auto'>{children}</main>
+      <main className=' bg-slate-100 overflow-y-auto dark:bg-gray-950'>
+        {children}
+      </main>
 
       <Footer />
     </ClerkProvider>

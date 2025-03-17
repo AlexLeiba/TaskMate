@@ -192,7 +192,10 @@ function Dropdown({
             <SelectValue placeholder={'Select'} />
           </div>
         </SelectTrigger>
-        <SelectContent size={size}>
+        <SelectContent
+          size={size}
+          className='dark:bg-black dark:text-white border-none'
+        >
           {options.map((category, index) => {
             return (
               <SelectItem
@@ -200,8 +203,9 @@ function Dropdown({
                 key={index}
                 size={size}
                 onKeyDown={handleFocus}
+                className='dark:hover:text-black dark:focus:text-black'
               >
-                <div className='flex items-center gap-2'>
+                <div className='flex items-center gap-2 '>
                   {category.image && (
                     <Image
                       className='w-5 h-5 object-cover'

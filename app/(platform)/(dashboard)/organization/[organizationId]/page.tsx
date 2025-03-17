@@ -26,7 +26,7 @@ async function OrganizationPage() {
   });
 
   return (
-    <div className='flex flex-col gap-4 w-full'>
+    <div className='flex flex-col gap-4 w-full dark:text-white '>
       <Spacer size={2} />
       {/* Current board top info */}
       <Info />

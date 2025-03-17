@@ -316,7 +316,7 @@ const SelectItem = React.forwardRef<
       size === 'small' ? 'body-sm h-8 pl-2' : 'body-base h-10 pl-3',
       [
         'w-full',
-        'hover:bg-gray-200 dark:hover:bg-gray-200 focus:bg-gray-200 dark:focus:bg-gray-200 rounded',
+        'hover:bg-gray-200 dark:hover:bg-gray-600 focus:bg-gray-200 dark:focus:bg-gray-200 rounded',
         'data-[disabled]:text-text-disabled relative flex cursor-pointer select-none items-center',
         'body-base pr-10 outline-none data-[disabled]:pointer-events-none',
       ],

@@ -3,8 +3,8 @@ import React from 'react';
 
 function About() {
   return (
-    <div className='max-w-screen-2xl mx-auto mt-12'>
-      <div className='dark:text-white'>
+    <div className='max-w-screen-2xl mx-auto pt-24 dark:text-white'>
+      <div>
         <div>
           <h3 className='sm:text-6xl'>About</h3>
           <Spacer size={8} md={4} sm={4} />

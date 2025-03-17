@@ -7,12 +7,13 @@ import MobileSidebar from './MobileSidebar';
 import Logo from '@/components/logo';
 import { Modal } from '@/components/Modal/modal';
 import FormBoard from '../../organization/[organizationId]/_components/formBoard';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export function Navbar() {
   const closeModalOnSubmitRef = useRef<HTMLButtonElement>(null);
   const [isLoadingCreateBoard, setIsLoadingCreateBoard] = useState(false);
   return (
-    <div className='fixed top-0 w-full h-14  border-b shadow-sm bg-slate-100 flex items-center z-50'>
+    <div className='fixed top-0 w-full h-14  border-b shadow-sm bg-slate-100 flex items-center z-50 dark:bg-gray-800'>
       {/* Mobile sidebar */}
       <MobileSidebar />
       {/*  */}
@@ -22,7 +23,7 @@ export function Navbar() {
 
           <Modal
             closeRef={closeModalOnSubmitRef}
-            contentClassName='lg:w-[450px] w-[305px] bg-gray-300'
+            contentClassName='lg:w-[450px] w-[305px] bg-gray-300 '
             title='New board'
             description=''
             sideOffset={5}
@@ -59,6 +60,9 @@ export function Navbar() {
               afterLeaveOrganizationUrl='/select-org'
               appearance={{
                 elements: {
+                  organizationSwitcherTriggerIcon: 'dark:text-white',
+                  avatarBox: 'dark:bg-gray-300',
+                  organizationPreviewTextContainer: 'dark:text-white',
                   rootBox: {
                     height: '100%',
                     display: 'flex',
@@ -75,17 +79,20 @@ export function Navbar() {
           </div>
         </div>
 
-        <div className='space-x-4  flex items-center justify-between '>
-          <UserButton
-            appearance={{
-              elements: {
-                avatarBox: {
-                  width: '30px',
-                  height: '30px',
+        <div className='flex items-center gap-6'>
+          <ThemeToggle />
+          <div className='space-x-4  flex items-center justify-between '>
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: {
+                    width: '30px',
+                    height: '30px',
+                  },
                 },
-              },
-            }}
-          />
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

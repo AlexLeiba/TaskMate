@@ -78,7 +78,7 @@ function AddListForm() {
   if (isEditing) {
     return (
       <ListWrapper>
-        <div className='w-full p-3 rounded-md shadow-md bg-white flex  gap-2 items-end relative'>
+        <div className='w-full p-3 rounded-md shadow-md bg-white flex  gap-2 items-end relative  dark:bg-gray-400 dark:text-white'>
           <form
             action=''
             ref={formRef}
@@ -118,7 +118,7 @@ function AddListForm() {
     <ListWrapper>
       <Button
         onClick={handleEnableEditing}
-        className='w-full hover:bg-white/70 bg-white text-left justify-start'
+        className='w-full hover:bg-white/70 dark:hover:bg-gray-500 bg-white dark:bg-gray-400 dark:text-white text-left justify-start '
         variant={'ghost'}
       >
         <Plus />

@@ -16,7 +16,7 @@ export const inputVariants = cva(
     'font-normal',
     'transition-all',
     'flex w-full border border-gray-600 ',
-    'bg-white text-gray-900',
+    'bg-white text-gray-900 dark:bg-gray-600 dark:text-white',
     'placeholder:text-gray-400',
     'disabled:bg-gray-100 disabled:border-gray-300 disabled:cursor-not-allowed disabled:text-gray-400',
     // remove default behaviour in browsers
