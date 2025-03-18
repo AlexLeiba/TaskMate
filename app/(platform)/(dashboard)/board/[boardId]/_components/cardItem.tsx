@@ -1,6 +1,6 @@
 'use client';
 import { Card } from '@prisma/client';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
 import {
   Check,

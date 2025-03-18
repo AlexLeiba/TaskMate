@@ -5,8 +5,6 @@ import { Spacer } from '../ui/spacer';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import Link from 'next/link';
-import { auth } from '@clerk/nextjs/server';
-import { useParams } from 'next/navigation';
 
 type ActivityType = {
   items: Activity[] | undefined;

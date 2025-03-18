@@ -31,7 +31,6 @@ import { toast } from 'react-toastify';
 import { useEventListener } from 'usehooks-ts';
 import { cardPrioritiesOptions } from './cardItem';
 import { DescriptionSkeleton } from './descriptionSkeleton';
-import { ActivitiesSkeleton } from './activitiesSkeleton';
 import { AssignToSkeleton } from './assignToSkeleton';
 import Image from 'next/image';
 import { format } from 'date-fns';
