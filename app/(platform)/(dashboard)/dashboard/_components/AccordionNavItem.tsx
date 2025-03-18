@@ -4,7 +4,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Activity, CreditCard, Layout, Settings } from 'lucide-react';
 import Image from 'next/image';
@@ -33,7 +32,6 @@ function AccordionNavItem({
   const pathName = usePathname();
 
   const isCurrentPath = pathName.split('/')[3];
-  console.log('🚀 ~ isCurrentPath:', isCurrentPath);
 
   const routesData = [
     {

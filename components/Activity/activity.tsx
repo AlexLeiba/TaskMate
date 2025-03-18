@@ -4,18 +4,34 @@ import React from 'react';
 import { Spacer } from '../ui/spacer';
 import { format } from 'date-fns';
 import Image from 'next/image';
+import Link from 'next/link';
+import { auth } from '@clerk/nextjs/server';
+import { useParams } from 'next/navigation';
 
 type ActivityType = {
   items: Activity[] | undefined;
+  organizationId?: string;
 };
 
-export function ActivityList({ items }: ActivityType) {
+export function ActivityList({ items, organizationId }: ActivityType) {
   return (
     <div className=' flex items-start gap-x-3 w-full'>
       <ActivityIcon />
 
-      <div className='mb-2'>
-        <p className='body-md font-semibold'>Activity</p>
+      <div className='mb-2 w-full'>
+        <div className='flex justify-between w-full'>
+          <p className='body-md font-semibold'>Activity</p>
+          {organizationId && (
+            <div>
+              <Link
+                href={`/organization/${organizationId}/activity?page=1'`}
+                className='underline'
+              >
+                <p className='body-md font-semibold'>All activities</p>
+              </Link>
+            </div>
+          )}
+        </div>
         <Spacer size={3} />
         <ol className='mb-2 '>
           {items && items.length > 0 ? (

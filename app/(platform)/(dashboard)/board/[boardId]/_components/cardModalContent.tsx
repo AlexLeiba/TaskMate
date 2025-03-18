@@ -35,6 +35,7 @@ import { ActivitiesSkeleton } from './activitiesSkeleton';
 import { AssignToSkeleton } from './assignToSkeleton';
 import Image from 'next/image';
 import { format } from 'date-fns';
+import { useOrganization } from '@clerk/nextjs';
 
 export function CardModalContent({
   cardId,
@@ -56,6 +57,9 @@ export function CardModalContent({
     value: '',
     icon: <>...</>,
   });
+
+  const { organization: activeOrganization } = useOrganization();
+
   const queryClient = useQueryClient();
 
   const { data: cardData, isLoading: isCardLoading } = useQuery<
@@ -341,7 +345,10 @@ export function CardModalContent({
             )}
             {/* ACTIVITY */}
             <Spacer size={7} />
-            <ActivityList items={activityData} />
+            <ActivityList
+              items={activityData}
+              organizationId={activeOrganization?.id}
+            />
           </div>
           <div>
             {/* REPORTER */}
