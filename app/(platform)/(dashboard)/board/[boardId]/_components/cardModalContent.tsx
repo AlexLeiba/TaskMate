@@ -16,7 +16,15 @@ import { TextArea } from '@/components/ui/textArea';
 import { Fetcher } from '@/lib/fetcher';
 import { Activity, Card } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Copy, Delete, Logs, MapPin, UserRoundPlus, Wifi } from 'lucide-react';
+import {
+  Copy,
+  Delete,
+  Logs,
+  MapPin,
+  UserRoundCog,
+  UserRoundPlus,
+  Wifi,
+} from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -25,6 +33,8 @@ import { cardPrioritiesOptions } from './cardItem';
 import { DescriptionSkeleton } from './descriptionSkeleton';
 import { ActivitiesSkeleton } from './activitiesSkeleton';
 import { AssignToSkeleton } from './assignToSkeleton';
+import Image from 'next/image';
+import { format } from 'date-fns';
 
 export function CardModalContent({
   cardId,
@@ -270,23 +280,32 @@ export function CardModalContent({
     }
   }
 
+  function CreatedAndUpdatedDateSkeleton() {
+    return (
+      <div className='h-11 w-full rounded-md bg-gray-200 dark:bg-gray-800 animate-pulse'></div>
+    );
+  }
+
   return (
     <div>
-      {/* LIST LOCATION */}
-      <div className='flex gap-2 w-full '>
-        <MapPin />
-        <p className='body-sm text-gray-500 dark:text-gray-300'>in list</p>
-        <p className='body-md text-gray-700 underline dark:text-gray-300'>
-          {cardData?.list.title}
-        </p>
-      </div>
-
-      <Spacer size={6} />
-
       <div>
-        {/* DESCRIPTION */}
+        {/* IN LIST */}
         <div className='flex w-full gap-8'>
           <div className='w-full'>
+            <div className='flex gap-2 w-full justify-between '>
+              <div className='flex gap-2 items-center '>
+                <MapPin />
+                <p className='body-sm text-gray-500 dark:text-gray-300'>
+                  in list
+                </p>
+                <p className='body-md text-gray-700 underline dark:text-gray-300'>
+                  {cardData?.list.title}
+                </p>
+              </div>
+            </div>
+
+            {/* // DESCRIPTION */}
+            <Spacer size={6} />
             <div className='flex gap-2'>
               <Logs />
               <p className='body-md font-semibold'>Description</p>
@@ -317,13 +336,43 @@ export function CardModalContent({
                       />
                     )}
                   />
-
-                  {/* Remove the second Controller and Dropdown */}
                 </form>
               </div>
             )}
+            {/* ACTIVITY */}
+            <Spacer size={7} />
+            <ActivityList items={activityData} />
           </div>
           <div>
+            {/* REPORTER */}
+            <div>
+              <div className='flex gap-2 items-center'>
+                <UserRoundCog />
+                <p className='body-md font-semibold'>Reporter</p>
+              </div>
+              <Spacer size={2} />
+              <div className='flex gap-2 items-center '>
+                <div className='flex flex-col items-start justify-start w-[35px]'>
+                  {cardData?.reporterImageUrl && (
+                    <Image
+                      width={30}
+                      height={30}
+                      src={cardData?.reporterImageUrl}
+                      className='rounded-full'
+                      alt={cardData?.reporterName}
+                    />
+                  )}
+                </div>
+
+                <div>
+                  <p className='body-xs font-semibold inline mr-2'>
+                    {cardData?.reporterName}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <Spacer size={7} />
             {/* ASSIGNED */}
             <div className='w-[250px]'>
               <div className='flex gap-2 items-center'>
@@ -363,6 +412,7 @@ export function CardModalContent({
               <p className='body-md font-medium'>Actions</p>
               <Spacer size={2} />
 
+              {/* COPY DELETE */}
               <div className='flex  gap-2 '>
                 <Button
                   variant={'secondary'}
@@ -379,17 +429,35 @@ export function CardModalContent({
                   <Delete /> Delete
                 </Button>
               </div>
+
+              {/* CREATED AND UPDATED DATE */}
+              <Spacer size={7} />
+              {cardData && cardData.createdAt && cardData.updatedAt ? (
+                <div className='flex justify-between  w-full'>
+                  <div className='text-right w-full'>
+                    <p className='body-xs text-gray-500 '>
+                      <strong className='mr-1'>Created: </strong>
+                      {format(
+                        new Date(cardData.createdAt),
+                        'MMM d, yyy'
+                      )} at {format(new Date(cardData.createdAt), 'hh:mm a')}
+                    </p>
+                    <Spacer size={2} />
+                    <p className='body-xs text-gray-500'>
+                      <strong className='mr-1'>Updated: </strong>
+                      {format(
+                        new Date(cardData.createdAt),
+                        'MMM d, yyy'
+                      )} at {format(new Date(cardData.updatedAt), 'hh:mm a')}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                CreatedAndUpdatedDateSkeleton()
+              )}
             </div>
           </div>
         </div>
-
-        {/* ACTIVITY */}
-        <Spacer size={6} />
-        {isActivityLoading ? (
-          <ActivitiesSkeleton />
-        ) : (
-          <ActivityList items={activityData} />
-        )}
       </div>
 
       {/* DELETE CARD MODAL */}

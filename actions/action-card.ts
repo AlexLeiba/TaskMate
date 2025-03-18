@@ -1,7 +1,7 @@
 'use server';
 import { createActivityLog } from '@/lib/createActivityLog';
 import { db } from '@/lib/db';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { ACTIONS, ENTITY_TYPE } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 
@@ -10,11 +10,19 @@ export async function createNewCardInList(
   title: string,
   listId: string
 ) {
-  const { orgId } = await auth();
+  const { orgId, userId } = await auth();
+  const user = await currentUser();
 
   if (!orgId) {
     return {
       error: 'Organization not found',
+      data: null,
+    };
+  }
+
+  if (!userId && !user) {
+    return {
+      error: 'User not found',
       data: null,
     };
   }
@@ -76,6 +84,9 @@ export async function createNewCardInList(
         assignedName: '',
         assignedImageUrl: '',
         priority: 'none',
+        reporterId: user?.id || '',
+        reporterName: user?.fullName || 'Name',
+        reporterImageUrl: user?.imageUrl || '',
       },
     });
 
@@ -193,10 +204,17 @@ export async function copyCard(
   listId: string
 ) {
   const { orgId } = await auth();
+  const user = await currentUser();
 
   if (!orgId) {
     return {
       error: 'Organization not found',
+      data: null,
+    };
+  }
+  if (!user) {
+    return {
+      error: 'User not found',
       data: null,
     };
   }
@@ -269,6 +287,9 @@ export async function copyCard(
         assignedName: '',
         assignedImageUrl: '',
         priority: 'none',
+        reporterId: user.id,
+        reporterName: user?.fullName || 'Name',
+        reporterImageUrl: user.imageUrl || '',
       },
     });
 

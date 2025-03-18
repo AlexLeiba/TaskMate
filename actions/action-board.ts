@@ -2,7 +2,7 @@
 
 import { createActivityLog } from '@/lib/createActivityLog';
 import { db } from '@/lib/db';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { ACTIONS, ENTITY_TYPE } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 
@@ -393,10 +393,18 @@ export async function deleteList(boardId: string, listId: string) {
 
 export async function copyList(boardId: string, listId: string) {
   const { orgId } = await auth();
+  const user = await currentUser();
 
   if (!orgId) {
     return {
       error: 'Organization not found',
+      data: null,
+    };
+  }
+
+  if (!user) {
+    return {
+      error: 'User not found',
       data: null,
     };
   }
@@ -484,6 +492,9 @@ export async function copyList(boardId: string, listId: string) {
               assignedImageUrl: '',
               assignedName: '',
               assignedId: '',
+              reporterImageUrl: user?.imageUrl || '',
+              reporterName: user.fullName || 'Name',
+              reporterId: user.id || '',
             })),
           },
         },

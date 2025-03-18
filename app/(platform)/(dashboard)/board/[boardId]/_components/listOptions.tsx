@@ -1,17 +1,16 @@
 'use client';
+import React, { useState } from 'react';
 import { copyList, deleteList } from '@/actions/action-board';
 import { Button } from '@/components/ui/button';
 import Modal from '@/components/ui/modal-dialog';
 import { Separator } from '@/components/ui/separator';
 import { List } from '@prisma/client';
 import { Copy, Delete, Edit, Plus } from 'lucide-react';
-import React, { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 
 function ListOptions({
   data,
   closeRef,
-  listId,
   enableEditingCard,
   handleEnableEditingListHeader,
 }: {
