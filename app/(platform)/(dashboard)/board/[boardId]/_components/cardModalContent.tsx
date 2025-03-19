@@ -70,15 +70,20 @@ export function CardModalContent({
 
   const queryClient = useQueryClient();
 
-  const { data: cardData, isLoading: isCardLoading } = useQuery<
-    Card & { list: { title: string } }
-  >({
+  const {
+    data: cardData,
+    isLoading: isCardLoading,
+    refetch: refetchCardData,
+  } = useQuery<Card & { list: { title: string } }>({
     queryKey: ['card', cardId],
     queryFn: () => Fetcher(`/api/cards/${cardId}`),
   });
-  const { data: activityData, isLoading: isActivityLoading } = useQuery<
-    Activity[]
-  >({
+
+  const {
+    data: activityData,
+    isLoading: isActivityLoading,
+    refetch: refetchActivityData,
+  } = useQuery<Activity[]>({
     queryKey: ['activity', cardId],
     queryFn: () => Fetcher(`/api/cards/${cardId}/activity`),
   });
@@ -194,7 +199,8 @@ export function CardModalContent({
       toast.success('Card edited successfully');
 
       queryClient.invalidateQueries({ queryKey: ['activity', cardId] });
-      queryClient.invalidateQueries({ queryKey: ['card', cardId] });
+      refetchCardData();
+      refetchActivityData();
 
       // textEditorRef.current?.blur();
     }
