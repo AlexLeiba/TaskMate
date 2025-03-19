@@ -169,6 +169,113 @@ body {
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
+
+  h1 {
+    @apply text-9xl;
+  }
+  h2 {
+    @apply text-8xl;
+  }
+  h3 {
+    @apply text-5xl;
+  }
+  h4 {
+    @apply text-3xl;
+  }
+  h5 {
+    @apply text-2xl;
+  }
+
+  /* PARAGRAPHS */
+
+  .body-xl {
+    font-size: 20px;
+    line-height: 30px;
+    font-weight: 400;
+  }
+
+  .body-lg {
+    font-size: 18px;
+    line-height: 28px;
+    font-weight: 400;
+  }
+
+  .body-md {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+  }
+
+  .body-sm {
+    font-size: 14px;
+    line-height: 22px;
+    font-weight: 400;
+  }
+
+  .body-xs {
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: 400;
+  }
+
+  .body-code {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+    font-family: Fira Mono, monospace;
+  }
+  .body-block-quote {
+    font-size: 20;
+    line-height: 30px;
+    font-weight: 400;
+    font-family: Playfair Display, serif;
+  }
+
+  @media (max-width: 1295px) {
+    /* HEADINGS */
+    h1 {
+      @apply text-7xl;
+    }
+    h2 {
+      @apply text-6xl;
+    }
+    h3 {
+      @apply text-4xl;
+    }
+    h4 {
+      @apply text-2xl;
+    }
+    h5 {
+      font-size: 20px;
+      line-height: 30px;
+    }
+    /* PARAGRAPHS */
+
+    .body-xl {
+      font-size: 18px;
+      line-height: 28px;
+    }
+
+    .body-lg {
+      font-size: 16px;
+      line-height: 24px;
+    }
+
+    .body-md {
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    .body-sm {
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .body-xs {
+      font-size: 11px;
+      line-height: 16px;
+    }
+  }
 }
 
 @layer base {
@@ -228,4 +335,85 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* QUILL EDITOR */
+.quill .ql-container p,
+.html-content p {
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.quill .ql-container h1,
+.html-content h1 {
+  font-size: 26px;
+  line-height: 24px;
+  font-weight: 400;
+}
+.quill .ql-container h2,
+.html-content h2 {
+  font-size: 19.5px;
+  line-height: 22px;
+  font-weight: 400;
+}
+.quill .ql-container h3,
+.html-content h3 {
+  font-size: 15.21px;
+  line-height: 24px;
+  font-weight: 400;
+}
+
+.quill > .ql-container > .ql-editor.ql-blank::before {
+  color: var(--baseline-400) !important;
+  font-style: normal !important;
+}
+.quill data-placeholder {
+  color: var(--baseline-800) !important;
+}
+
+.ql-toolbar {
+  height: 45px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  background-color: rgb(209 213 219 / var(--tw-text-opacity, 1));
+}
+
+.ql-container.ql-snow {
+  border: none !important;
+}
+
+.ql-editor {
+  min-height: 240px;
+  max-height: 280px; /* Ensure a minimum height for the editor */
+  overflow-y: auto;
+  padding-bottom: 1rem; /* Add space for readability */
+  overflow-y: auto; /* Add vertical scrolling if content is too long */
+  padding-top: 62px !important;
+  border: solid 1px rgb(209 213 219 / var(--tw-text-opacity, 1));
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.html-content a {
+  text-decoration: underline;
+  color: var(--primary-400);
+}
+
+.html-content ul {
+  font-size: 13px;
+  list-style-type: disc; /* Ensure bullets appear */
+  margin-left: 40px !important; /* Add indentation */
+}
+
+.html-content ol {
+  font-size: 13px;
+  list-style-type: decimal; /* Ensure numbers appear */
+  margin-left: 40px !important;
+}
+
+.html-content li {
+  margin-bottom: 5px; /* Optional: Add spacing */
 }

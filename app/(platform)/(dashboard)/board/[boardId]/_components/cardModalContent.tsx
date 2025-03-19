@@ -12,18 +12,20 @@ import { Button } from '@/components/ui/button';
 import Dropdown from '@/components/ui/dropdown';
 import Modal from '@/components/ui/modal-dialog';
 import { Spacer } from '@/components/ui/spacer';
-import { TextArea } from '@/components/ui/textArea';
 import { Fetcher } from '@/lib/fetcher';
 import { Activity, Card } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  Check,
   Copy,
   Delete,
+  Edit,
   Logs,
   MapPin,
   UserRoundCog,
   UserRoundPlus,
   Wifi,
+  X,
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
@@ -35,6 +37,10 @@ import { AssignToSkeleton } from './assignToSkeleton';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { useOrganization } from '@clerk/nextjs';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
+import { ActivitiesSkeleton } from './activitiesSkeleton';
+import { cn } from '@/lib/utils';
 
 export function CardModalContent({
   cardId,
@@ -43,7 +49,6 @@ export function CardModalContent({
   cardId: string;
   listId: string;
 }) {
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const params = useParams();
   const { boardId } = params;
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -56,6 +61,10 @@ export function CardModalContent({
     value: '',
     icon: <>...</>,
   });
+
+  const textEditorRef = useRef<ReactQuill | null>(null);
+
+  const [textEditorFocused, setTextEditorFocused] = useState(false);
 
   const { organization: activeOrganization } = useOrganization();
 
@@ -113,7 +122,6 @@ export function CardModalContent({
     handleSubmit,
     formState: { errors, isDirty },
     setValue,
-    reset,
   } = useForm({
     defaultValues: {
       description: cardData?.description || '',
@@ -121,7 +129,7 @@ export function CardModalContent({
   });
 
   useEffect(() => {
-    textareaRef.current?.blur();
+    // textEditorRef.current?.blur();
 
     setValue('description', cardData?.description as string);
 
@@ -167,7 +175,7 @@ export function CardModalContent({
       };
       setSelectAssignUser(userData);
     }
-    textareaRef.current?.blur();
+    // textEditorRef.current?.blur();
   }, [selectedOrganizationUsers]);
 
   async function onSubmit({ description }: { description: string }) {
@@ -186,16 +194,17 @@ export function CardModalContent({
       toast.success('Card edited successfully');
 
       queryClient.invalidateQueries({ queryKey: ['activity', cardId] });
+      queryClient.invalidateQueries({ queryKey: ['card', cardId] });
 
-      textareaRef.current?.blur();
+      // textEditorRef.current?.blur();
     }
   }
 
-  useEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      handleSubmit(onSubmit)();
-    }
-  });
+  // useEventListener('keydown', (e) => {
+  //   if (e.key === 'Enter' && !e.shiftKey) {
+  //     handleSubmit(onSubmit)();
+  //   }
+  // });
 
   // SERVER ACTIONS
   async function handleDeleteCard() {
@@ -289,6 +298,18 @@ export function CardModalContent({
     );
   }
 
+  function handleOpenTextEditor() {
+    setTextEditorFocused(true);
+    if (textEditorRef?.current) {
+      textEditorRef?.current.focus(); // Focus the editor
+    }
+  }
+
+  function handleSaveDescriptionChanges() {
+    handleSubmit(onSubmit)();
+    setTextEditorFocused(false);
+  }
+
   return (
     <div>
       <div>
@@ -310,44 +331,95 @@ export function CardModalContent({
             {/* // DESCRIPTION */}
             <Spacer size={6} />
             <div className='flex gap-2'>
-              <Logs />
-              <p className='body-md font-semibold'>Description</p>
+              <div className='flex justify-between w-full'>
+                <div className='flex gap-2'>
+                  <Logs />
+                  <p className='body-md font-semibold'>Description</p>
+                </div>
+                {textEditorFocused ? (
+                  <div className='flex gap-4'>
+                    <div title='Close description editor'>
+                      <X
+                        cursor={'pointer'}
+                        onClick={() => setTextEditorFocused(false)}
+                      />
+                    </div>
+                    <div
+                      className='cursor-pointer'
+                      title='Save changes'
+                      onClick={handleSaveDescriptionChanges}
+                    >
+                      <Check />
+                    </div>
+                  </div>
+                ) : (
+                  <div title='Edit description'>
+                    <Edit cursor={'pointer'} onClick={handleOpenTextEditor} />
+                  </div>
+                )}
+              </div>
             </div>
             <Spacer size={2} />
             {isCardLoading ? (
-              <DescriptionSkeleton />
+              <>
+                <Spacer size={7} />
+                <DescriptionSkeleton />
+              </>
             ) : (
               <div className='flex gap-4'>
-                <form
-                  className='w-full ml-8'
-                  action=''
-                  onSubmit={handleSubmit(onSubmit)}
-                >
-                  <Controller
-                    name='description'
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                      <TextArea
-                        ref={textareaRef}
-                        onChange={onChange}
-                        value={value || ''}
-                        rows={7}
-                        autoFocus={false}
-                        className='w-full'
-                        placeholder='Type the description here...'
-                        error={errors?.description?.message as string}
-                      />
+                {textEditorFocused ? (
+                  <form
+                    className='w-full ml-8 relative'
+                    action=''
+                    onSubmit={handleSubmit(onSubmit)}
+                  >
+                    <Controller
+                      name='description'
+                      control={control}
+                      render={({ field: { onChange, value } }) => (
+                        <ReactQuill
+                          ref={textEditorRef}
+                          readOnly={isCardLoading}
+                          className='w-full  text-baseline-950 dark:text-white min-h-[241.37] max-h-[280px] overflow-y-auto rounded-md '
+                          value={value}
+                          onChange={onChange}
+                          theme={'snow'}
+                          placeholder='Write description here...'
+                        />
+                      )}
+                    />
+                  </form>
+                ) : cardData?.description ? (
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleOpenTextEditor();
+                    }}
+                    className={cn(
+                      'html-content ',
+                      'ml-8 w-[398] min-h-[241.37] max-h-[280px] overflow-y-auto rounded-b px-[15px] py-6 bg-gray-200  dark:bg-gray-900 dark:hover:bg-gray-800 hover:bg-gray-300 cursor-pointer transition-all  '
                     )}
-                  />
-                </form>
+                    dangerouslySetInnerHTML={{
+                      __html: cardData?.description,
+                    }}
+                  ></div>
+                ) : (
+                  <p className='text-gray-500 body-xs'>
+                    No description provided...
+                  </p>
+                )}
               </div>
             )}
             {/* ACTIVITY */}
             <Spacer size={7} />
-            <ActivityList
-              items={activityData}
-              organizationId={activeOrganization?.id}
-            />
+            {isActivityLoading ? (
+              <ActivitiesSkeleton />
+            ) : (
+              <ActivityList
+                items={activityData}
+                organizationId={activeOrganization?.id}
+              />
+            )}
           </div>
           <div>
             {/* REPORTER */}
