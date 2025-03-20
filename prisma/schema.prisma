@@ -72,8 +72,49 @@ model Card {
   reporterName String
   reporterId String
 
+  attachments Attachments[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  comments Comments[]
+}
+
+model Comments{
+  id        String @id @default(uuid())
+  text      String
+ 
+   listId String
+   cardId   String
+   orgId String
+   
+   card     Card @relation(fields: [cardId], references: [id],onDelete: Cascade)
+
+
+   userId   String
+   userName String
+   userImage String
+
+   createdAt DateTime @default(now())
+
+}
+
+model Attachments{
+  id        String @id @default(uuid())
+  values String[]
+
+   listId String
+   cardId   String
+   orgId String
+   
+   card     Card @relation(fields: [cardId], references: [id],onDelete: Cascade)
+
+
+   userId   String
+   userName String
+   userImage String
+
+   createdAt DateTime @default(now())
 }
 
 

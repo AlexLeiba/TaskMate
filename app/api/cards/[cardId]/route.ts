@@ -29,6 +29,11 @@ export async function GET(
             title: true, //return list with only title in it
           },
         },
+        attachments: {
+          select: {
+            values: true,
+          },
+        },
       },
     });
 

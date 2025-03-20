@@ -7,13 +7,12 @@ import {
   editCard,
   editPriorityCard,
 } from '@/actions/action-card';
-import { ActivityList } from '@/components/Activity/activity';
 import { Button } from '@/components/ui/button';
 import Dropdown from '@/components/ui/dropdown';
 import Modal from '@/components/ui/modal-dialog';
 import { Spacer } from '@/components/ui/spacer';
 import { Fetcher } from '@/lib/fetcher';
-import { Activity, Card } from '@prisma/client';
+import { Activity, Attachments, Card } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Check,
@@ -30,7 +29,6 @@ import {
 import { useParams } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import { useEventListener } from 'usehooks-ts';
 import { cardPrioritiesOptions } from './cardItem';
 import { DescriptionSkeleton } from './descriptionSkeleton';
 import { AssignToSkeleton } from './assignToSkeleton';
@@ -41,6 +39,7 @@ import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { ActivitiesSkeleton } from './activitiesSkeleton';
 import { cn } from '@/lib/utils';
+import { CardContentActionTabs } from '@/components/CardContentActionTabs/CardContentActionTabs';
 
 export function CardModalContent({
   cardId,
@@ -74,18 +73,11 @@ export function CardModalContent({
     data: cardData,
     isLoading: isCardLoading,
     refetch: refetchCardData,
-  } = useQuery<Card & { list: { title: string } }>({
+  } = useQuery<
+    Card & { list: { title: string } } & { attachments: Attachments[] }
+  >({
     queryKey: ['card', cardId],
     queryFn: () => Fetcher(`/api/cards/${cardId}`),
-  });
-
-  const {
-    data: activityData,
-    isLoading: isActivityLoading,
-    refetch: refetchActivityData,
-  } = useQuery<Activity[]>({
-    queryKey: ['activity', cardId],
-    queryFn: () => Fetcher(`/api/cards/${cardId}/activity`),
   });
 
   const { data: selectedOrganizationUsers, isLoading: isOrganizationLoading } =
@@ -200,7 +192,7 @@ export function CardModalContent({
 
       queryClient.invalidateQueries({ queryKey: ['activity', cardId] });
       refetchCardData();
-      refetchActivityData();
+      // refetchActivityData();
 
       // textEditorRef.current?.blur();
     }
@@ -333,7 +325,6 @@ export function CardModalContent({
                 </p>
               </div>
             </div>
-
             {/* // DESCRIPTION */}
             <Spacer size={6} />
             <div className='flex gap-2'>
@@ -346,21 +337,28 @@ export function CardModalContent({
                   <div className='flex gap-4'>
                     <div title='Close description editor'>
                       <X
+                        size={18}
+                        className='text-red-500 hover:opacity-80'
                         cursor={'pointer'}
                         onClick={() => setTextEditorFocused(false)}
                       />
                     </div>
                     <div
-                      className='cursor-pointer'
+                      className='cursor-pointer text-green-600 hover:opacity-80'
                       title='Save changes'
                       onClick={handleSaveDescriptionChanges}
                     >
-                      <Check />
+                      <Check size={18} />
                     </div>
                   </div>
                 ) : (
                   <div title='Edit description'>
-                    <Edit cursor={'pointer'} onClick={handleOpenTextEditor} />
+                    <Edit
+                      cursor={'pointer'}
+                      onClick={handleOpenTextEditor}
+                      className='text-green-600 hover:opacity-80'
+                      size={18}
+                    />
                   </div>
                 )}
               </div>
@@ -368,14 +366,14 @@ export function CardModalContent({
             <Spacer size={2} />
             {isCardLoading ? (
               <>
-                <Spacer size={7} />
+                {/* <Spacer size={7} /> */}
                 <DescriptionSkeleton />
               </>
             ) : (
               <div className='flex gap-4'>
                 {textEditorFocused ? (
                   <form
-                    className='w-full ml-8 relative'
+                    className='w-full  relative'
                     action=''
                     onSubmit={handleSubmit(onSubmit)}
                   >
@@ -403,7 +401,7 @@ export function CardModalContent({
                     }}
                     className={cn(
                       'html-content ',
-                      'ml-8 w-[398] min-h-[241.37] max-h-[280px] overflow-y-auto rounded-b px-[15px] py-6 bg-gray-200  dark:bg-gray-900 dark:hover:bg-gray-800 hover:bg-gray-300 cursor-pointer transition-all  '
+                      ' w-full min-h-[241.37] max-h-[280px] overflow-y-auto rounded-b px-[15px] py-6 bg-gray-200  dark:bg-gray-900 dark:hover:bg-gray-800 hover:bg-gray-300 cursor-pointer transition-all  '
                     )}
                     dangerouslySetInnerHTML={{
                       __html: cardData?.description,
@@ -418,14 +416,15 @@ export function CardModalContent({
             )}
             {/* ACTIVITY */}
             <Spacer size={7} />
-            {isActivityLoading ? (
-              <ActivitiesSkeleton />
-            ) : (
-              <ActivityList
-                items={activityData}
-                organizationId={activeOrganization?.id}
-              />
-            )}
+
+            {/* // ACTIVITIES/COMMENTS/ATTACHMENTS - TABS */}
+            <CardContentActionTabs
+              organizationId={activeOrganization?.id}
+              cardId={cardId}
+              listId={listId}
+              cardAttachments={cardData?.attachments[0] as Attachments}
+            />
+            {/* )} */}
           </div>
           <div>
             {/* REPORTER */}

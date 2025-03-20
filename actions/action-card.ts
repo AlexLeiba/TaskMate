@@ -5,6 +5,353 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import { ACTIONS, ENTITY_TYPE } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 
+export async function deleteAttachmentInCard(
+  boardId: string,
+  listId: string,
+  cardId: string,
+  attachmentId: string
+) {
+  const { orgId, userId } = await auth();
+  const user = await currentUser();
+
+  if (!orgId) {
+    return {
+      error: 'Organization not found',
+      data: null,
+    };
+  }
+
+  if (!userId && !user) {
+    return {
+      error: 'User not found',
+      data: null,
+    };
+  }
+
+  let deletedAttachment;
+  try {
+    // Will prevent creating a list if the board doesn't exist
+    const board = await db.board.findUnique({
+      where: {
+        id: boardId,
+        orgId: orgId,
+      },
+      select: {
+        title: true,
+      },
+    });
+
+    if (!board) {
+      return {
+        error: 'Board not found',
+      };
+    }
+    //
+
+    // Check if list exists
+    const currentList = await db.list.findUnique({
+      where: {
+        id: listId,
+        boardId: boardId,
+        board: {
+          orgId: orgId,
+        },
+      },
+      select: {
+        //include cards
+        cards: true,
+        title: true,
+      },
+    });
+
+    if (!currentList) {
+      return {
+        error: 'List not found, please try again',
+        data: null,
+      };
+    }
+
+    const currentCard = await db.card.findUnique({
+      where: {
+        id: cardId,
+        listId: listId,
+      },
+      select: {
+        title: true,
+      },
+    });
+
+    if (!currentCard) {
+      return {
+        error: 'Card not found',
+        data: null,
+      };
+    }
+
+    deletedAttachment = await db.attachments.delete({
+      where: {
+        id: attachmentId,
+        listId: listId,
+        cardId: cardId,
+        orgId: orgId,
+      },
+    });
+
+    // Activity
+    await createActivityLog({
+      entityId: deletedAttachment.id,
+      entityType: ENTITY_TYPE.CARD,
+      action: ACTIONS.DELETE,
+      entityTitle: `Deleted an attachment from the Card: '${currentCard.title}' in the List: '${currentList.title}'`,
+      boardTitle: board.title,
+    });
+  } catch (error: any) {
+    return {
+      error: error.message || 'Error on creating card, please try again',
+      data: null,
+    };
+  }
+
+  revalidatePath(`/board/${boardId}`); // revalidate the path to update the cache
+
+  return {
+    data: deletedAttachment,
+    error: null,
+  };
+}
+
+export async function createCommentInCard(
+  boardId: string,
+  text: string,
+  listId: string,
+  cardId: string
+) {
+  const { orgId, userId } = await auth();
+  const user = await currentUser();
+
+  if (!orgId) {
+    return {
+      error: 'Organization not found',
+      data: null,
+    };
+  }
+
+  if (!userId && !user) {
+    return {
+      error: 'User not found',
+      data: null,
+    };
+  }
+
+  let newComment;
+  try {
+    // Will prevent creating a list if the board doesn't exist
+    const board = await db.board.findUnique({
+      where: {
+        id: boardId,
+        orgId: orgId,
+      },
+      select: {
+        title: true,
+      },
+    });
+
+    if (!board) {
+      return {
+        error: 'Board not found',
+      };
+    }
+    //
+
+    // Check if list exists
+    const currentList = await db.list.findUnique({
+      where: {
+        id: listId,
+        boardId: boardId,
+        board: {
+          orgId: orgId,
+        },
+      },
+      select: {
+        //include cards
+        cards: true,
+        title: true,
+      },
+    });
+
+    if (!currentList) {
+      return {
+        error: 'List not found, please try again',
+        data: null,
+      };
+    }
+
+    const currentCard = await db.card.findUnique({
+      where: {
+        id: cardId,
+        listId: listId,
+      },
+      select: {
+        title: true,
+      },
+    });
+
+    if (!currentCard) {
+      return {
+        error: 'Card not found',
+        data: null,
+      };
+    }
+
+    newComment = await db.comments.create({
+      data: {
+        listId: listId,
+        text: text,
+        cardId: cardId,
+        orgId: orgId,
+        userId: userId,
+        userName: user?.fullName || 'Name',
+        userImage: user?.imageUrl || '',
+        createdAt: new Date(),
+      },
+    });
+
+    // Activity
+    await createActivityLog({
+      entityId: newComment.id,
+      entityType: ENTITY_TYPE.CARD,
+      action: ACTIONS.CREATE,
+      entityTitle: `Added a comment to the Card: '${currentCard.title}' in the List: '${currentList.title}'`,
+      boardTitle: board.title,
+    });
+  } catch (error: any) {
+    return {
+      error: error.message || 'Error on creating card, please try again',
+      data: null,
+    };
+  }
+
+  revalidatePath(`/board/${boardId}`); // revalidate the path to update the cache
+
+  return {
+    data: newComment,
+    error: null,
+  };
+}
+export async function deleteCommentInCard(
+  boardId: string,
+  listId: string,
+  cardId: string,
+  commentId: string
+) {
+  const { orgId, userId } = await auth();
+  const user = await currentUser();
+
+  if (!orgId) {
+    return {
+      error: 'Organization not found',
+      data: null,
+    };
+  }
+
+  if (!userId && !user) {
+    return {
+      error: 'User not found',
+      data: null,
+    };
+  }
+
+  let deletedComment;
+  try {
+    // Will prevent creating a list if the board doesn't exist
+    const board = await db.board.findUnique({
+      where: {
+        id: boardId,
+        orgId: orgId,
+      },
+      select: {
+        title: true,
+      },
+    });
+
+    if (!board) {
+      return {
+        error: 'Board not found',
+      };
+    }
+    //
+
+    // Check if list exists
+    const currentList = await db.list.findUnique({
+      where: {
+        id: listId,
+        boardId: boardId,
+        board: {
+          orgId: orgId,
+        },
+      },
+      select: {
+        //include cards
+        cards: true,
+        title: true,
+      },
+    });
+
+    if (!currentList) {
+      return {
+        error: 'List not found, please try again',
+        data: null,
+      };
+    }
+
+    const currentCard = await db.card.findUnique({
+      where: {
+        id: cardId,
+        listId: listId,
+      },
+      select: {
+        title: true,
+      },
+    });
+
+    if (!currentCard) {
+      return {
+        error: 'Card not found',
+        data: null,
+      };
+    }
+
+    deletedComment = await db.comments.delete({
+      where: {
+        id: commentId,
+        cardId: cardId,
+        orgId: orgId,
+        listId: listId,
+      },
+    });
+
+    // Activity
+    await createActivityLog({
+      entityId: deletedComment.id,
+      entityType: ENTITY_TYPE.CARD,
+      action: ACTIONS.DELETE,
+      entityTitle: `Deleted a comment from the Card: '${currentCard.title}' in the List: '${currentList.title}'`,
+      boardTitle: board.title,
+    });
+  } catch (error: any) {
+    return {
+      error: error.message || 'Error on creating card, please try again',
+      data: null,
+    };
+  }
+
+  revalidatePath(`/board/${boardId}`); // revalidate the path to update the cache
+
+  return {
+    data: deletedComment,
+    error: null,
+  };
+}
 export async function createNewCardInList(
   boardId: string,
   title: string,
