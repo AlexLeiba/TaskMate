@@ -5,7 +5,6 @@ import Activities from '../_components/Activities';
 function ActivitiesPage() {
   return (
     <div className='w-full overflow-y-auto'>
-      {' '}
       {/* ACTIVITY */}
       <Spacer size={6} />
       <Activities />

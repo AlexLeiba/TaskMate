@@ -1,5 +1,5 @@
 'use client';
-import { ImageDown, ImageIcon, Loader, Plus } from 'lucide-react';
+import { ImageDown, ImageIcon, Loader, Plus, X } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { Spacer } from '../ui/spacer';
 import Image from 'next/image';
@@ -10,14 +10,22 @@ import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import { toast } from 'react-toastify';
 import { Attachments as AttachmentsType } from '@prisma/client';
 import { useParams } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
+import { deleteAttachmentInCard } from '@/actions/action-card';
 
 type ActivityType = {
-  attachments: AttachmentsType;
+  attachments: AttachmentsType[];
   cardId: string;
   listId: string;
+  refetchCardData: () => void;
 };
 
-export function Attachments({ attachments, cardId, listId }: ActivityType) {
+export function Attachments({
+  attachments,
+  cardId,
+  listId,
+  refetchCardData,
+}: ActivityType) {
   const params = useParams();
   const { boardId } = params;
   const uploadFileRef = useRef<HTMLInputElement>(null);
@@ -63,6 +71,8 @@ export function Attachments({ attachments, cardId, listId }: ActivityType) {
           if (responseData.status === 200) {
             setPreviewImageUrl(responseData.url);
             toast.success('File uploaded successfully');
+            refetchCardData();
+            setUploadImageLoading(false);
           }
 
           if (responseData.error) {
@@ -71,20 +81,42 @@ export function Attachments({ attachments, cardId, listId }: ActivityType) {
         };
       } catch (error: any) {
         toast.error(error.message);
-      } finally {
+
         setUploadImageLoading(false);
       }
     }
   }
   // fetch attachments here based on list id cardid and orgId
   const { organization: activeOrganization } = useOrganization();
-  return (
-    <div className=' flex attachments-start gap-x-3 w-full'>
-      <ImageIcon />
 
-      <div className='mb-2 w-full'>
+  async function handleDeleteAttachment(attachmentId: string) {
+    const response = await deleteAttachmentInCard(
+      boardId as string,
+      listId,
+      cardId,
+      attachmentId
+    );
+
+    if (response?.data) {
+      toast.success('File deleted successfully');
+      refetchCardData();
+    }
+    if (response?.error) {
+      toast.error(response?.error);
+    }
+  }
+  return (
+    <div className=' flex attachments-start gap-x-3 w-[430px]'>
+      <div className=' w-full'>
         <div className='flex justify-between w-full'>
-          <p className='body-md font-semibold'>Attachments</p>
+          <div className='flex gap-2'>
+            <ImageIcon />
+
+            <div className='flex gap-2 items-center'>
+              <p className='body-md font-semibold'>Attachments</p>
+              <p className='text-gray-400'>{attachments?.length}</p>
+            </div>
+          </div>
           <div className='flex gap-4'>
             <div title='Download all attachments'>
               <ImageDown
@@ -117,38 +149,40 @@ export function Attachments({ attachments, cardId, listId }: ActivityType) {
         </div>
         <Spacer size={3} />
 
-        <div>
-          {previewImageUrl && (
-            <Image
-              width={60}
-              height={40}
-              src={previewImageUrl}
-              className='rounded-md'
-              alt={'preview-uploaded-image'}
-            />
-          )}
-        </div>
-        <div className='flex gap-2'>
-          {attachments && attachments?.values.length > 0 ? (
-            attachments?.values.map((image, index) => {
+        <div className='flex gap-2 overflow-y-auto h-[80px]'>
+          {attachments && attachments?.length > 0 ? (
+            attachments?.map((file, index) => {
+              console.log('🚀 ~ attachments?.map ~ file:', file);
               return (
-                <div className='flex gap-2 items-center flex-wrap' key={index}>
-                  <div className='flex flex-col items-start justify-start w-[60px]'>
-                    {image && (
+                <div
+                  className='flex gap-2 items-center flex-wrap mb-5 mt-1'
+                  key={index}
+                >
+                  <div className='relative flex flex-col items-start justify-start w-[70px] border dark:border-white/20 border-gray-300 rounded-md'>
+                    {file.value && (
                       <Image
-                        width={60}
-                        height={40}
-                        src={image}
-                        className='rounded-md'
+                        width={70}
+                        height={50}
+                        src={file.value}
+                        className='rounded-md h-11 w-full object-contain'
                         alt={'attached-image'}
                       />
                     )}
+                    <div
+                      role='button'
+                      onClick={() => handleDeleteAttachment(file.id)}
+                      tabIndex={0}
+                      title='Delete image'
+                      className='absolute -right-1 -top-1 size-4 cursor-pointer rounded-full bg-red-500 text-white flex justify-center items-center'
+                    >
+                      <X size={15} />
+                    </div>
                   </div>
                 </div>
               );
             })
           ) : (
-            <p className='body-xs mb-3  text-gray-500'>
+            <p className='body-xs mb-2  text-gray-500'>
               No attachments provided.
             </p>
           )}

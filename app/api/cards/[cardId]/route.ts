@@ -31,7 +31,8 @@ export async function GET(
         },
         attachments: {
           select: {
-            values: true,
+            value: true,
+            id: true,
           },
         },
       },

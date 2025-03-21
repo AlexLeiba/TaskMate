@@ -12,7 +12,6 @@ export async function deleteAttachmentInCard(
   attachmentId: string
 ) {
   const { orgId, userId } = await auth();
-  const user = await currentUser();
 
   if (!orgId) {
     return {
@@ -21,7 +20,7 @@ export async function deleteAttachmentInCard(
     };
   }
 
-  if (!userId && !user) {
+  if (!userId) {
     return {
       error: 'User not found',
       data: null,
@@ -58,8 +57,7 @@ export async function deleteAttachmentInCard(
         },
       },
       select: {
-        //include cards
-        cards: true,
+        //include title
         title: true,
       },
     });
@@ -78,6 +76,7 @@ export async function deleteAttachmentInCard(
       },
       select: {
         title: true,
+        id: true,
       },
     });
 
@@ -99,15 +98,15 @@ export async function deleteAttachmentInCard(
 
     // Activity
     await createActivityLog({
-      entityId: deletedAttachment.id,
+      entityId: currentCard.id,
       entityType: ENTITY_TYPE.CARD,
       action: ACTIONS.DELETE,
-      entityTitle: `Deleted an attachment from the Card: '${currentCard.title}' in the List: '${currentList.title}'`,
+      entityTitle: `Deleted an attachment in the List: '${currentList.title}' from the Card: '${currentCard.title}' `,
       boardTitle: board.title,
     });
   } catch (error: any) {
     return {
-      error: error.message || 'Error on creating card, please try again',
+      error: error.message || 'Error on deleting attachment, please try again',
       data: null,
     };
   }
@@ -193,6 +192,7 @@ export async function createCommentInCard(
       },
       select: {
         title: true,
+        id: true,
       },
     });
 
@@ -210,7 +210,7 @@ export async function createCommentInCard(
         cardId: cardId,
         orgId: orgId,
         userId: userId,
-        userName: user?.fullName || 'Name',
+        userName: user?.fullName || 'User Name',
         userImage: user?.imageUrl || '',
         createdAt: new Date(),
       },
@@ -218,15 +218,15 @@ export async function createCommentInCard(
 
     // Activity
     await createActivityLog({
-      entityId: newComment.id,
+      entityId: currentCard.id,
       entityType: ENTITY_TYPE.CARD,
       action: ACTIONS.CREATE,
-      entityTitle: `Added a comment to the Card: '${currentCard.title}' in the List: '${currentList.title}'`,
+      entityTitle: `Added a comment in the List: '${currentList.title}' to the Card: '${currentCard.title}' `,
       boardTitle: board.title,
     });
   } catch (error: any) {
     return {
-      error: error.message || 'Error on creating card, please try again',
+      error: error.message || 'Error on creating a comment, please try again',
       data: null,
     };
   }
@@ -311,6 +311,7 @@ export async function deleteCommentInCard(
       },
       select: {
         title: true,
+        id: true,
       },
     });
 
@@ -332,7 +333,7 @@ export async function deleteCommentInCard(
 
     // Activity
     await createActivityLog({
-      entityId: deletedComment.id,
+      entityId: currentCard.id,
       entityType: ENTITY_TYPE.CARD,
       action: ACTIONS.DELETE,
       entityTitle: `Deleted a comment from the Card: '${currentCard.title}' in the List: '${currentList.title}'`,

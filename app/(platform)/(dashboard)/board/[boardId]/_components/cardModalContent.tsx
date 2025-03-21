@@ -12,7 +12,10 @@ import Dropdown from '@/components/ui/dropdown';
 import Modal from '@/components/ui/modal-dialog';
 import { Spacer } from '@/components/ui/spacer';
 import { Fetcher } from '@/lib/fetcher';
-import { Activity, Attachments, Card } from '@prisma/client';
+import {
+  Attachments as AttachmentsType,
+  Card as CardType,
+} from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Check,
@@ -37,7 +40,6 @@ import { format } from 'date-fns';
 import { useOrganization } from '@clerk/nextjs';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-import { ActivitiesSkeleton } from './activitiesSkeleton';
 import { cn } from '@/lib/utils';
 import { CardContentActionTabs } from '@/components/CardContentActionTabs/CardContentActionTabs';
 
@@ -74,7 +76,7 @@ export function CardModalContent({
     isLoading: isCardLoading,
     refetch: refetchCardData,
   } = useQuery<
-    Card & { list: { title: string } } & { attachments: Attachments[] }
+    CardType & { list: { title: string } } & { attachments: AttachmentsType[] }
   >({
     queryKey: ['card', cardId],
     queryFn: () => Fetcher(`/api/cards/${cardId}`),
@@ -311,7 +313,7 @@ export function CardModalContent({
   return (
     <div>
       <div>
-        {/* IN LIST */}
+        {/* IN LIST INFORMATION */}
         <div className='flex w-full gap-8'>
           <div className='w-full'>
             <div className='flex gap-2 w-full justify-between '>
@@ -325,7 +327,7 @@ export function CardModalContent({
                 </p>
               </div>
             </div>
-            {/* // DESCRIPTION */}
+            {/* // DESCRIPTION ACTION BUTTONS  */}
             <Spacer size={6} />
             <div className='flex gap-2'>
               <div className='flex justify-between w-full'>
@@ -338,7 +340,7 @@ export function CardModalContent({
                     <div title='Close description editor'>
                       <X
                         size={18}
-                        className='text-red-500 hover:opacity-80'
+                        className=' hover:opacity-80'
                         cursor={'pointer'}
                         onClick={() => setTextEditorFocused(false)}
                       />
@@ -364,13 +366,14 @@ export function CardModalContent({
               </div>
             </div>
             <Spacer size={2} />
+            {/* DESCRIPTION SKELETON */}
             {isCardLoading ? (
               <>
-                {/* <Spacer size={7} /> */}
                 <DescriptionSkeleton />
               </>
             ) : (
               <div className='flex gap-4'>
+                {/* DESCRIPTION EDITOR */}
                 {textEditorFocused ? (
                   <form
                     className='w-full  relative'
@@ -394,6 +397,7 @@ export function CardModalContent({
                     />
                   </form>
                 ) : cardData?.description ? (
+                  // DESCRIPTION HTML
                   <div
                     onClick={(e) => {
                       e.stopPropagation();
@@ -414,7 +418,7 @@ export function CardModalContent({
                 )}
               </div>
             )}
-            {/* ACTIVITY */}
+
             <Spacer size={7} />
 
             {/* // ACTIVITIES/COMMENTS/ATTACHMENTS - TABS */}
@@ -422,7 +426,8 @@ export function CardModalContent({
               organizationId={activeOrganization?.id}
               cardId={cardId}
               listId={listId}
-              cardAttachments={cardData?.attachments[0] as Attachments}
+              cardAttachments={cardData?.attachments || []}
+              refetchCardData={refetchCardData}
             />
             {/* )} */}
           </div>
@@ -495,7 +500,7 @@ export function CardModalContent({
               <p className='body-md font-medium'>Actions</p>
               <Spacer size={2} />
 
-              {/* COPY DELETE */}
+              {/* COPY DELETE BUTTONS */}
               <div className='flex  gap-2 '>
                 <Button
                   variant={'secondary'}

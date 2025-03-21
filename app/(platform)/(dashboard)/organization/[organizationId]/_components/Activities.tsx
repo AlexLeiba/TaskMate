@@ -3,7 +3,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Fetcher } from '@/lib/fetcher';
 import { Activity } from '@prisma/client';
-import { ActivityList } from '@/components/Activity/activity';
+import { ActivityList } from '@/components/Activity/activityList';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -14,7 +14,9 @@ function Activities() {
   const params = useSearchParams();
   const route = useRouter();
 
-  const { data: activitiesData } = useQuery<Activity[]>({
+  const { data: activitiesData, isLoading: isActivityLoading } = useQuery<
+    Activity[]
+  >({
     queryKey: ['activity', 'all-activities', Number(params.get('page'))],
     queryFn: () =>
       Fetcher(`/api/all-activities?page=${Number(params.get('page'))}`),
@@ -35,7 +37,10 @@ function Activities() {
 
   return (
     <div className='w-full overflow-y-auto'>
-      <ActivityList items={activitiesData} />
+      <ActivityList
+        activitiesData={activitiesData || []}
+        isActivityLoading={isActivityLoading}
+      />
 
       <div className='flex justify-between items-center w-full'>
         <Button

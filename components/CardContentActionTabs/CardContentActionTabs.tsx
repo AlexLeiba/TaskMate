@@ -1,21 +1,24 @@
 import React from 'react';
-import { ActivityList } from '../Activity/activity';
-import { Activity, Attachments as AttachmentsType } from '@prisma/client';
+import { ActivityList } from '../Activity/activityList';
+import { Attachments as AttachmentsType } from '@prisma/client';
 import { cn } from '@/lib/utils';
 import { Comments } from '../Comments/comments';
 import { Attachments } from '../Attachments/attachments';
+import ActivityFetcher from '../Activity/activityFetcher';
 
 type ActivityType = {
   organizationId?: string;
-  cardAttachments: AttachmentsType;
+  cardAttachments: AttachmentsType[];
   cardId: string;
   listId: string;
+  refetchCardData: () => void;
 };
 export function CardContentActionTabs({
   organizationId,
   cardAttachments,
   cardId,
   listId,
+  refetchCardData,
 }: ActivityType) {
   const [tabSelected, setTabSelected] = React.useState('Attachments');
 
@@ -54,14 +57,13 @@ export function CardContentActionTabs({
       </div>
       {tabSelected === 'Attachments' && (
         <Attachments
+          refetchCardData={refetchCardData}
           attachments={cardAttachments}
           cardId={cardId}
           listId={listId}
         />
       )}
-      {tabSelected === 'Activities' && (
-        <ActivityList cardId={cardId} organizationId={organizationId} />
-      )}
+      {tabSelected === 'Activities' && <ActivityFetcher cardId={cardId} />}
       {tabSelected === 'Comments' && (
         <Comments cardId={cardId} listId={listId} />
       )}

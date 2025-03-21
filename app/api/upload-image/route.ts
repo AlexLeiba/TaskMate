@@ -47,6 +47,10 @@ export async function POST(req: NextRequest) {
       id: cardId,
       listId: listId,
     },
+    select: {
+      title: true,
+      id: true,
+    },
   });
 
   try {
@@ -75,59 +79,26 @@ export async function POST(req: NextRequest) {
     console.log('🚀 ~ POST ~ result:\n\n\n', result);
 
     if (result) {
-      const prevAttachment = await db.attachments.findFirst({
-        where: {
-          cardId,
-          listId,
+      await db.attachments.create({
+        data: {
+          value: result.secure_url,
+          userId: user.id,
+          userName: user.fullName || 'User Name',
+          userImage: user.imageUrl || '',
+          listId: listId,
+          cardId: cardId,
+          orgId: orgId,
         },
       });
 
-      if (prevAttachment && prevAttachment.values.length > 0) {
-        await db.attachments.updateMany({
-          where: {
-            listId: listId,
-            cardId: cardId,
-          },
-          data: {
-            values: [...prevAttachment.values, result.secure_url],
-            userId: user.id,
-            userName: user.fullName || 'Name',
-            userImage: user.imageUrl,
-            listId: listId,
-            cardId: cardId,
-            orgId: orgId,
-          },
-        });
-        // Activity
-        await createActivityLog({
-          entityId: prevAttachment.id,
-          entityType: ENTITY_TYPE.CARD,
-          action: ACTIONS.DELETE,
-          entityTitle: `Added an image to the Card: '${card.title}' in the List: '${currentList.title}'`,
-          boardTitle: board.title,
-        });
-      } else {
-        const createdAttachment = await db.attachments.create({
-          data: {
-            values: [result.secure_url],
-            userId: user.id,
-            userName: user.fullName || 'Name',
-            userImage: user.imageUrl,
-            listId: listId,
-            cardId: cardId,
-            orgId: orgId,
-          },
-        });
-
-        // Activity
-        await createActivityLog({
-          entityId: createdAttachment.id,
-          entityType: ENTITY_TYPE.CARD,
-          action: ACTIONS.DELETE,
-          entityTitle: `Added an image to the Card: '${card.title}' in the List: '${currentList.title}'`,
-          boardTitle: board.title,
-        });
-      }
+      // Activity
+      await createActivityLog({
+        entityId: card.id,
+        entityType: ENTITY_TYPE.CARD,
+        action: ACTIONS.DELETE,
+        entityTitle: `Added an image to the Card: '${card.title}' in the List: '${currentList.title}'`,
+        boardTitle: board.title,
+      });
     }
 
     return NextResponse.json({

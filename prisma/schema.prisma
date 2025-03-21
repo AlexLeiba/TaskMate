@@ -101,7 +101,7 @@ model Comments{
 
 model Attachments{
   id        String @id @default(uuid())
-  values String[]
+  value String
 
    listId String
    cardId   String

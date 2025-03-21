@@ -25,7 +25,7 @@ export async function GET(
     });
 
     if (!cardData) {
-      throw new Error('Not found');
+      throw new Error('Card not found');
     }
 
     const activityLogs = await db?.activity?.findMany({
