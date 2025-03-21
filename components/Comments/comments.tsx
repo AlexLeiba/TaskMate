@@ -19,7 +19,7 @@ import {
 } from '@/actions/action-card';
 import { toast } from 'react-toastify';
 import { useEventListener } from 'usehooks-ts';
-import { ActivitiesSkeleton } from '@/app/(platform)/(dashboard)/board/[boardId]/_components/activitiesSkeleton';
+import { CommentsSkeleton } from '@/app/(platform)/(dashboard)/board/[boardId]/_components/commentsSkeleton';
 
 type ActivityType = {
   cardId: string;
@@ -176,7 +176,7 @@ export function Comments({ cardId, listId }: ActivityType) {
             <Spacer size={3} />
             <div className=' overflow-y-auto h-[80px] pr-2'>
               {isCommentsLoading ? (
-                <ActivitiesSkeleton />
+                <CommentsSkeleton />
               ) : commentsData && commentsData.length > 0 ? (
                 commentsData.map((data: any) => {
                   return (

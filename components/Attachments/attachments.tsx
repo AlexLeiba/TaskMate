@@ -17,6 +17,7 @@ type ActivityType = {
   attachments: AttachmentsType[];
   cardId: string;
   listId: string;
+  isCardLoading: boolean;
   refetchCardData: () => void;
 };
 
@@ -24,12 +25,12 @@ export function Attachments({
   attachments,
   cardId,
   listId,
+  isCardLoading,
   refetchCardData,
 }: ActivityType) {
   const params = useParams();
   const { boardId } = params;
   const uploadFileRef = useRef<HTMLInputElement>(null);
-  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [uploadImageLoading, setUploadImageLoading] = useState(false);
 
   // HANDLE FILE UPLOAD
@@ -69,7 +70,6 @@ export function Attachments({
           const responseData = await response.json();
 
           if (responseData.status === 200) {
-            setPreviewImageUrl(responseData.url);
             toast.success('File uploaded successfully');
             refetchCardData();
             setUploadImageLoading(false);
@@ -86,8 +86,6 @@ export function Attachments({
       }
     }
   }
-  // fetch attachments here based on list id cardid and orgId
-  const { organization: activeOrganization } = useOrganization();
 
   async function handleDeleteAttachment(attachmentId: string) {
     const response = await deleteAttachmentInCard(
@@ -150,9 +148,14 @@ export function Attachments({
         <Spacer size={3} />
 
         <div className='flex gap-2 overflow-y-auto h-[80px]'>
-          {attachments && attachments?.length > 0 ? (
+          {/* SKELETON IMAGES */}
+          {isCardLoading ? (
+            <div className='flex gap-2 mt-3'>
+              <div className='w-[68px] h-[44px] rounded-md bg-gray-300 animate-pulse'></div>
+              <div className='w-[68px] h-[44px] rounded-md bg-gray-300 animate-pulse'></div>
+            </div>
+          ) : attachments && attachments?.length > 0 ? (
             attachments?.map((file, index) => {
-              console.log('🚀 ~ attachments?.map ~ file:', file);
               return (
                 <div
                   className='flex gap-2 items-center flex-wrap mb-5 mt-1'
@@ -182,9 +185,11 @@ export function Attachments({
               );
             })
           ) : (
-            <p className='body-xs mb-2  text-gray-500'>
-              No attachments provided.
-            </p>
+            <div className='h-20'>
+              <p className='body-xs mb-2  text-gray-500'>
+                No attachments provided.
+              </p>
+            </div>
           )}
         </div>
       </div>

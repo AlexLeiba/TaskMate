@@ -67,7 +67,7 @@ export function CardModalContent({
 
   const [textEditorFocused, setTextEditorFocused] = useState(false);
 
-  const { organization: activeOrganization } = useOrganization();
+  // const { organization: activeOrganization } = useOrganization();
 
   const queryClient = useQueryClient();
 
@@ -310,6 +310,10 @@ export function CardModalContent({
     setTextEditorFocused(false);
   }
 
+  function handleCloseTextEditor() {
+    setTextEditorFocused(false);
+  }
+
   return (
     <div>
       <div>
@@ -342,7 +346,7 @@ export function CardModalContent({
                         size={18}
                         className=' hover:opacity-80'
                         cursor={'pointer'}
-                        onClick={() => setTextEditorFocused(false)}
+                        onClick={() => handleCloseTextEditor()}
                       />
                     </div>
                     <div
@@ -372,7 +376,7 @@ export function CardModalContent({
                 <DescriptionSkeleton />
               </>
             ) : (
-              <div className='flex gap-4'>
+              <div className='flex '>
                 {/* DESCRIPTION EDITOR */}
                 {textEditorFocused ? (
                   <form
@@ -387,7 +391,7 @@ export function CardModalContent({
                         <ReactQuill
                           ref={textEditorRef}
                           readOnly={isCardLoading}
-                          className='w-full  text-baseline-950 dark:text-white min-h-[241.37] max-h-[280px] overflow-y-auto rounded-md '
+                          className='w-full  text-baseline-950 dark:text-white min-h-[240px] max-h-[280px] overflow-y-auto rounded-md '
                           value={value}
                           onChange={onChange}
                           theme={'snow'}
@@ -405,16 +409,27 @@ export function CardModalContent({
                     }}
                     className={cn(
                       'html-content ',
-                      ' w-full min-h-[241.37] max-h-[280px] overflow-y-auto rounded-b px-[15px] py-6 bg-gray-200  dark:bg-gray-900 dark:hover:bg-gray-800 hover:bg-gray-300 cursor-pointer transition-all  '
+                      ' w-full min-h-[240px] max-h-[280px] overflow-y-auto rounded-b px-[15px] py-6 bg-gray-200  dark:bg-gray-900 dark:hover:bg-gray-800 hover:bg-gray-300 cursor-pointer transition-all  '
                     )}
                     dangerouslySetInnerHTML={{
                       __html: cardData?.description,
                     }}
                   ></div>
                 ) : (
-                  <p className='text-gray-500 body-xs'>
-                    No description provided...
-                  </p>
+                  <>
+                    <Spacer size={2} />
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenTextEditor();
+                      }}
+                      className='rounded-b px-[15px]  dark:bg-gray-900 dark:hover:bg-gray-800 hover:bg-gray-300 h-[240px] w-full cursor-pointer transition-all '
+                    >
+                      <p className='text-gray-500 body-xs '>
+                        No description provided...
+                      </p>
+                    </div>
+                  </>
                 )}
               </div>
             )}
@@ -423,10 +438,10 @@ export function CardModalContent({
 
             {/* // ACTIVITIES/COMMENTS/ATTACHMENTS - TABS */}
             <CardContentActionTabs
-              organizationId={activeOrganization?.id}
               cardId={cardId}
               listId={listId}
               cardAttachments={cardData?.attachments || []}
+              isCardLoading={isCardLoading}
               refetchCardData={refetchCardData}
             />
             {/* )} */}

@@ -1,5 +1,4 @@
 import React from 'react';
-import { ActivityList } from '../Activity/activityList';
 import { Attachments as AttachmentsType } from '@prisma/client';
 import { cn } from '@/lib/utils';
 import { Comments } from '../Comments/comments';
@@ -7,17 +6,17 @@ import { Attachments } from '../Attachments/attachments';
 import ActivityFetcher from '../Activity/activityFetcher';
 
 type ActivityType = {
-  organizationId?: string;
   cardAttachments: AttachmentsType[];
   cardId: string;
   listId: string;
+  isCardLoading: boolean;
   refetchCardData: () => void;
 };
 export function CardContentActionTabs({
-  organizationId,
   cardAttachments,
   cardId,
   listId,
+  isCardLoading,
   refetchCardData,
 }: ActivityType) {
   const [tabSelected, setTabSelected] = React.useState('Attachments');
@@ -57,6 +56,7 @@ export function CardContentActionTabs({
       </div>
       {tabSelected === 'Attachments' && (
         <Attachments
+          isCardLoading={isCardLoading}
           refetchCardData={refetchCardData}
           attachments={cardAttachments}
           cardId={cardId}
