@@ -3,15 +3,12 @@ import { ImageDown, ImageIcon, Loader, Plus, X } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { Spacer } from '../ui/spacer';
 import Image from 'next/image';
-import { useOrganization } from '@clerk/nextjs';
-import Lightbox from 'yet-another-react-lightbox';
-import 'yet-another-react-lightbox/styles.css';
-import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import { toast } from 'react-toastify';
 import { Attachments as AttachmentsType } from '@prisma/client';
 import { useParams } from 'next/navigation';
-import { useQueryClient } from '@tanstack/react-query';
 import { deleteAttachmentInCard } from '@/actions/action-card';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 type ActivityType = {
   attachments: AttachmentsType[];
@@ -32,6 +29,8 @@ export function Attachments({
   const { boardId } = params;
   const uploadFileRef = useRef<HTMLInputElement>(null);
   const [uploadImageLoading, setUploadImageLoading] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   // HANDLE FILE UPLOAD
   function handleFileUploadClick() {
@@ -103,6 +102,36 @@ export function Attachments({
       toast.error(response?.error);
     }
   }
+
+  async function handleDownloadAllAttachments() {
+    const zip = new JSZip();
+
+    // Fetch and add each file to the zip
+    const downloadPromises = attachments.map(async (attachment, index) => {
+      const response = await fetch(attachment.value);
+      const blob = await response.blob();
+      zip.file(`attachment-${index + 1}.jpg`, blob);
+    });
+
+    await Promise.all(downloadPromises);
+
+    // Generate ZIP and trigger download
+    zip.generateAsync({ type: 'blob' }).then((content) => {
+      saveAs(content, 'attachments.zip');
+    });
+  }
+
+  function handleDownloadAttachment(attachmentUrl: string) {
+    const anchorLink = document.createElement('a');
+    anchorLink.href = attachmentUrl;
+    anchorLink.download = 'attachment';
+
+    anchorLink.target = '_blank';
+    document.body.appendChild(anchorLink);
+    anchorLink.click();
+    document.body.removeChild(anchorLink);
+  }
+
   return (
     <div className=' flex attachments-start gap-x-3 w-[430px]'>
       <div className=' w-full'>
@@ -118,6 +147,7 @@ export function Attachments({
           <div className='flex gap-4'>
             <div title='Download all attachments'>
               <ImageDown
+                onClick={handleDownloadAllAttachments}
                 cursor={'pointer'}
                 size={18}
                 className='text-green-600 hover:opacity-80'
@@ -164,10 +194,14 @@ export function Attachments({
                   <div className='relative flex flex-col items-start justify-start w-[70px] border dark:border-white/20 border-gray-300 rounded-md'>
                     {file.value && (
                       <Image
+                        title='Preview image'
+                        onClick={() => {
+                          handleDownloadAttachment(file.value);
+                        }}
                         width={70}
                         height={50}
                         src={file.value}
-                        className='rounded-md h-11 w-full object-contain'
+                        className='rounded-md h-11 w-full object-contain cursor-pointer hover:opacity-50'
                         alt={'attached-image'}
                       />
                     )}

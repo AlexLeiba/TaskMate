@@ -119,7 +119,7 @@ export function CardModalContent({
   const {
     control,
     handleSubmit,
-    formState: { errors, isDirty },
+    formState: { isDirty },
     setValue,
   } = useForm({
     defaultValues: {
