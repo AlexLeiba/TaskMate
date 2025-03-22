@@ -1,6 +1,6 @@
 'use client';
 import { Activity } from '@prisma/client';
-import { MessageCircle, Plus, X } from 'lucide-react';
+import { Loader, MessageCircle, Plus, X } from 'lucide-react';
 import React from 'react';
 import { Spacer } from '../ui/spacer';
 import { format } from 'date-fns';
@@ -30,6 +30,7 @@ export function Comments({ cardId, listId }: ActivityType) {
   const [isAddingComment, setIsAddingComment] = React.useState(false);
   const formCardRef = React.useRef<HTMLFormElement>(null);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   function onKeyDownEvent(e: KeyboardEvent) {
     if (e.key === 'Escape') {
@@ -64,6 +65,7 @@ export function Comments({ cardId, listId }: ActivityType) {
   });
 
   async function onSubmit({ text }: { text: string }) {
+    setIsSubmitting(true);
     const response = await createCommentInCard(
       boardId as string,
       text,
@@ -76,11 +78,14 @@ export function Comments({ cardId, listId }: ActivityType) {
       toast.success('The comment was created successfully');
       setIsAddingComment(false);
       refetchActivityData();
+      setIsSubmitting(false);
     }
     if (response?.error) {
       reset();
       toast.error(response?.error);
+      setIsSubmitting(false);
     }
+    setIsSubmitting(false);
   }
 
   function handleCloseEditingCard() {
@@ -89,6 +94,7 @@ export function Comments({ cardId, listId }: ActivityType) {
   }
 
   async function handleDeleteComment(commentId: string) {
+    setIsSubmitting(true);
     const response = await deleteCommentInCard(
       boardId as string,
       listId,
@@ -102,17 +108,25 @@ export function Comments({ cardId, listId }: ActivityType) {
       toast.success('The comment was deleted successfully');
       setIsAddingComment(false);
       refetchActivityData();
+      setIsSubmitting(false);
     }
     if (response?.error) {
       reset();
       toast.error(response?.error);
+      setIsSubmitting(false);
     }
+    setIsSubmitting(false);
   }
   return (
     <div className=' flex items-start gap-x-3 w-full'>
       <div className=' w-full'>
         <div className='flex gap-2'>
-          <MessageCircle />
+          {isSubmitting ? (
+            <Loader className='animate-spin ' />
+          ) : (
+            <MessageCircle />
+          )}
+
           <div className='flex justify-between w-full'>
             <div className='flex gap-2 items-center'>
               <p className='body-md font-semibold'>Comments</p>
@@ -141,36 +155,45 @@ export function Comments({ cardId, listId }: ActivityType) {
         </div>
 
         {isAddingComment ? (
-          <form
-            ref={formCardRef}
-            className='m-1 py-0.5 px-1 space-y-1 dark:text-white'
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <TextArea
-              rows={1}
-              autoFocus
-              label='Your comment'
-              {...register('text')}
-              id='text'
-              onKeyDown={() => {}}
-              //   ref={textareaCardRef}
-              placeholder='Type the comment here...'
-              error={errors.text?.message}
-            />
-
-            <div className='flex  gap-2 justify-between'>
-              <Button
-                ref={buttonRef}
-                type='submit'
-                variant={'secondary'}
-                size={'sm'}
-                className='justify-start '
-                onClick={handleSubmit(onSubmit)}
-              >
-                Save
-              </Button>
-            </div>
-          </form>
+          <>
+            <Spacer size={1} />
+            <form
+              ref={formCardRef}
+              className='m-1 py-0.5 px-1 space-y-1 dark:text-white h-[80px]'
+              onSubmit={(e) => e.preventDefault()}
+            >
+              <div className='flex  gap-2 justify-between items-end relative'>
+                <div className='mr-16 w-full'>
+                  <TextArea
+                    rows={1}
+                    autoFocus
+                    label='Your comment'
+                    {...register('text')}
+                    id='text'
+                    onKeyDown={() => {}}
+                    //   ref={textareaCardRef}
+                    placeholder='Type the comment here...'
+                    error={errors.text?.message}
+                  />
+                </div>
+                <Button
+                  ref={buttonRef}
+                  type='submit'
+                  variant={'secondary'}
+                  size={'sm'}
+                  className='justify-start absolute bottom-0 right-0 '
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <Loader className='animate-spin ' size={18} />
+                  ) : (
+                    'Send'
+                  )}
+                </Button>
+              </div>
+            </form>
+          </>
         ) : (
           <>
             <Spacer size={3} />

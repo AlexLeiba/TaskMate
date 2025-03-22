@@ -29,8 +29,7 @@ export function Attachments({
   const { boardId } = params;
   const uploadFileRef = useRef<HTMLInputElement>(null);
   const [uploadImageLoading, setUploadImageLoading] = useState(false);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // HANDLE FILE UPLOAD
   function handleFileUploadClick() {
@@ -87,6 +86,7 @@ export function Attachments({
   }
 
   async function handleDeleteAttachment(attachmentId: string) {
+    setIsSubmitting(true);
     const response = await deleteAttachmentInCard(
       boardId as string,
       listId,
@@ -97,10 +97,13 @@ export function Attachments({
     if (response?.data) {
       toast.success('File deleted successfully');
       refetchCardData();
+      setIsSubmitting(false);
     }
     if (response?.error) {
       toast.error(response?.error);
+      setIsSubmitting(false);
     }
+    setIsSubmitting(false);
   }
 
   async function handleDownloadAllAttachments() {
@@ -137,7 +140,11 @@ export function Attachments({
       <div className=' w-full'>
         <div className='flex justify-between w-full'>
           <div className='flex gap-2'>
-            <ImageIcon />
+            {isSubmitting ? (
+              <Loader className='animate-spin ' />
+            ) : (
+              <ImageIcon />
+            )}
 
             <div className='flex gap-2 items-center'>
               <p className='body-md font-semibold'>Attachments</p>
@@ -205,6 +212,7 @@ export function Attachments({
                         alt={'attached-image'}
                       />
                     )}
+
                     <div
                       role='button'
                       onClick={() => handleDeleteAttachment(file.id)}

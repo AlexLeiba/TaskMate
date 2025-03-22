@@ -417,3 +417,7 @@ body {
 .html-content li {
   margin-bottom: 5px; /* Optional: Add spacing */
 }
+
+.ql-tooltip {
+  left: 5px !important;
+}
