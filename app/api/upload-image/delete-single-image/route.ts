@@ -1,11 +1,8 @@
 import cloudinary from '@/lib/cloudinary';
-import { createActivityLog } from '@/lib/createActivityLog';
-import { db } from '@/lib/db';
 import { currentUser, auth } from '@clerk/nextjs/server';
-import { ACTIONS, ENTITY_TYPE } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function DELETE(req: NextRequest, res: NextResponse) {
+export async function DELETE(req: NextRequest) {
   const user = await currentUser();
   const { orgId } = await auth();
 

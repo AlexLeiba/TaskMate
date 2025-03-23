@@ -1,11 +1,8 @@
 import cloudinary from '@/lib/cloudinary';
-import { createActivityLog } from '@/lib/createActivityLog';
-import { db } from '@/lib/db';
 import { currentUser, auth } from '@clerk/nextjs/server';
-import { ACTIONS, ENTITY_TYPE } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function DELETE(req: NextRequest, res: NextResponse) {
+export async function DELETE(req: NextRequest) {
   const user = await currentUser();
   const { orgId } = await auth();
 
@@ -32,20 +29,6 @@ export async function DELETE(req: NextRequest, res: NextResponse) {
   console.log('🚀 ~ DELETE ~ attachmentIds:\n\n\n', attachmentIds);
 
   try {
-    // if (
-    //   !attachmentsAsArray ||
-    //   !Array.isArray(attachmentsAsArray) ||
-    //   attachmentsAsArray.length === 0
-    // ) {
-    //   return NextResponse.json(
-    //     { error: 'No attachment ids provided' },
-    //     {
-    //       status: 400,
-    //     }
-    //   );
-    // }
-    // upload image to cloudinary and get the result
-    // on deleting a board/card/list -< map throu all images and delete them or better use     const result = await cloudinary.api.delete_resources(attachmentIds);
     const result = await cloudinary.api.delete_resources(attachmentIds);
     console.log('🚀 ~ DELETE ~ result:\n\n\n\n', result);
 
