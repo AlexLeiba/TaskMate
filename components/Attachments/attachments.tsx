@@ -106,15 +106,18 @@ export function Attachments({
       refetchCardData();
       setIsSubmitting(false);
 
-      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/upload-image`, {
-        method: 'DELETE',
-        body: JSON.stringify({
-          attachmentIds: publicId,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/upload-image/delete-single-image`,
+        {
+          method: 'DELETE',
+          body: JSON.stringify({
+            attachmentIds: publicId,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
     }
     if (response?.error) {
       toast.error(response?.error);

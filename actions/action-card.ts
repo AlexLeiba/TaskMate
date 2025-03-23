@@ -1,4 +1,5 @@
 'use server';
+import cloudinary from '@/lib/cloudinary';
 import { createActivityLog } from '@/lib/createActivityLog';
 import { db } from '@/lib/db';
 import { auth, currentUser } from '@clerk/nextjs/server';
@@ -718,6 +719,10 @@ export async function deleteCard(
         id: cardId,
         listId: listId,
       },
+      select: {
+        attachments: true,
+        title: true,
+      },
     });
 
     if (!cardToBeDeleted) {
@@ -733,6 +738,15 @@ export async function deleteCard(
         listId: listId,
       },
     });
+
+    // DELETE ALL IMAGES OF THE DELETED CARD FROM CLOUDINARY
+    const imagesPublicIdsOfTheDeletedCard = cardToBeDeleted?.attachments?.map(
+      (attachment) => attachment.publicId
+    );
+
+    if (imagesPublicIdsOfTheDeletedCard.length > 0) {
+      await cloudinary.api.delete_resources(imagesPublicIdsOfTheDeletedCard);
+    }
 
     // Activity
     await createActivityLog({

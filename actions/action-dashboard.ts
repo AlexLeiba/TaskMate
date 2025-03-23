@@ -1,5 +1,6 @@
 'use server';
 
+import cloudinary from '@/lib/cloudinary';
 import { createActivityLog } from '@/lib/createActivityLog';
 // server actions allows to mutate the server components
 
@@ -84,6 +85,30 @@ export async function createBoard(data: { title: string; image: string }) {
 
 export async function deleteBoard(id: string) {
   try {
+    const board = await db.board.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        lists: {
+          select: {
+            cards: {
+              select: {
+                attachments: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!board) {
+      return {
+        data: '',
+        error: 'Board not found',
+      };
+    }
+
     const result = await db.board.delete({
       where: {
         id,
@@ -91,6 +116,21 @@ export async function deleteBoard(id: string) {
     });
 
     if (result) {
+      // DELETE ALL IMAGES OF THE DELETED BOARD FROM CLOUDINARY
+      const imagesPublicIdsOfTheDeletedBoard = [''];
+
+      board?.lists?.forEach((list) =>
+        list.cards?.forEach((card) =>
+          card.attachments?.forEach((attachment) => {
+            imagesPublicIdsOfTheDeletedBoard.push(attachment.publicId);
+          })
+        )
+      );
+
+      if (imagesPublicIdsOfTheDeletedBoard.length > 0) {
+        await cloudinary.api.delete_resources(imagesPublicIdsOfTheDeletedBoard);
+      }
+
       revalidatePath(`/board/${id}`);
 
       // Activity

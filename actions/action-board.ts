@@ -1,5 +1,6 @@
 'use server';
 
+import cloudinary from '@/lib/cloudinary';
 import { createActivityLog } from '@/lib/createActivityLog';
 import { db } from '@/lib/db';
 import { auth, currentUser } from '@clerk/nextjs/server';
@@ -349,6 +350,14 @@ export async function deleteList(boardId: string, listId: string) {
         orgId: orgId,
       },
     },
+    select: {
+      cards: {
+        select: {
+          attachments: true,
+        },
+      },
+      title: true,
+    },
   });
 
   if (!list) {
@@ -367,6 +376,20 @@ export async function deleteList(boardId: string, listId: string) {
         },
       },
     });
+
+    // DELETE ALL IMAGES OF THE DELETED LIST FROM CLOUDINARY
+
+    const imagesPublicIdsOfTheDeletedList = [''];
+
+    list.cards?.forEach((card) =>
+      card.attachments?.forEach((attachment) => {
+        imagesPublicIdsOfTheDeletedList.push(attachment.publicId);
+      })
+    );
+
+    if (imagesPublicIdsOfTheDeletedList.length > 0) {
+      await cloudinary.api.delete_resources(imagesPublicIdsOfTheDeletedList);
+    }
 
     // Activity
     await createActivityLog({
