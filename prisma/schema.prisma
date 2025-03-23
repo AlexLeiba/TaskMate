@@ -109,7 +109,9 @@ model Attachments{
    
    card     Card @relation(fields: [cardId], references: [id],onDelete: Cascade)
 
-
+  publicId String
+  format String
+  
    userId   String
    userName String
    userImage String

@@ -66,6 +66,10 @@ export function Attachments({
           );
 
           const responseData = await response.json();
+          console.log(
+            '🚀 ~ reader.onload= ~ responseData: \n\n\n\n',
+            responseData
+          );
 
           if (responseData.status === 200) {
             toast.success('File uploaded successfully');
@@ -85,7 +89,10 @@ export function Attachments({
     }
   }
 
-  async function handleDeleteAttachment(attachmentId: string) {
+  async function handleDeleteAttachment(
+    attachmentId: string,
+    publicId: string
+  ) {
     setIsSubmitting(true);
     const response = await deleteAttachmentInCard(
       boardId as string,
@@ -98,6 +105,16 @@ export function Attachments({
       toast.success('File deleted successfully');
       refetchCardData();
       setIsSubmitting(false);
+
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/upload-image`, {
+        method: 'DELETE',
+        body: JSON.stringify({
+          attachmentIds: publicId,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     }
     if (response?.error) {
       toast.error(response?.error);
@@ -193,6 +210,7 @@ export function Attachments({
             </div>
           ) : attachments && attachments?.length > 0 ? (
             attachments?.map((file, index) => {
+              console.log('🚀 ~ attachments?.map ~ file:', file);
               return (
                 <div
                   className='flex gap-2 items-center flex-wrap mb-5 mt-1'
@@ -215,7 +233,9 @@ export function Attachments({
 
                     <div
                       role='button'
-                      onClick={() => handleDeleteAttachment(file.id)}
+                      onClick={() =>
+                        handleDeleteAttachment(file.id, file.publicId)
+                      }
                       tabIndex={0}
                       title='Delete image'
                       className='absolute -right-1 -top-1 size-4 cursor-pointer rounded-full bg-red-500 text-white flex justify-center items-center'
