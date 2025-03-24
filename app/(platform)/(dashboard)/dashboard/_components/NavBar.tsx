@@ -20,14 +20,17 @@ export function Navbar() {
       <div className='md:max-w-screen-2xl px-4  flex items-center justify-between w-full mx-auto'>
         <div className='flex gap-4 items-center h-[30px]'>
           <Logo />
+          <ThemeToggle />
+        </div>
 
+        <div className='flex items-center gap-6'>
           <Modal
             closeRef={closeModalOnSubmitRef}
             contentClassName='lg:w-[450px] w-[305px] bg-gray-300 '
             title='New board'
             description=''
             sideOffset={5}
-            side='right'
+            side='top'
             content={
               <FormBoard
                 setIsLoadingCreateBoard={setIsLoadingCreateBoard}
@@ -62,25 +65,15 @@ export function Navbar() {
                 elements: {
                   organizationSwitcherTriggerIcon: 'dark:text-white',
                   avatarBox: 'dark:bg-gray-300',
-                  organizationPreviewTextContainer: 'dark:text-white',
-                  rootBox: {
-                    height: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                  },
 
-                  popoverBox: {
-                    width: '100%',
-                    maxWidth: 'auto',
-                  },
+                  organizationSwitcherPopoverActions: 'text-black',
+                  organizationPreview: 'text-black',
+                  organizationPreviewMainIdentifier: 'dark:text-white',
                 },
               }}
             />
           </div>
-        </div>
 
-        <div className='flex items-center gap-6'>
-          <ThemeToggle />
           <div className='space-x-4  flex items-center justify-between '>
             <UserButton
               appearance={{

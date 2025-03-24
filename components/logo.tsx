@@ -19,8 +19,28 @@ function Logo({
           props?.className
         )}
       >
-        <Image src={'/logo.png'} alt='logo' width={30} height={30} />
-        <p className='font-bold '>TaskMate</p>
+        <Image
+          className='md:hidden'
+          src={'/logo/logo.webp'}
+          alt='logo'
+          width={30}
+          height={30}
+        />
+        <Image
+          src={'/logo/whole-logo-light.webp'}
+          alt='logo'
+          width={120}
+          height={30}
+          className='dark:hidden hidden md:block '
+        />
+        <Image
+          className=' hidden md:dark:block '
+          src={'/logo/whole-logo-dark.webp'}
+          alt='logo'
+          width={120}
+          height={30}
+        />
+        {/* <p className='font-bold '>TaskMate</p> */}
       </div>
     </Link>
   );

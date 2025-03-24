@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   keywords: metadataConfig.keywords,
   icons: [
     {
-      url: '/logo.png',
+      url: '/logo/logo.webp',
     },
   ],
 };

@@ -301,8 +301,11 @@ body {
   @apply text-xl font-medium !important;
 }
 
-.cl-organizationSwitcherPopoverCard {
-  left: 16px !important;
+@media (max-width: 768px) {
+  .cl-organizationSwitcherPopoverCard {
+    left: 16px !important;
+    width: 100% !important;
+  }
 }
 
 @media (max-width: 768px) {
@@ -324,6 +327,10 @@ body {
 
 .cl-organizationSwitcherTrigger {
   padding: 0 8px;
+}
+
+.cl-organizationSwitcherPopoverActions span {
+  color: black !important;
 }
 
 /* ---break---*/
