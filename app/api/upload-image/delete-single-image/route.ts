@@ -26,14 +26,9 @@ export async function DELETE(req: NextRequest) {
     );
   }
   const { attachmentIds } = body;
-  console.log(
-    '🚀 ~ DELETE SINGLE ATTACHMENT IDS ~ attachmentIds:\n\n\n',
-    attachmentIds
-  );
 
   try {
     const result = await cloudinary.uploader.destroy(attachmentIds);
-    console.log('🚀 ~ DELETE SINGLE ATTACHMENT ~ result:\n\n\n\n', result);
 
     return NextResponse.json({
       status: 200,

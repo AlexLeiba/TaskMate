@@ -26,11 +26,9 @@ export async function DELETE(req: NextRequest) {
     );
   }
   const { attachmentIds } = body;
-  console.log('🚀 ~ DELETE ~ attachmentIds:\n\n\n', attachmentIds);
 
   try {
     const result = await cloudinary.api.delete_resources(attachmentIds);
-    console.log('🚀 ~ DELETE ~ result:\n\n\n\n', result);
 
     return NextResponse.json({
       status: 200,
