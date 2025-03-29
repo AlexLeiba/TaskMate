@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import Modal from '@/components/ui/modal-dialog';
 import { Separator } from '@/components/ui/separator';
 import { List } from '@prisma/client';
-import { Copy, Delete, Edit, Plus } from 'lucide-react';
+import { Copy, Delete, Edit, Loader, Plus } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 function ListOptions({
@@ -21,6 +21,7 @@ function ListOptions({
   handleEnableEditingListHeader: () => void;
 }) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isCopySubmitting, setIsCopySubmitting] = useState(false);
 
   async function handleDeleteList() {
     setIsDeleteModalOpen(false);
@@ -39,16 +40,20 @@ function ListOptions({
   }
 
   async function handleCopyList() {
+    if (isCopySubmitting) return;
+    setIsCopySubmitting(true);
     const response = await copyList(data.boardId, data.id);
 
     if (response?.error) {
       toast.error(response?.error);
+      setIsCopySubmitting(false);
     }
     if (response?.data) {
       toast.success('List was copied successfully');
 
       // On success will trigger the dropdown Options menu to close
       closeRef?.current?.click();
+      setIsCopySubmitting(false);
     }
   }
 
@@ -80,7 +85,12 @@ function ListOptions({
         className='w-full justify-start hover:bg-gray-400 hover:text-white'
         variant={'ghost'}
       >
-        <Copy /> Copy list
+        {isCopySubmitting ? (
+          <Loader className='animate-spin ' size={18} />
+        ) : (
+          <Copy />
+        )}
+        Copy list
       </Button>
 
       <Separator />

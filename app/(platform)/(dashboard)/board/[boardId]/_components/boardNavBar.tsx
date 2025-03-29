@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Spacer } from '@/components/ui/spacer';
 
 import { type Board as BoardType } from '@prisma/client';
-import { Ellipsis, X } from 'lucide-react';
+import { Ellipsis, Loader, X } from 'lucide-react';
 import Link from 'next/link';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -17,7 +17,10 @@ export function BoardNavBar({ board }: { board: BoardType }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [titleValue, setTitleValue] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const [isTitleSubmitting, setIsTitleSubmitting] = useState(false);
   async function handleEditTitle() {
+    if (isTitleSubmitting) return;
+    setIsTitleSubmitting(true);
     try {
       const response = await editBoardTitle(board.id, titleValue);
 
@@ -27,11 +30,14 @@ export function BoardNavBar({ board }: { board: BoardType }) {
 
       toast.success('Board title updated successfully');
       setTitleValue('');
+      setIsTitleSubmitting(false);
     } catch (error: any) {
       toast.error(error);
+      setIsTitleSubmitting(false);
     } finally {
       setTitleValue('');
       setIsOpen(false);
+      setIsTitleSubmitting(false);
     }
   }
 
@@ -71,6 +77,9 @@ export function BoardNavBar({ board }: { board: BoardType }) {
                   disabled={titleValue.length < 3}
                 >
                   Save
+                  {isTitleSubmitting && (
+                    <Loader className='animate-spin ' size={18} />
+                  )}
                 </Button>
               </>
             }

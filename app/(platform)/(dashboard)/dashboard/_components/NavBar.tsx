@@ -13,14 +13,19 @@ export function Navbar() {
   const closeModalOnSubmitRef = useRef<HTMLButtonElement>(null);
   const [isLoadingCreateBoard, setIsLoadingCreateBoard] = useState(false);
   return (
-    <div className='fixed top-0 w-full h-14  border-b shadow-sm bg-slate-100 flex items-center z-50 dark:bg-gray-800'>
-      {/* Mobile sidebar */}
-      <MobileSidebar />
+    <div className='fixed top-0 w-full h-14 px-4   border-b shadow-sm bg-slate-100 flex items-center z-50 dark:bg-gray-800'>
+      <div className='flex   gap-2 items-center justify-start'>
+        <Logo />
+        {/* Mobile sidebar */}
+        <MobileSidebar />
+      </div>
       {/*  */}
       <div className='md:max-w-screen-2xl px-4  flex items-center justify-between w-full mx-auto'>
         <div className='flex gap-4 items-center h-[30px]'>
-          <Logo />
-          <ThemeToggle />
+          {/* <Logo /> */}
+          <div className='hidden md:block'>
+            <ThemeToggle />
+          </div>
         </div>
 
         <div className='flex items-center gap-6'>
@@ -55,7 +60,7 @@ export function Navbar() {
             </Button>
           </Modal>
 
-          <div>
+          <div className='hidden md:block '>
             <OrganizationSwitcher
               hidePersonal
               afterCreateOrganizationUrl={'/organization/:id'}

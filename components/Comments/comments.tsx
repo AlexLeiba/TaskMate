@@ -225,7 +225,9 @@ export function Comments({ cardId, listId }: ActivityType) {
                           </p>
                           <div title='Delete comment'>
                             <X
-                              onClick={() => handleDeleteComment(data.id)}
+                              onClick={() => {
+                                !isSubmitting && handleDeleteComment(data.id);
+                              }}
                               role='button'
                               tabIndex={0}
                               className='text-red-500 hover:opacity-80 cursor-pointer'

@@ -1,8 +1,8 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import ListWrapper from './listWrapper';
 import { Button } from '@/components/ui/button';
-import { Plus, X } from 'lucide-react';
+import { Loader, Plus, X } from 'lucide-react';
 import { useEventListener, useOnClickOutside } from 'usehooks-ts';
 import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
@@ -27,10 +27,10 @@ function AddListForm() {
       title: '',
     },
   });
-  const [isEditing, setIsEditing] = React.useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const formRef = React.useRef<HTMLFormElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const [listValue, setListValue] = React.useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleEnableEditing() {
     setIsEditing(true);
@@ -54,6 +54,8 @@ function AddListForm() {
   }
 
   async function onSubmit({ title }: { title: string }) {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     console.log('handleSubmit', title);
 
     const response = await addNewListTitle(boardId as string, title);
@@ -61,9 +63,11 @@ function AddListForm() {
     if (response?.data) {
       handleDisableEditing();
       toast.success('A new list was created successfully');
+      setIsSubmitting(false);
     }
     if (response?.error) {
       toast.error(response?.error);
+      setIsSubmitting(false);
     }
 
     handleDisableEditing();
@@ -100,7 +104,11 @@ function AddListForm() {
               type='submit'
               onClick={handleSubmit(onSubmit)}
             >
-              <Plus />
+              {isSubmitting ? (
+                <Loader className='animate-spin ' size={18} />
+              ) : (
+                <Plus />
+              )}
             </Button>
           </form>
           <X
@@ -121,7 +129,12 @@ function AddListForm() {
         className='w-full hover:bg-white/70 dark:hover:bg-gray-500 bg-white dark:bg-gray-400 dark:text-white text-left justify-start '
         variant={'ghost'}
       >
-        <Plus />
+        {isSubmitting ? (
+          <Loader className='animate-spin ' size={18} />
+        ) : (
+          <Plus />
+        )}
+
         <p>Add a list</p>
       </Button>
     </ListWrapper>

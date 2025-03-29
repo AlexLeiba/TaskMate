@@ -10,6 +10,7 @@ import { Accordion } from '@/components/ui/accordion';
 import { useLocalStorage } from 'usehooks-ts';
 import AccordionNavItem, { OrganizationType } from './AccordionNavItem';
 import { Spacer } from '@/components/ui/spacer';
+import ThemeToggle from '@/components/ThemeToggle';
 
 type Props = {
   storageKey: string;
@@ -101,19 +102,26 @@ function Sidebar({ storageKey = 'default-sidebar-state' }: Props) {
     <>
       <div className='font-medium  flex  px-4 py-4  h-[calc(100vh-80px)] flex-col'>
         <div className='flex justify-between  w-full '>
-          <p className=' font-bold'>Workspaces</p>
-
-          <Link href={'/select-org'}>
-            <Button
-              variant={'ghost'}
-              size={'sm'}
-              className='h-7 dark:hover:text-gray-300'
-            >
-              <Plus />
-            </Button>
-          </Link>
+          <div className='flex flex-col'>
+            <div className='md:hidden '>
+              <ThemeToggle />
+              <Spacer size={6} />
+            </div>
+            <div className='flex justify-between  w-full '>
+              <p className=' font-bold'>Workspaces</p>
+              <Link href={'/select-org'}>
+                <Button
+                  variant={'ghost'}
+                  size={'sm'}
+                  className='h-7 dark:hover:text-gray-300'
+                >
+                  <Plus />
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
-        <Spacer size={8} />
+        <Spacer size={3} />
 
         <Accordion
           type='multiple'

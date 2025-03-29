@@ -9,7 +9,7 @@ import { Fetcher } from '@/lib/fetcher';
 import { createCardSchema } from '@/lib/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
-import { Copy, Delete } from 'lucide-react';
+import { Copy, Delete, Loader } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -18,14 +18,19 @@ import { toast } from 'react-toastify';
 export function CardModalMenuContent({
   cardId,
   listId,
+  setIsCardModalOpen,
 }: {
   cardId: string;
   listId: string;
+  setIsCardModalOpen: (value: React.SetStateAction<boolean>) => void;
 }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const params = useParams();
   const { boardId } = params;
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const [isCopySubmitting, setIsCopySubmitting] = useState(false);
+
   const { data: cardData } = useQuery({
     queryKey: ['card', cardId],
     queryFn: () => Fetcher(`/api/cards/${cardId}`),
@@ -49,6 +54,7 @@ export function CardModalMenuContent({
   }, [cardData]);
 
   async function onSubmit({ title }: { title: string }) {
+    setIsCardModalOpen(false);
     const response = await editCard({
       title,
       boardId: boardId as string,
@@ -66,6 +72,7 @@ export function CardModalMenuContent({
 
   async function handleDeleteCard() {
     setIsDeleteModalOpen(false);
+    setIsCardModalOpen(false);
 
     const response = await deleteCard(boardId as string, cardId, listId);
 
@@ -78,13 +85,18 @@ export function CardModalMenuContent({
   }
 
   async function handleCopyCard() {
+    if (isCopySubmitting) return;
+    setIsCopySubmitting(true);
     const response = await copyCard(boardId as string, cardId, listId);
+    setIsCardModalOpen(false);
 
     if (response?.error) {
       toast.error(response?.error);
+      setIsCopySubmitting(false);
     }
     if (response?.data) {
       toast.success('Card copied successfully');
+      setIsCopySubmitting(false);
     }
   }
   return (
@@ -127,7 +139,12 @@ export function CardModalMenuContent({
           variant={'ghost'}
           className='w-full justify-start hover:bg-gray-200'
         >
-          <Copy /> Copy
+          {isCopySubmitting ? (
+            <Loader className='animate-spin ' size={18} />
+          ) : (
+            <Copy />
+          )}
+          Copy
         </Button>
         <Separator />
         <Button

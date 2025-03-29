@@ -45,6 +45,7 @@ export function ActivityList({
                     <Link
                       href={`/organization/${organizationId}/activity?page=1`}
                       className='underline'
+                      target='_blank'
                     >
                       <p className='body-sm font-semibold'>All activities</p>
                     </Link>

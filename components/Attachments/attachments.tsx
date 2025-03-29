@@ -174,7 +174,11 @@ export function Attachments({
           <div className='flex gap-4'>
             <div title='Download all attachments'>
               <ImageDown
-                onClick={handleDownloadAllAttachments}
+                onClick={() => {
+                  attachments?.length > 0 &&
+                    !isSubmitting &&
+                    handleDownloadAllAttachments();
+                }}
                 cursor={'pointer'}
                 size={18}
                 className='text-green-600 hover:opacity-80'
@@ -237,6 +241,7 @@ export function Attachments({
                     <div
                       role='button'
                       onClick={() =>
+                        !isSubmitting &&
                         handleDeleteAttachment(file.id, file.publicId)
                       }
                       tabIndex={0}

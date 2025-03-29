@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button';
 import { TextArea } from '@/components/ui/textArea';
 import { createCardSchema } from '@/lib/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, X } from 'lucide-react';
+import { Loader, Plus, X } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import React, { RefObject } from 'react';
+import React, { RefObject, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useEventListener, useOnClickOutside } from 'usehooks-ts';
@@ -41,6 +41,7 @@ function CardForm({
 
   const formCardRef = React.useRef<HTMLFormElement>(null);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function onKeyDownEvent(e: KeyboardEvent) {
     if (e.key === 'Escape') {
@@ -57,6 +58,9 @@ function CardForm({
   useOnClickOutside(formCardRef as RefObject<HTMLElement>, disableEditingCard);
 
   async function onSubmit({ title }: { title: string }) {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
     const response = await createNewCardInList(
       boardId as string,
       title,
@@ -67,10 +71,12 @@ function CardForm({
       disableEditingCard();
       reset();
       toast.success('Card was created successfully');
+      setIsSubmitting(false);
     }
     if (response?.error) {
       reset();
       toast.error(response?.error);
+      setIsSubmitting(false);
     }
   }
 
@@ -107,6 +113,7 @@ function CardForm({
             onClick={handleSubmit(onSubmit)}
           >
             Add
+            {isSubmitting && <Loader className='animate-spin ' size={18} />}
           </Button>
           <Button
             variant={'ghost'}

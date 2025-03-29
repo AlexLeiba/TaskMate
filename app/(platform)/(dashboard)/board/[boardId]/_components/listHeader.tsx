@@ -8,6 +8,7 @@ import {
   Circle,
   CircleCheck,
   Clock4,
+  Loader,
   Plus,
   SearchCode,
   X,
@@ -72,6 +73,7 @@ function ListHeader({
     icon: <Circle />,
   });
   const [isPrioritiesOpenModal, setIsPrioritiesOpenModal] = useState(false);
+  const [isTitleSubmitting, setIsTitleSubmitting] = useState(false);
 
   useEffect(() => {
     const selectedStatus = listStatusOptions.find(
@@ -118,14 +120,18 @@ function ListHeader({
   }
 
   async function onSubmit({ title }: { title: string }) {
+    if (isTitleSubmitting) return;
+    setIsTitleSubmitting(true);
     const response = await editListTitle(boardId as string, title, data.id);
 
     if (response?.data) {
       handleDisableEditing();
       toast.success('List name was edited successfully');
+      setIsTitleSubmitting(false);
     }
     if (response?.error) {
       toast.error(response?.error);
+      setIsTitleSubmitting(false);
     }
 
     handleDisableEditing();
@@ -186,7 +192,11 @@ function ListHeader({
             type='submit'
             onClick={handleSubmit(onSubmit)}
           >
-            <Plus />
+            {isTitleSubmitting ? (
+              <Loader className='animate-spin ' size={18} />
+            ) : (
+              <Plus />
+            )}
           </Button>
         </form>
         <X

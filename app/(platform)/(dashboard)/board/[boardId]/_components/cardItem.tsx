@@ -72,6 +72,8 @@ function CardItem({
 
   const [isPrioritiesOpenModal, setIsPrioritiesOpenModal] = useState(false);
 
+  const [isCopySubmitting, setIsCopySubmitting] = useState(false);
+
   async function handleAddCardPriority(value: string) {
     const response = await editPriorityCard({
       priority: value,
@@ -109,7 +111,11 @@ function CardItem({
               title='Card Options'
               isOpen={isCardModalOpen}
               content={
-                <CardModalMenuContent cardId={data.id} listId={listId} />
+                <CardModalMenuContent
+                  cardId={data.id}
+                  listId={listId}
+                  setIsCardModalOpen={setIsCardModalOpen}
+                />
               }
             >
               <Ellipsis

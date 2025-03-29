@@ -27,14 +27,13 @@ function MobileSidebar() {
 
   return (
     <div className=' md:hidden block'>
-      <Button
-        variant={'ghost'}
-        size={'sm'}
-        className='h-[30px] w-[30px]  hover:bg-gray-400 hover:text-white'
+      <Menu
         onClick={onOpen}
-      >
-        <Menu width={30} height={30} cursor={'pointer'} className=' h-8 w-8' />
-      </Button>
+        width={30}
+        height={30}
+        cursor={'pointer'}
+        className=' h-8 w-8 hover:bg-gray-400 hover:text-white cursor-pointer'
+      />
 
       <Sheet open={isOpen} onOpenChange={onClose}>
         <SheetContent side={'left'} className='p-2 pt-10'>

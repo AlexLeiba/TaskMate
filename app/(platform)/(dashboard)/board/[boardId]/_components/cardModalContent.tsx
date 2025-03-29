@@ -22,6 +22,7 @@ import {
   Copy,
   Delete,
   Edit,
+  Loader,
   Logs,
   MapPin,
   UserRoundCog,
@@ -62,6 +63,9 @@ export function CardModalContent({
     value: '',
     icon: <>...</>,
   });
+
+  const [isCopySubmitting, setIsCopySubmitting] = useState(false);
+  const [isDescSubmitting, setIsDescSubmitting] = useState(false);
 
   const textEditorRef = useRef<ReactQuill | null>(null);
 
@@ -178,7 +182,9 @@ export function CardModalContent({
   }, [selectedOrganizationUsers]);
 
   async function onSubmit({ description }: { description: string }) {
-    if (!isDirty) return;
+    if (!isDirty || isDescSubmitting) return;
+
+    setIsDescSubmitting(true);
     const response = await editCard({
       description,
       boardId: boardId as string,
@@ -188,12 +194,14 @@ export function CardModalContent({
 
     if (response?.error) {
       toast.error(response?.error);
+      setIsDescSubmitting(false);
     }
     if (response?.data) {
       toast.success('Card edited successfully');
 
       queryClient.invalidateQueries({ queryKey: ['activity', cardId] });
       refetchCardData();
+      setIsDescSubmitting(false);
       // refetchActivityData();
 
       // textEditorRef.current?.blur();
@@ -221,14 +229,17 @@ export function CardModalContent({
   }
 
   async function handleCopyCard() {
+    setIsCopySubmitting(true);
     const response = await copyCard(boardId as string, cardId, listId);
 
     if (response?.error) {
       toast.error(response?.error);
+      setIsCopySubmitting(false);
     }
     if (response?.data) {
       queryClient.invalidateQueries({ queryKey: ['activity', cardId] });
       toast.success('Card copied successfully');
+      setIsCopySubmitting(false);
     }
   }
 
@@ -359,12 +370,16 @@ export function CardModalContent({
                   </div>
                 ) : (
                   <div title='Edit description'>
-                    <Edit
-                      cursor={'pointer'}
-                      onClick={handleOpenTextEditor}
-                      className='text-green-600 hover:opacity-80'
-                      size={18}
-                    />
+                    {isDescSubmitting ? (
+                      <Loader className='animate-spin ' size={18} />
+                    ) : (
+                      <Edit
+                        cursor={'pointer'}
+                        onClick={handleOpenTextEditor}
+                        className='text-green-600 hover:opacity-80'
+                        size={18}
+                      />
+                    )}
                   </div>
                 )}
               </div>
@@ -520,9 +535,14 @@ export function CardModalContent({
                 <Button
                   variant={'secondary'}
                   className='w-full justify-start'
-                  onClick={handleCopyCard}
+                  onClick={() => !isCopySubmitting && handleCopyCard()}
                 >
-                  <Copy /> Copy
+                  {isCopySubmitting ? (
+                    <Loader className='animate-spin ' size={18} />
+                  ) : (
+                    <Copy />
+                  )}
+                  Copy
                 </Button>
                 <Button
                   variant={'destructive'}

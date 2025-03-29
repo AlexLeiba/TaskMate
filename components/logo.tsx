@@ -20,7 +20,7 @@ function Logo({
         )}
       >
         <Image
-          className='md:hidden'
+          className='md:hidden w-12 h-6'
           src={'/logo/logo.webp'}
           alt='logo'
           width={30}
