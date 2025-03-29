@@ -40,7 +40,6 @@ function Logo({
           width={120}
           height={30}
         />
-        {/* <p className='font-bold '>TaskMate</p> */}
       </div>
     </Link>
   );
