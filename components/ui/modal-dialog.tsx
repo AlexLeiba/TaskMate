@@ -43,7 +43,7 @@ type Props = {
   hideCancel?: boolean;
   hideConfirm?: boolean;
   disabledConfirmButton?: boolean;
-
+  contentClassName?: string;
   onConfirm?: () => void;
   onCancel?: () => void;
   onLinkButton?: () => void;
@@ -99,6 +99,7 @@ function Modal({
   customTrigger,
   hideCancel,
   hideConfirm,
+  contentClassName,
   onOpenChange,
   onConfirm,
   onCancel,
@@ -127,7 +128,8 @@ function Modal({
 
       <DialogContent
         className={cn(
-          'bg-slate-100 dark:bg-gray-900 dark:text-white z-50  md:w-[560px] lg:w-[600px] w-[300px] overflow-auto rounded-lg border-none p-0',
+          contentClassName && contentClassName,
+          'bg-slate-100 dark:bg-gray-900 dark:text-white z-50  md:w-[560px] lg:w-[600px] w-[300px] overflow-y-auto  lg:h-auto rounded-lg border-none p-0',
           (!!children || !!onCheckbox) && 'lg:w-[760px]'
         )}
         type={'modal'}

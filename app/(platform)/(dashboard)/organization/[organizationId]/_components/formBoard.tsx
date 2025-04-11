@@ -1,8 +1,8 @@
 'use client';
+import React from 'react';
 import { createBoard } from '@/actions/action-dashboard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import React, { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { boardSchema } from '@/lib/schemas';
@@ -10,7 +10,6 @@ import { toast } from 'react-toastify';
 import ImagePicker from '@/components/ImagePicker/imagePicker';
 import { useRouter } from 'next/navigation';
 import { useEventListener } from 'usehooks-ts';
-import { Spacer } from '@/components/ui/spacer';
 import { Loader } from 'lucide-react';
 
 function FormBoard({

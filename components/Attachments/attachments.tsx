@@ -156,7 +156,7 @@ export function Attachments({
   }
 
   return (
-    <div className=' flex attachments-start gap-x-3 w-[430px]'>
+    <div className=' flex attachments-start gap-x-3 w-full'>
       <div className=' w-full'>
         <div className='flex justify-between w-full'>
           <div className='flex gap-2'>

@@ -42,6 +42,7 @@ function ImagePicker({ type, setSelectedImageId, selectedImageId }: Props) {
 
       if (result && result.response) {
         const fetchedImages = result.response as Array<Record<string, any>>;
+        console.log('🚀 ~ fetchImages ~ fetchedImages:', fetchedImages);
         setImages(fetchedImages);
       } else {
         throw new Error('Error fetching images');
@@ -54,7 +55,7 @@ function ImagePicker({ type, setSelectedImageId, selectedImageId }: Props) {
         ) as Array<Record<string, any>>
       );
       return toast.warn(
-        'Request limit reached until tomorrow, until then please use available images'
+        'Request limit reached , try again later , until then please use available images'
       );
     } finally {
       setIsLoading(false);

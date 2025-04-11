@@ -329,8 +329,8 @@ export function CardModalContent({
     <div>
       <div>
         {/* IN LIST INFORMATION */}
-        <div className='flex w-full gap-8'>
-          <div className='w-full'>
+        <div className='flex w-full gap-8 md:flex-col flex-col lg:flex-row h-full'>
+          <div className='w-full '>
             <div className='flex gap-2 w-full justify-between '>
               <div className='flex gap-2 items-center '>
                 <MapPin />
@@ -492,7 +492,7 @@ export function CardModalContent({
 
             <Spacer size={7} />
             {/* ASSIGNED */}
-            <div className='w-[250px]'>
+            <div className='lg:w-[250px]'>
               <div className='flex gap-2 items-center'>
                 <UserRoundPlus />
                 <p className='body-md font-semibold'>Assigne to</p>
@@ -512,7 +512,7 @@ export function CardModalContent({
             </div>
             {/* PRIORITY */}
             <Spacer size={7} />
-            <div className='w-[250px]'>
+            <div className='lg:w-[250px]'>
               <div className='flex gap-2 items-center'>
                 <Wifi />
                 <p className='body-md font-semibold'>Priority</p>
@@ -531,7 +531,7 @@ export function CardModalContent({
               <Spacer size={2} />
 
               {/* COPY DELETE BUTTONS */}
-              <div className='flex  gap-2 '>
+              <div className='flex  gap-2 w-full'>
                 <Button
                   variant={'secondary'}
                   className='w-full justify-start'
