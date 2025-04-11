@@ -3,7 +3,7 @@ import React from 'react';
 
 function About() {
   return (
-    <div className='max-w-screen-2xl mx-auto pt-24 dark:text-white'>
+    <div className='max-w-screen-2xl px-4  mx-auto pt-24 pb-24 dark:text-white'>
       <div>
         <div>
           <h3 className='sm:text-6xl'>About</h3>
@@ -11,15 +11,18 @@ function About() {
           <div>
             <div>
               <section>
-                <p>TaskMate is a friendly and easy to use task manager app</p>
+                <p className='text-2xl'>
+                  TaskMate is a friendly and easy to use task manager app
+                </p>
               </section>
             </div>
 
             <div>
-              <Spacer sm={4} />
+              <Spacer size={12} />
 
               <section>
-                <h5>Features</h5>
+                <p className='text-2xl'>Features</p>
+                <Spacer size={4} />
                 <ul>
                   <li>
                     <p className='font-bold'>Authentication</p>
@@ -27,7 +30,7 @@ function About() {
                       • Authentication with Google / Github / Email / Facebook
                     </p>
                   </li>
-                  <Spacer sm={2} />
+                  <Spacer size={2} />
                   <li>
                     <p className='font-bold'>Organization</p>
                     <p>
@@ -35,13 +38,13 @@ function About() {
                     </p>
                     <p>• Members: invite , delete , change permissions</p>
                   </li>
-                  <Spacer sm={2} />
+                  <Spacer size={2} />
                   <li>
                     <p className='font-bold'>Board</p>
                     <p>• Manage boards: create, update, delete</p>
                     <p>• Select background image for each board</p>
                   </li>
-                  <Spacer sm={2} />
+                  <Spacer size={2} />
                   <li>
                     <p className='font-bold'>Lists / Column</p>
                     <p>
@@ -53,7 +56,7 @@ function About() {
                       between other lists in the same board.
                     </p>
                   </li>
-                  <Spacer sm={2} />
+                  <Spacer size={2} />
                   <li>
                     <p className='font-bold'>Cards / Tickets</p>
                     <p>
@@ -70,11 +73,11 @@ function About() {
               </section>
             </div>
             <div>
-              <Spacer sm={6} />
+              <Spacer size={8} />
 
               <section>
-                <h5>Technologies used</h5>
-
+                <p className='text-2xl'>Technologies used</p>
+                <Spacer size={4} />
                 <div className='flex gap-8'>
                   <div>
                     <p className=' font-bold '>Front-end</p>

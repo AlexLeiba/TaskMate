@@ -1,5 +1,6 @@
 import { Footer } from '@/app/(marketing)/_components/footer';
 import { Navbar } from '@/app/(marketing)/_components/navbar';
+import { Spacer } from '@/components/ui/spacer';
 import { ClerkProvider } from '@clerk/nextjs';
 
 export default function DashboardLayout({
@@ -9,16 +10,16 @@ export default function DashboardLayout({
 }>) {
   return (
     <ClerkProvider>
-      {/* <div className='h-screen bg-slate-100'>
-        <main className='pt-14  bg-slate-100 overflow-y-auto'>{children}</main>
-      </div> */}
+      <div className='flex min-h-screen flex-col '>
+        <Navbar />
+        <main className=' bg-slate-100  dark:bg-gray-950  overflow-y-auto'>
+          <Spacer size={8} />
+          {children}
+          <Spacer size={8} />
+        </main>
 
-      <Navbar />
-      <main className=' bg-slate-100 overflow-y-auto dark:bg-gray-950'>
-        {children}
-      </main>
-
-      <Footer />
+        <Footer />
+      </div>
     </ClerkProvider>
   );
 }

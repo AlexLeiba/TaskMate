@@ -7,7 +7,7 @@ export default function SignUpPage() {
         appearance={{
           elements: {
             cardBox: {
-              width: '500px',
+              width: '100%',
               maxWidth: '800px',
               background: 'black',
             },

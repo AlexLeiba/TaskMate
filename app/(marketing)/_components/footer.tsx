@@ -19,37 +19,41 @@ export function Footer() {
         <Logo />
 
         <div className='flex gap-8'>
-          <Link href={'/about'}>
-            <p className='font-bold'>About</p>
-          </Link>
-          <div className='  flex items-center justify-between '>
+          <div className='  flex items-center justify-between  '>
             <div className=' flex  gap-4   text-center items-center justify-center '>
-              <Link href={'https://github.com/AlexLeiba'} target='_blank'>
-                <div className='flex gap-2 dark:text-white items-center'>
-                  <p>Github</p>
-                  <Github size={20} cursor={'pointer'} />{' '}
-                </div>
-              </Link>
+              <div className='flex lg:flex-row gap-4 lg:items-center md:flex-col flex-col items-start '>
+                <Link href={'/about'}>
+                  <p className='font-bold'>About</p>
+                </Link>
+                <Link href={'https://github.com/AlexLeiba'} target='_blank'>
+                  <div className='flex gap-2 dark:text-white items-center'>
+                    <p>Github</p>
+                    <Github size={20} cursor={'pointer'} />{' '}
+                  </div>
+                </Link>
+              </div>
 
-              <Link href={'mailto:leiba.alexandru@gmail.com'} target='_blank'>
-                <div className='flex gap-2 dark:text-white items-center'>
-                  <p>Gmail</p>
-                  <Mail size={20} cursor={'pointer'} />{' '}
-                </div>
-              </Link>
+              <div className='flex lg:flex-row gap-4 lg:items-center md:flex-col flex-col items-start '>
+                <Link href={'mailto:leiba.alexandru@gmail.com'} target='_blank'>
+                  <div className='flex gap-2 dark:text-white items-center'>
+                    <p>Gmail</p>
+                    <Mail size={20} cursor={'pointer'} />{' '}
+                  </div>
+                </Link>
 
-              <Link
-                target='_blank'
-                href={
-                  'https://www.linkedin.com/in/alex-leiba-9205801ba?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app'
-                }
-              >
-                <div className='flex gap-2 dark:text-white items-center'>
-                  <p>Linkedin</p>
+                <Link
+                  target='_blank'
+                  href={
+                    'https://www.linkedin.com/in/alex-leiba-9205801ba?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app'
+                  }
+                >
+                  <div className='flex gap-2 dark:text-white items-center'>
+                    <p>Linkedin</p>
 
-                  <Linkedin size={20} cursor={'pointer'} />
-                </div>
-              </Link>
+                    <Linkedin size={20} cursor={'pointer'} />
+                  </div>
+                </Link>
+              </div>
             </div>
           </div>
         </div>

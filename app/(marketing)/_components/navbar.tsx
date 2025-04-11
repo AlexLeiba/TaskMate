@@ -28,19 +28,29 @@ export function Navbar() {
           ) : (
             <>
               {currentPath === 'sign-in' && (
-                <Button size={'sm'}>
-                  <Link href='/sign-up'>Sign Up for Free</Link>
-                </Button>
+                <div className='flex gap-4 items-center'>
+                  <Link href={'/about'}>
+                    <p className='font-bold'>About</p>
+                  </Link>
+                  <Button size={'sm'}>
+                    <Link href='/sign-up'>Sign Up for Free</Link>
+                  </Button>
+                </div>
               )}
 
               {currentPath === 'sign-up' && (
-                <Button
-                  size={'sm'}
-                  variant={'outline'}
-                  className='dark:bg-white dark:text-black bg-black text-white '
-                >
-                  <Link href={`/sign-in`}>Sign in</Link>
-                </Button>
+                <div className='flex gap-4 items-center'>
+                  <Link href={'/about'}>
+                    <p className='font-bold'>About</p>
+                  </Link>
+                  <Button
+                    size={'sm'}
+                    variant={'outline'}
+                    className='dark:bg-white dark:text-black bg-black text-white '
+                  >
+                    <Link href={`/sign-in`}>Sign in</Link>
+                  </Button>
+                </div>
               )}
 
               {currentPath !== 'sign-in' && currentPath !== 'sign-up' && (
