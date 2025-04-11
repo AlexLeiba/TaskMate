@@ -1,5 +1,122 @@
 export const DEFAULT_IMAGES = [
   {
+    id: '7F65HDP0-E0',
+    slug: 'aerial-photography-of-cityscape-near-sea-7F65HDP0-E0',
+    alternative_slugs: {
+      en: 'aerial-photography-of-cityscape-near-sea-7F65HDP0-E0',
+      es: 'fotografia-aerea-de-paisajes-urbanos-cerca-del-mar-7F65HDP0-E0',
+      ja: '海近辺の街並みの航空写真-7F65HDP0-E0',
+      fr: 'photographie-aerienne-dun-paysage-urbain-pres-de-la-mer-7F65HDP0-E0',
+      it: 'fotografia-aerea-del-paesaggio-urbano-vicino-al-mare-7F65HDP0-E0',
+      ko: '바다-근처-도시-풍경의-항공-사진-7F65HDP0-E0',
+      de: 'luftaufnahmen-des-stadtbildes-in-meeresnahe-7F65HDP0-E0',
+      pt: 'fotografia-aerea-da-paisagem-urbana-perto-do-mar-7F65HDP0-E0',
+    },
+    created_at: '2017-01-06T19:07:43Z',
+    updated_at: '2025-04-11T07:28:29Z',
+    promoted_at: '2017-01-06T19:07:43Z',
+    width: 6000,
+    height: 4000,
+    color: '#f3f3f3',
+    blur_hash: 'L,LzpqX8jZax~VjYj[kC%MaxWBof',
+    description: 'Wildest sunset ever',
+    alt_description: 'aerial photography of cityscape near sea',
+    breadcrumbs: [],
+    urls: {
+      raw: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?ixid=M3w3MTM1NzR8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NDQzNzI1MDJ8&ixlib=rb-4.0.3',
+      full: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3MTM1NzR8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NDQzNzI1MDJ8&ixlib=rb-4.0.3&q=85',
+      regular:
+        'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MTM1NzR8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NDQzNzI1MDJ8&ixlib=rb-4.0.3&q=80&w=1080',
+      small:
+        'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MTM1NzR8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NDQzNzI1MDJ8&ixlib=rb-4.0.3&q=80&w=400',
+      thumb:
+        'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MTM1NzR8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NDQzNzI1MDJ8&ixlib=rb-4.0.3&q=80&w=200',
+      small_s3:
+        'https://s3.us-west-2.amazonaws.com/images.unsplash.com/small/photo-1483729558449-99ef09a8c325',
+    },
+    links: {
+      self: 'https://api.unsplash.com/photos/aerial-photography-of-cityscape-near-sea-7F65HDP0-E0',
+      html: 'https://unsplash.com/photos/aerial-photography-of-cityscape-near-sea-7F65HDP0-E0',
+      download:
+        'https://unsplash.com/photos/7F65HDP0-E0/download?ixid=M3w3MTM1NzR8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NDQzNzI1MDJ8',
+      download_location:
+        'https://api.unsplash.com/photos/7F65HDP0-E0/download?ixid=M3w3MTM1NzR8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NDQzNzI1MDJ8',
+    },
+    likes: 3041,
+    liked_by_user: false,
+    current_user_collections: [],
+    sponsorship: null,
+    topic_submissions: {
+      wallpapers: {
+        status: 'approved',
+        approved_on: '2020-04-06T14:20:09Z',
+      },
+    },
+    asset_type: 'photo',
+    user: {
+      id: '2xVXrJvhhy0',
+      updated_at: '2025-04-02T19:53:28Z',
+      username: 'agustindiazg',
+      name: 'Agustin Diaz Gargiulo',
+      first_name: 'Agustin',
+      last_name: 'Diaz Gargiulo',
+      twitter_username: 'agussdiaz28',
+      portfolio_url: 'https://www.eyeem.com/u/mariandiaz___',
+      bio: 'Developer | Photographer',
+      location: 'Tandil, Argentina',
+      links: {
+        self: 'https://api.unsplash.com/users/agustindiazg',
+        html: 'https://unsplash.com/@agustindiazg',
+        photos: 'https://api.unsplash.com/users/agustindiazg/photos',
+        likes: 'https://api.unsplash.com/users/agustindiazg/likes',
+        portfolio: 'https://api.unsplash.com/users/agustindiazg/portfolio',
+      },
+      profile_image: {
+        small:
+          'https://images.unsplash.com/profile-1632878091545-0896749d4eaeimage?ixlib=rb-4.0.3&crop=faces&fit=crop&w=32&h=32',
+        medium:
+          'https://images.unsplash.com/profile-1632878091545-0896749d4eaeimage?ixlib=rb-4.0.3&crop=faces&fit=crop&w=64&h=64',
+        large:
+          'https://images.unsplash.com/profile-1632878091545-0896749d4eaeimage?ixlib=rb-4.0.3&crop=faces&fit=crop&w=128&h=128',
+      },
+      instagram_username: 'agussdiaz28',
+      total_collections: 0,
+      total_likes: 461,
+      total_photos: 11,
+      total_promoted_photos: 4,
+      total_illustrations: 0,
+      total_promoted_illustrations: 0,
+      accepted_tos: true,
+      for_hire: true,
+      social: {
+        instagram_username: 'agussdiaz28',
+        portfolio_url: 'https://www.eyeem.com/u/mariandiaz___',
+        twitter_username: 'agussdiaz28',
+        paypal_email: null,
+      },
+    },
+    exif: {
+      make: null,
+      model: null,
+      name: null,
+      exposure_time: null,
+      aperture: null,
+      focal_length: null,
+      iso: null,
+    },
+    location: {
+      name: 'Rio de Janeiro, Brazil',
+      city: 'Rio de Janeiro',
+      country: 'Brazil',
+      position: {
+        latitude: -22.9068467,
+        longitude: -43.1728965,
+      },
+    },
+    views: 50467100,
+    downloads: 337995,
+  },
+  {
     id: '16CbnBFveF0',
     slug: 'green-palm-plant-in-close-up-photography-16CbnBFveF0',
     alternative_slugs: {
