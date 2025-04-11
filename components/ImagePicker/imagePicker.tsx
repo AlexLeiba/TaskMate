@@ -7,6 +7,10 @@ import { toast } from 'react-toastify';
 import { Button } from '../ui/button';
 import { DEFAULT_IMAGES } from '@/consts/images';
 import { useFormContext } from 'react-hook-form';
+import { useWindowSize } from '@/hooks/useWindowSize';
+import breakpoints from '@/lib/breakpoints';
+
+const MOBILE_BREAK_POINT = breakpoints.mobile.breakpoints.max;
 
 type Props = {
   type: 'header' | 'boards';
@@ -20,6 +24,8 @@ function ImagePicker({ type, setSelectedImageId, selectedImageId }: Props) {
     formState: { errors },
   } = useFormContext();
 
+  const [width] = useWindowSize();
+
   const [images, setImages] = React.useState<Array<Record<string, any>>>([]);
 
   const [isLoading, setIsLoading] = React.useState(false);
@@ -31,7 +37,7 @@ function ImagePicker({ type, setSelectedImageId, selectedImageId }: Props) {
     try {
       const result = await unsplash.photos.getRandom({
         collectionIds: ['317099'], //ids of a specific collection from library
-        count: type === 'boards' ? 10 : 6,
+        count: type === 'boards' ? (width < MOBILE_BREAK_POINT ? 4 : 10) : 4,
       });
 
       if (result && result.response) {
@@ -41,8 +47,15 @@ function ImagePicker({ type, setSelectedImageId, selectedImageId }: Props) {
         throw new Error('Error fetching images');
       }
     } catch (error: any) {
-      setImages(DEFAULT_IMAGES as Array<Record<string, any>>);
-      return toast.error('Error fetching new images, please try again later');
+      setImages(
+        DEFAULT_IMAGES.slice(
+          0,
+          type === 'boards' ? (width < MOBILE_BREAK_POINT ? 4 : 10) : 4
+        ) as Array<Record<string, any>>
+      );
+      return toast.warn(
+        'Request limit reached until tomorrow, until then please use available images'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +69,9 @@ function ImagePicker({ type, setSelectedImageId, selectedImageId }: Props) {
   }
 
   // SKELETON
-  const skeletonData = new Array(type === 'boards' ? 10 : 6).fill(0);
+  const skeletonData = new Array(
+    type === 'boards' ? (width < MOBILE_BREAK_POINT ? 4 : 10) : 4
+  ).fill(0);
 
   function imageSkeleton() {
     return (
@@ -66,7 +81,7 @@ function ImagePicker({ type, setSelectedImageId, selectedImageId }: Props) {
             <div
               key={index}
               className={cn(
-                type === 'boards' ? 'lg:max-w-[135px]' : 'max-w-[135px]',
+                'grid  lg:grid-cols-5 gap-2 md:grid-cols-3 grid-cols-2 w-full',
                 'rounded-md !bg-gray-400 animate-pulse  relative cursor-pointer aspect-video group hover:opacity-50 transition bg-muted  h-24  z-10'
               )}
             ></div>
@@ -97,58 +112,67 @@ function ImagePicker({ type, setSelectedImageId, selectedImageId }: Props) {
   }
 
   return (
-    <div className='flex gap-2 flex-wrap'>
-      {!isLoading
-        ? images.map((image, index) => {
-            return (
-              <div
-                key={index}
-                onClick={() => {
-                  handleImageClick(image);
-                }}
-                className={cn(
-                  'relative',
-                  type === 'boards' ? 'lg:max-w-[135px]' : 'max-w-[135px]',
-                  isLoading && ' hover:opacity-90 cursor-auto',
-                  selectedImageId === image.id &&
-                    'border-2 border-white   transition-all',
-                  'relative rounded-md cursor-pointer aspect-video group hover:opacity-90 transition bg-muted   h-24  z-10'
-                )}
-              >
-                <Image
-                  fill
-                  src={image?.urls?.regular}
-                  alt={'unsplash image'}
-                  className={cn(
-                    selectedImageId === image.id &&
-                      'opacity-40 group-hover:opacity-100',
-                    'object-cover w-full h-full rounded-sm '
-                  )}
-                />
+    <>
+      <div
+        className={cn(
+          type === 'boards'
+            ? 'lg:grid-cols-5 md:grid-cols-3 grid-cols-2'
+            : 'grid-cols-2',
+          'grid   gap-2  w-full min-w-[200px]'
+        )}
+      >
+        {!isLoading
+          ? images.map((image, index) => {
+              return (
                 <div
+                  key={index}
+                  onClick={() => {
+                    handleImageClick(image);
+                  }}
                   className={cn(
-                    'w-full',
-                    selectedImageId === image.id
-                      ? 'opacity-100 rounded-sm bg-gray-600/60 p-1'
-                      : 'opacity-0 group-hover:opacity-100 rounded-sm bg-gray-600/40 p-1',
-                    ' absolute bottom-0  left-0 text-white z-20 '
+                    // type === 'boards' ? 'lg:max-w-[135px]' : 'max-w-[135px]',
+                    isLoading && ' hover:opacity-90 cursor-auto',
+                    selectedImageId === image.id &&
+                      'border-2 border-white   transition-all',
+                    'relative rounded-md cursor-pointer object-cover w-full group hover:opacity-90 transition bg-muted   h-24  z-10 '
                   )}
                 >
-                  {image.location?.name ? (
-                    <p className='body-xs'>{image.location.name}</p>
-                  ) : image.location.country ? (
-                    <p className='body-xs'>{image.location.country}</p>
-                  ) : (
-                    <p className='body-xs'>Author: {image.user?.name}</p>
-                  )}
+                  <Image
+                    fill
+                    src={image?.urls?.regular}
+                    alt={'unsplash image'}
+                    className={cn(
+                      selectedImageId === image.id &&
+                        'opacity-40 group-hover:opacity-100',
+                      'object-cover w-full h-full rounded-sm '
+                    )}
+                  />
+                  <div
+                    className={cn(
+                      'w-full',
+                      selectedImageId === image.id
+                        ? 'opacity-100 rounded-sm bg-gray-600/60 p-1'
+                        : 'opacity-0 group-hover:opacity-100 rounded-sm bg-gray-600/40 p-1',
+                      ' absolute bottom-0  left-0 text-white z-20 '
+                    )}
+                  >
+                    {image.location?.name ? (
+                      <p className='body-xs'>{image.location.name}</p>
+                    ) : image.location.country ? (
+                      <p className='body-xs'>{image.location.country}</p>
+                    ) : (
+                      <p className='body-xs'>Author: {image.user?.name}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })
-        : imageSkeleton()}
+              );
+            })
+          : imageSkeleton()}
 
-      <p className='body-xs text-red-500'>{errors?.image?.message as string}</p>
-
+        <p className='body-xs text-red-500'>
+          {errors?.image?.message as string}
+        </p>
+      </div>
       <div className='w-full flex justify-end'>
         <Button
           type='button'
@@ -165,7 +189,7 @@ function ImagePicker({ type, setSelectedImageId, selectedImageId }: Props) {
           )}
         </Button>
       </div>
-    </div>
+    </>
   );
 }
 
