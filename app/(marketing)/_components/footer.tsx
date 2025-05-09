@@ -1,11 +1,13 @@
 'use client';
 import Logo from '@/components/logo';
+import { useUser } from '@clerk/nextjs';
 import { Github, Linkedin, Mail } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 
 export function Footer() {
+  const user = useUser();
   const pathname = usePathname();
 
   const hiddenListOfPaths = ['board'];
@@ -22,7 +24,7 @@ export function Footer() {
           <div className='  flex items-center justify-between  '>
             <div className=' flex  gap-4   text-center items-center justify-center '>
               <div className='flex lg:flex-row gap-4 lg:items-center md:flex-col flex-col items-start '>
-                <Link href={'/about'}>
+                <Link href={user.user?.id ? '/organization/about' : '/about'}>
                   <p className='font-bold'>About</p>
                 </Link>
                 <Link href={'https://github.com/AlexLeiba'} target='_blank'>

@@ -7,7 +7,7 @@ import React from 'react';
 
 function MarketingPage() {
   return (
-    <div className=' bg-gradient-to-b from-sky-600  to-transparent'>
+    <div className=' bg-gradient-to-b from-sky-600  to-transparent w-full'>
       <div className='mx-auto max-w-screen-2xl px-4'>
         <div className=' min-h-[600px]'>
           <div className=' flex justify-center items-center flex-col  text-gray-200'>
@@ -36,7 +36,6 @@ function MarketingPage() {
                   width={750}
                   height={400}
                 />
-                {/* </div> */}
 
                 <Image
                   src={'/landing/drag-drop-done.webp'}

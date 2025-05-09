@@ -10,12 +10,10 @@ export default function DashboardLayout({
 }>) {
   return (
     <ClerkProvider>
-      <div className='flex min-h-screen flex-col '>
+      <div className='flex h-screen flex-col '>
         <Navbar />
-        <main className=' bg-slate-100  dark:bg-gray-950  overflow-y-auto'>
-          <Spacer size={8} />
+        <main className=' bg-slate-100  dark:bg-gray-950  overflow-y-auto flex flex-grow '>
           {children}
-          <Spacer size={8} />
         </main>
 
         <Footer />

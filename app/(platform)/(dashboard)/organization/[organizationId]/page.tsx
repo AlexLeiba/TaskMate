@@ -26,7 +26,7 @@ async function OrganizationPage() {
   });
 
   return (
-    <div className='flex flex-col gap-4 w-full dark:text-white '>
+    <div className='flex flex-col gap-4 w-full dark:text-white  '>
       <Spacer size={2} />
       {/* Current board top info */}
       <Info />
@@ -34,14 +34,14 @@ async function OrganizationPage() {
 
       {/* Your boards */}
       <div>
-        <div className='inline-flex flex-col gap-4'>
+        <div className='inline-flex flex-col gap-4 '>
           <div className='flex gap-x-2 items-center'>
             <User />
             <p className='body-lg font-bold'>Your boards</p>
           </div>
 
           {/* BOARDS LIST */}
-          <div className=' grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4'>
+          <div className=' grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 '>
             {boards?.map((board) => (
               <Board board={board} key={board.id} />
             ))}

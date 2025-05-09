@@ -69,7 +69,7 @@ async function BoardIdLayout({
 
   return (
     <div
-      className='relative h-[calc(100vh-56px)] bg-no-repeat bg-cover bg-center '
+      className='relative w-full h-[calc(100vh-56px)] bg-no-repeat bg-cover bg-center '
       //Background Image Board
       style={{ backgroundImage: `url(${board.imageFullUrl})` }}
     >

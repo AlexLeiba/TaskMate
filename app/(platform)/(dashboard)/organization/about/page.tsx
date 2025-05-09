@@ -3,7 +3,7 @@ import React from 'react';
 
 function About() {
   return (
-    <div className='w-full max-w-screen-2xl px-4  mx-auto pt-24 pb-24 dark:text-white'>
+    <div className='max-w-screen-2xl px-4  mx-auto pt-24 pb-24 dark:text-white'>
       <div>
         <div>
           <h3 className='sm:text-6xl'>About</h3>

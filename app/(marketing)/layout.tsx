@@ -5,10 +5,10 @@ import { Footer } from './_components/footer';
 
 function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className='h-screen bg-slate-100'>
+    <div className='min-h-screen flex flex-col bg-slate-100'>
       <ClerkProvider>
         <Navbar />
-        <main className='min-h-screen  bg-slate-100 overflow-y-auto  dark:bg-gray-950'>
+        <main className='flex flex-grow  bg-slate-100 overflow-y-auto  dark:bg-gray-950'>
           {children}
         </main>
         <Footer />

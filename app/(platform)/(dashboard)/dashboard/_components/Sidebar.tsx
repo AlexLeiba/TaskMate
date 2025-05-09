@@ -100,7 +100,7 @@ function Sidebar({ storageKey = 'default-sidebar-state' }: Props) {
 
   return (
     <>
-      <div className='font-medium  flex  px-4 py-4  h-[calc(100vh-80px)] flex-col'>
+      <div className='font-medium  flex  px-4 py-4  h-[calc(100vh-155px)] flex-col'>
         <div className='flex justify-between  w-full '>
           <div className='flex flex-col'>
             <div className='md:hidden '>

@@ -27,6 +27,7 @@ function ImagePicker({ type, setSelectedImageId, selectedImageId }: Props) {
   const [width] = useWindowSize();
 
   const [images, setImages] = React.useState<Array<Record<string, any>>>([]);
+  console.log('🚀 ~ ImagePicker ~ images:', images);
 
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -35,17 +36,19 @@ function ImagePicker({ type, setSelectedImageId, selectedImageId }: Props) {
     setSelectedImageId(null);
     setValue('image', '');
     try {
-      const result = await unsplash.photos.getRandom({
-        collectionIds: ['317099'], //ids of a specific collection from library
-        count: type === 'boards' ? (width < MOBILE_BREAK_POINT ? 4 : 10) : 4,
-      });
+      if (width) {
+        const result = await unsplash.photos.getRandom({
+          collectionIds: ['317099'], //ids of a specific collection from library
+          count: type === 'boards' ? (width < MOBILE_BREAK_POINT ? 4 : 10) : 4,
+        });
 
-      if (result && result.response) {
-        const fetchedImages = result.response as Array<Record<string, any>>;
-        console.log('🚀 ~ fetchImages ~ fetchedImages:', fetchedImages);
-        setImages(fetchedImages);
-      } else {
-        throw new Error('Error fetching images');
+        if (result && result.response) {
+          const fetchedImages = result.response as Array<Record<string, any>>;
+
+          setImages(fetchedImages);
+        } else {
+          throw new Error('Error fetching images');
+        }
       }
     } catch (error: any) {
       setImages(
@@ -63,7 +66,7 @@ function ImagePicker({ type, setSelectedImageId, selectedImageId }: Props) {
   }
   useEffect(() => {
     fetchImages();
-  }, []);
+  }, [width]);
 
   function handleRefetchImages() {
     fetchImages();
