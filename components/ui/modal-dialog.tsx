@@ -129,7 +129,7 @@ function Modal({
       <DialogContent
         className={cn(
           contentClassName && contentClassName,
-          'bg-slate-100 dark:bg-gray-900 dark:text-white z-50  md:w-[560px] lg:w-[600px] w-[300px] overflow-y-auto  lg:h-auto rounded-lg border-none p-0',
+          'bg-slate-100 dark:bg-gray-900 dark:text-white z-50  md:w-[560px] lg:w-[600px] w-full overflow-y-auto  lg:h-auto rounded-lg border-none p-0',
           (!!children || !!onCheckbox) && 'lg:w-[760px]'
         )}
         type={'modal'}

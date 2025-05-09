@@ -78,7 +78,7 @@ function ListItem({ data, index }: { data: ListWithCardsType; index: number }) {
                       {/* ON OPEN A CARD MODAL */}
                       {data.cards.map((card, index) => (
                         <Modal
-                          contentClassName='md:h-full h-full'
+                          contentClassName='md:h-full h-full  '
                           open={cardModalOpen}
                           onOpenChange={() => setCardModalOpen(false)}
                           key={card.id}
