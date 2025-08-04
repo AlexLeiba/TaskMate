@@ -67,7 +67,10 @@ function About() {
                       • DRAG AND DROP: drag and drop functionality to move
                       cards/tickets between the same or other lists/columns .
                     </p>
-                    <p>• Card/Ticket details: title , description</p>
+                    <p>
+                      • Card/Ticket details: title , description, comments,
+                      attachments , activities
+                    </p>
                   </li>
                 </ul>
               </section>
