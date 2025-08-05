@@ -31,9 +31,6 @@ export function Navbar() {
             <>
               {currentPath === 'sign-in' && (
                 <div className='flex gap-4 items-center'>
-                  <Link href={'/about'} title='About'>
-                    <p className='font-bold'>About</p>
-                  </Link>
                   <Button size={'sm'} title='Sign Up'>
                     <Link href='/sign-up'>Sign Up for Free</Link>
                   </Button>

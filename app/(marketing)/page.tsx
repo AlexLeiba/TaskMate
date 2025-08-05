@@ -27,7 +27,7 @@ function MarketingPage() {
               </div>
 
               <div className='flex-1 relative flex flex-col gap-8'>
-                <Spacer size={8} />
+                <Spacer sm={2} md={8} lg={8} />
 
                 <Image
                   src={'/landing/organization.webp'}

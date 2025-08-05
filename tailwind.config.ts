@@ -107,7 +107,7 @@ export default {
           },
         ],
         '2xl': [
-          '2.4rem',
+          '2.1rem',
           {
             lineHeight: '3.2rem',
           },
