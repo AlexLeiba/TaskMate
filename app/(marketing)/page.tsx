@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import { Spacer } from '@/components/ui/spacer';
-import { CheckCircleIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -20,7 +19,7 @@ function MarketingPage() {
                   bring your tasks and teammates together.
                 </h4>
                 <div className='flex '>
-                  <Link href={'/sign-up'}>
+                  <Link href={'/sign-up'} title='Sign Up'>
                     <Button variant={'secondary'}>Sign up for free</Button>
                   </Link>
                 </div>
@@ -31,7 +30,7 @@ function MarketingPage() {
 
                 <Image
                   src={'/landing/organization.webp'}
-                  alt='organization'
+                  alt='organization dashboard'
                   className='object-fill rounded-md '
                   width={750}
                   height={400}
@@ -39,7 +38,7 @@ function MarketingPage() {
 
                 <Image
                   src={'/landing/drag-drop-done.webp'}
-                  alt='organization'
+                  alt='dashboard cards and lists'
                   className='object-fill rounded-md md:absolute  top-[15%] right-0 md:rotate-6 w-full md:w-[350px]'
                   width={350}
                   height={100}
@@ -70,7 +69,7 @@ function MarketingPage() {
             </p>
             <Spacer size={6} />
             <div className='flex gap-4 w-full justify-center items-center'>
-              <Link href={'/sign-up'}>
+              <Link href={'/sign-up'} title='Sign Up'>
                 <Button variant={'secondary'}>Sign up for free</Button>
               </Link>
             </div>
