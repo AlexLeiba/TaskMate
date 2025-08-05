@@ -3,9 +3,8 @@ import { SignUp } from '@clerk/nextjs';
 
 export default function SignUpPage() {
   return (
-    <div className=' w-full h-full'>
-      <Spacer size={14} />
-      <div className='mt-4 md:mt-0 lg:mt-0 flex justify-center items-center  lg:h-[calc(100vh-160px)] md:h-[calc(100vh-150px)] sm:h-[calc(100vh-400px)]'>
+    <div className='w-full h-[calc(100vh-56px)]'>
+      <div className='min-h-[800px] h-full flex flex-col justify-center items-center'>
         <SignUp
           appearance={{
             elements: {

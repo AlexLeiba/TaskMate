@@ -15,8 +15,6 @@ export default function DashboardLayout({
         <main className=' bg-slate-100  dark:bg-gray-950  overflow-y-auto flex flex-grow '>
           {children}
         </main>
-
-        <Footer />
       </div>
     </ClerkProvider>
   );

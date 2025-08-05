@@ -40,9 +40,6 @@ export function Navbar() {
 
               {currentPath === 'sign-up' && (
                 <div className='flex gap-4 items-center'>
-                  <Link href={'/about'}>
-                    <p className='font-bold'>About</p>
-                  </Link>
                   <Button
                     size={'sm'}
                     variant={'outline'}
