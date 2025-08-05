@@ -28,6 +28,7 @@ function ThemeToggle() {
 
   return (
     <div
+      title='Change theme'
       onClick={() => {
         darkMode ? setIsDarkMode(false) : setIsDarkMode(true);
       }}

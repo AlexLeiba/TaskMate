@@ -13,6 +13,7 @@ function Logo({
   return (
     <Link href={'/'}>
       <div
+        title='Home'
         className={cn(
           type === 'header' ? 'hidden md:flex' : 'flex',
           'hover:opacity-75 transition  gap-x-1  items-center ',

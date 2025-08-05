@@ -24,15 +24,17 @@ export function Navbar() {
 
         <div className='space-x-4  flex items-center justify-between '>
           {isSignedIn ? (
-            <UserButton />
+            <div title='User Profile'>
+              <UserButton />
+            </div>
           ) : (
             <>
               {currentPath === 'sign-in' && (
                 <div className='flex gap-4 items-center'>
-                  <Link href={'/about'}>
+                  <Link href={'/about'} title='About'>
                     <p className='font-bold'>About</p>
                   </Link>
-                  <Button size={'sm'}>
+                  <Button size={'sm'} title='Sign Up'>
                     <Link href='/sign-up'>Sign Up for Free</Link>
                   </Button>
                 </div>
@@ -41,6 +43,7 @@ export function Navbar() {
               {currentPath === 'sign-up' && (
                 <div className='flex gap-4 items-center'>
                   <Button
+                    title='Sign In'
                     size={'sm'}
                     variant={'outline'}
                     className='dark:bg-white dark:text-black bg-black text-white '
@@ -53,13 +56,14 @@ export function Navbar() {
               {currentPath !== 'sign-in' && currentPath !== 'sign-up' && (
                 <>
                   <Button
+                    title='Sign In'
                     size={'sm'}
                     variant={'outline'}
                     className='dark:bg-white dark:text-black bg-black text-white '
                   >
                     <Link href={`/sign-in`}>Sign in</Link>
                   </Button>
-                  <Button size={'sm'}>
+                  <Button size={'sm'} title='Sign Up'>
                     <Link href='/sign-up'>Sign Up for Free</Link>
                   </Button>
                 </>

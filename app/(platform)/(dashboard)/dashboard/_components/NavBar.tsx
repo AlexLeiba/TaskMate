@@ -47,6 +47,7 @@ export function Navbar() {
               }
             >
               <Button
+                title='Create new board'
                 disabled={isLoadingCreateBoard}
                 size={'sm'}
                 className='rounded-full w-8 h-8  md:w-auto '

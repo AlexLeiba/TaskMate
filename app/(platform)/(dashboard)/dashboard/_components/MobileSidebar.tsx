@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import { useMobileSidebarStore } from '@/hooks/useMobileSidebarStore';
 import { usePathname } from 'next/navigation';
 import { Menu } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import Sidebar from './Sidebar';
 
